@@ -54,9 +54,8 @@ public class SlimeChunkExecuter implements CommandExecutor {
         long seed = location.getWorld().getSeed();
         int cx = location.getBlockX() >> 4;
         int cz = location.getBlockZ() >> 4;
-        int r = 0;
-        for (int i = 0; i < 16; i++) {
-            for (int x = -r; i <= r; i++) {
+        for (int r = 0; r < 16; r++) {
+            for (int x = -r; x <= r; x++) {
                 for (int z = -r; z <= r; z++) {
                     if (isSlimeChunk(seed, cx + x, cz + z)) {
                         return new Location(location.getWorld(), (cx + x) << 4, 0, (cz + z) << 4);
@@ -70,10 +69,10 @@ public class SlimeChunkExecuter implements CommandExecutor {
     private boolean isSlimeChunk(long seed, int cx, int cz) {
         Random rnd = new Random(
                 seed +
-                        (int) (cx * cx * 0x4c1906) +
-                        (int) (cx * 0x5ac0db) +
-                        (int) (cz * cz) * 0x4307a7L +
-                        (int) (cz * 0x5f24f) ^ 0x3ad8025f
+                        (cx * cx * 0x4c1906) +
+                        (cx * 0x5ac0db) +
+                        (cz * cz) * 0x4307a7L +
+                        (cz * 0x5f24f) ^ 0x3ad8025f
         );
         return rnd.nextInt(10) == 0;
     }
