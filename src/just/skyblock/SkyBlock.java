@@ -56,6 +56,7 @@ public class SkyBlock extends JavaPlugin implements TabCompleter{
         nether.setKeepSpawnInMemory(false);
         getServer().getPluginManager().registerEvents(new Listener(this), this);
         getCommand("skyblock").setTabCompleter(this);
+        getCommand("slimechunk").setExecutor(new SlimeChunkExecuter(this));
         Crate.islandCrateTicker();
         Shop.load();
         Island.disposeAll(); // If we dont reference the Island class at least once, onDisable will fail if no Islands get loaded

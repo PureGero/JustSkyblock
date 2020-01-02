@@ -193,14 +193,12 @@ public class Generator extends BlockPopulator {
     }
 
     private void genNetherIsland(Chunk c) {
-        System.out.println("Nether populate checkpoint 1");
         // Island
         for(int i = 0; i < 3; i++)
             for(int k = 0; k < 5; k++)
                 for(int j = 0; j < 3; j++)
                     c.getBlock(7 + i, 62 + j, 7 + k).setType(Material.NETHERRACK);
         c.getBlock(8, 62, 8).setType(Material.BEDROCK);
-        System.out.println("Nether populate checkpoint 2");
 
         // Nether brick
         for (int i = 0; i < 3; i++)
@@ -214,13 +212,11 @@ public class Generator extends BlockPopulator {
         // Portal
         for(int k = 0; k < 2; k++)
             c.getBlock(8, 65 + k, 8).setType(Material.NETHER_PORTAL);
-        System.out.println("Nether populate checkpoint 3");
 
         c.getBlock(8, 64, 10).setType(Material.LAVA);
         c.getBlock(9, 64, 11).setType(Material.SOUL_SAND);
         c.getBlock(9, 65, 11).setType(Material.NETHER_WART);
         c.getBlock(7, 64, 11).setType(Material.NETHER_QUARTZ_ORE);
         c.getBlock(7, 67, 7).setType(Material.GLOWSTONE);
-        System.out.println("Nether populate checkpoint 4");
     }
 }

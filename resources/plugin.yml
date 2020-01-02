@@ -25,6 +25,9 @@ commands:
   objectives:
     description: Objectives list
     aliases: [objective, obj, progress, achievements, achievement]
+  slimechunk:
+    description: Tells you were your slime chunk is
+    aliases: [whereismyslimechunk, findmyslimechunk]
 permissions:
   skyblock:
     default: true
