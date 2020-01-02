@@ -1,7 +1,11 @@
 package just.skyblock;
 
+import net.minecraft.server.v1_15_R1.PacketPlayOutWorldBorder;
+import net.minecraft.server.v1_15_R1.WorldBorder;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.v1_15_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -157,6 +161,48 @@ public class Listener implements org.bukkit.event.Listener{
             e.getPlayer().sendMessage(ChatColor.GOLD + "Teleporting to previous location...");
             i.lx = 0;
             i.lz = 0;
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    public void playerTeleportUpdateWorldBorder(PlayerTeleportEvent e) {
+        World world = e.getTo().getWorld();
+        WorldBorder worldBorder = new WorldBorder();
+        worldBorder.world = ((CraftWorld) e.getTo().getWorld()).getHandle();
+
+        if (e.getTo().getWorld() == SkyBlock.skyblock.lobby) {
+            worldBorder.setSize(6000000);
+            worldBorder.setCenter(0, 0);
+        } else if (world == SkyBlock.skyblock.world || world == SkyBlock.skyblock.nether) {
+            int x = ((e.getTo().getBlockX() >> 9) << 9) + 256;
+            int z = ((e.getTo().getBlockZ() >> 9) << 9) + 256;
+            worldBorder.setSize(512);
+            worldBorder.setCenter(x, z);
+        }
+
+        PacketPlayOutWorldBorder packet = new PacketPlayOutWorldBorder(worldBorder, PacketPlayOutWorldBorder.EnumWorldBorderAction.INITIALIZE);
+        CraftPlayer player = (CraftPlayer) e.getPlayer();
+
+        player.getHandle().playerConnection.sendPacket(packet);
+
+        // Send it again after any world loading
+        Bukkit.getScheduler().runTaskLater(SkyBlock.skyblock, () -> {
+            player.getHandle().playerConnection.sendPacket(packet);
+        }, 1L);
+    }
+
+    @EventHandler
+    public void preventPlayerMovingBetweenIslands(PlayerMoveEvent e) {
+        int fromrx = e.getFrom().getBlockX() >> 4 >> 5;
+        int fromrz = e.getFrom().getBlockZ() >> 4 >> 5;
+        int torx = e.getTo().getBlockX() >> 4 >> 5;
+        int torz = e.getTo().getBlockZ() >> 4 >> 5;
+
+        if (e.getFrom().getWorld() == e.getTo().getWorld()
+                && (fromrx != torx || fromrz != torz)
+                && e.getTo().distanceSquared(e.getFrom()) < 64) {
+            e.getPlayer().sendMessage(ChatColor.RED + "You have reached the limit of your skyblock world");
+            e.setCancelled(true);
         }
     }
     
