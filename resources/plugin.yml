@@ -12,7 +12,7 @@ commands:
     description: Go to spawn
   money:
     description: Money
-    aliases: [mymoney,balance,coins]
+    aliases: [mymoney,balance,bal,coins]
   pay:
     description: Give money to another player
     aliases: [givemoney]
