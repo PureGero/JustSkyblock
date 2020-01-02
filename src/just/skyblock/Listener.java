@@ -257,6 +257,7 @@ public class Listener implements org.bukkit.event.Listener{
         if (from.getWorld() == skyblock.world && to.getWorld().getEnvironment() == World.Environment.NETHER) {
             e.setCancelled(true);
             e.getPlayer().teleport(Island.get(from).getNetherSpawnLocation());
+            Objective.enterNether(Island.load(e.getPlayer().getUniqueId())); // Enter Nether Objective
         } else if (from.getWorld() == skyblock.nether && to.getWorld().getEnvironment() == World.Environment.NORMAL) {
             e.setCancelled(true);
             e.getPlayer().teleport(Island.get(from).getSpawnLocation());
