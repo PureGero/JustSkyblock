@@ -322,6 +322,13 @@ public class Listener implements org.bukkit.event.Listener{
             e.getEntity().teleport(Island.get(from).getSpawnLocation());
         }
     }
+
+    @EventHandler
+    public void onPlayerExpLevelChange(PlayerExpChangeEvent e) {
+        if (e.getPlayer().getLevel() >= 100) {
+            Objective.exp100(Island.load(e.getPlayer().getUniqueId()));
+        }
+    }
     
     
     

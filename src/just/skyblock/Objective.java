@@ -63,6 +63,7 @@ public class Objective {
         "Double cobble horder", "Fill a double chest with cobblestone",
         "Drop the beat", "Play a music disc",
         "Welcome to Hell", "Enter the nether",
+/* 55 */"100s Club", "Obtain 100 xp levels",
     };
     public static int length(){
         return fields.length/2;
@@ -270,6 +271,10 @@ public class Objective {
     public static void enterNether(Island i){
         if(!has(i,53))
             give(i,53);
+    }
+    public static void exp100(Island i){
+        if(!has(i,54))
+            give(i,54);
     }
     public static void killShop(Island i, int c){
         if(c >= 1)
