@@ -54,6 +54,7 @@ public class SkyBlock extends JavaPlugin implements TabCompleter{
             }
         }));
         nether.setKeepSpawnInMemory(false);
+        getServer().setSpawnRadius(0);
         getServer().getPluginManager().registerEvents(new Listener(this), this);
         getCommand("skyblock").setTabCompleter(this);
         getCommand("slimechunk").setExecutor(new SlimeChunkExecuter(this));
