@@ -122,10 +122,11 @@ public class Island {
         update = 0;
         checkUpdates();
         save();
+
         new File(SkyBlock.skyblock.world.getWorldFolder(),
-                "region/r." + (int)Math.floor(oldx/512.0)
-                + "." + (int)Math.floor(oldz/512.0) + ".mca")
-                    .deleteOnExit(); // Delete region file once server has exited
+                "region/r." + oldx + "." + oldz + ".mca")
+                .deleteOnExit(); // Delete region file once server has exited
+
         if(resetCount >= 2)
             Objective.resetSkyblock(this);
     }

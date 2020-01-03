@@ -69,7 +69,7 @@ public class SkyBlock extends JavaPlugin implements TabCompleter{
                 Island.saveAll();
             }
         }, 10*60*20L, 10*60*20L);
-        getServer().getScheduler().runTaskTimerAsynchronously(this, new Runnable(){
+        getServer().getScheduler().runTaskTimer(this, new Runnable(){
             public void run(){
                 for(Player p : Bukkit.getOnlinePlayers()){
                     Island i = Island.load(p.getUniqueId());
@@ -201,110 +201,79 @@ public class SkyBlock extends JavaPlugin implements TabCompleter{
                     p.sendMessage(ChatColor.RED + "WARNING: This skyblock will be deleted soon!");
                     p.sendMessage(ChatColor.RED + "Please remove all the stuff you want to keep from this skyblock.");
                     Island.load(p.getUniqueId()).spawnOld(p);
-                }*/else
-                    getServer().getScheduler().runTaskAsynchronously(this, new Runnable(){
-                        public void run(){
-                            OfflinePlayer o = getServer().getOfflinePlayer(a[0]);
-                            if(o.getFirstPlayed() > 0){
-                                final Island i = Island.load(o.getUniqueId());
-                                if(i.allowed.contains(p.getUniqueId())){
-                                    getServer().getScheduler().runTask(SkyBlock.this, new Runnable(){
-                                        public void run(){
-                                            i.spawn(p);
-                                        }
-                                    });
-                                    Objective.visitAnotherPlot(Island.load(p.getUniqueId()));
-                                }else{
-                                    p.sendMessage(ChatColor.RED + o.getName() + " has not added you to their skyblock!");
-                                    Island.safeDispose(o.getUniqueId());
-                                }
-                            }else{
-                                sendHelp(p,l);
-                            }
+                }*/else {
+                    OfflinePlayer o = getServer().getOfflinePlayer(a[0]);
+                    if (o.getFirstPlayed() > 0) {
+                        final Island i = Island.load(o.getUniqueId());
+                        if (i.allowed.contains(p.getUniqueId())) {
+                            i.spawn(p);
+                            Objective.visitAnotherPlot(Island.load(p.getUniqueId()));
+                        } else {
+                            p.sendMessage(ChatColor.RED + o.getName() + " has not added you to their skyblock!");
+                            Island.safeDispose(o.getUniqueId());
                         }
-                    });
+                    } else {
+                        sendHelp(p, l);
+                    }
+                }
             }else if(a.length == 2){
                 if(a[0].equalsIgnoreCase("add") || a[0].equalsIgnoreCase("trust")){
-                    getServer().getScheduler().runTaskAsynchronously(this, new Runnable(){
-                        public void run(){
-                            OfflinePlayer o = getServer().getOfflinePlayer(a[1]);
-                            if(o.getFirstPlayed() > 0){
-                                Island i = Island.load(p.getUniqueId());
-                                if(i.allowed.contains(o.getUniqueId()))
-                                    p.sendMessage(ChatColor.RED + o.getName() + " has already been added to your skyblock!");
-                                else{
-                                    Objective.addToPlot(i);
-                                    i.allowed.add(o.getUniqueId());
-                                    p.sendMessage(ChatColor.GREEN + o.getName() + " has been added to your skyblock!");
-                                }
-                            }else{
-                                p.sendMessage(ChatColor.RED + o.getName() + " has never played on this server!");
-                            }
+                    OfflinePlayer o = getServer().getOfflinePlayer(a[1]);
+                    if(o.getFirstPlayed() > 0){
+                        Island i = Island.load(p.getUniqueId());
+                        if(i.allowed.contains(o.getUniqueId()))
+                            p.sendMessage(ChatColor.RED + o.getName() + " has already been added to your skyblock!");
+                        else{
+                            Objective.addToPlot(i);
+                            i.allowed.add(o.getUniqueId());
+                            p.sendMessage(ChatColor.GREEN + o.getName() + " has been added to your skyblock!");
                         }
-                    });
+                    }else{
+                        p.sendMessage(ChatColor.RED + o.getName() + " has never played on this server!");
+                    }
                 }else if(a[0].equalsIgnoreCase("remove") || a[0].equalsIgnoreCase("untrust")){
-                    getServer().getScheduler().runTaskAsynchronously(this, new Runnable(){
-                        public void run(){
-                            OfflinePlayer o = getServer().getOfflinePlayer(a[1]);
-                            if(o.getFirstPlayed() > 0){
-                                Island i = Island.load(p.getUniqueId());
-                                if(i.allowed.contains(o.getUniqueId())){
-                                    i.allowed.remove(o.getUniqueId());
-                                    final Player p2 = getServer().getPlayer(o.getUniqueId());
-                                    if(p2 != null && i.inIsland(p2.getLocation())){
-                                        p2.sendMessage(ChatColor.RED + "You have been removed from this skyblock.");
-                                        getServer().getScheduler().runTask(SkyBlock.this, new Runnable(){
-                                            public void run(){
-                                                p2.teleport(lobby.getSpawnLocation().add(0.5, 0.5, 0.5));
-                                            }
-                                        });
-                                    }
-                                    p.sendMessage(ChatColor.GREEN + o.getName() + " has been removed from your skyblock!");
-                                }else{
-                                    p.sendMessage(ChatColor.RED + o.getName() + " has been not been added to your skyblock!");
-                                }
-                            }else{
-                                p.sendMessage(ChatColor.RED + o.getName() + " has never played on this server!");
+                    OfflinePlayer o = getServer().getOfflinePlayer(a[1]);
+                    if(o.getFirstPlayed() > 0){
+                        Island i = Island.load(p.getUniqueId());
+                        if(i.allowed.contains(o.getUniqueId())){
+                            i.allowed.remove(o.getUniqueId());
+                            final Player p2 = getServer().getPlayer(o.getUniqueId());
+                            if(p2 != null && i.inIsland(p2.getLocation())){
+                                p2.sendMessage(ChatColor.RED + "You have been removed from this skyblock.");
+                                p2.teleport(lobby.getSpawnLocation().add(0.5, 0.5, 0.5));
                             }
+                            p.sendMessage(ChatColor.GREEN + o.getName() + " has been removed from your skyblock!");
+                        }else{
+                            p.sendMessage(ChatColor.RED + o.getName() + " has been not been added to your skyblock!");
                         }
-                    });
+                    }else{
+                        p.sendMessage(ChatColor.RED + o.getName() + " has never played on this server!");
+                    }
                 }else if(a[0].equalsIgnoreCase("op") && p.hasPermission("skyblock.admin")){
-                    getServer().getScheduler().runTaskAsynchronously(this, new Runnable(){
-                        public void run(){
-                            final OfflinePlayer o = getServer().getOfflinePlayer(a[1]);
-                            if(o.getFirstPlayed() > 0){
-                                final Island i = Island.load(o.getUniqueId());
-                                getServer().getScheduler().runTask(SkyBlock.this, new Runnable(){
-                                    public void run(){
-                                        i.spawn(p);
-                                        Island.safeDispose(o.getUniqueId());
-                                    }
-                                });
-                            }else{
-                                p.sendMessage(ChatColor.RED + o.getName() + " has never played on this server!");
-                            }
-                        }
-                    });
+                    final OfflinePlayer o = getServer().getOfflinePlayer(a[1]);
+                    if(o.getFirstPlayed() > 0){
+                        Island i = Island.load(o.getUniqueId());
+                        i.spawn(p);
+                        Island.safeDispose(o.getUniqueId());
+                    }else{
+                        p.sendMessage(ChatColor.RED + o.getName() + " has never played on this server!");
+                    }
                 }else sendHelp(p,l);
             }else if(a.length == 3){
                 if(sender.hasPermission("skyblock.admin") && a[0].equalsIgnoreCase("giveloot")){
-                    final int j = Integer.parseInt(a[2]);
-                    getServer().getScheduler().runTaskAsynchronously(this, new Runnable(){
-                        public void run(){
-                            OfflinePlayer o = getServer().getOfflinePlayer(a[1]);
-                            if(o.getFirstPlayed() > 0){
-                                final Island i = Island.load(o.getUniqueId());
-                                i.crates += j;
-                                Island.safeDispose(o.getUniqueId());
-                                p.sendMessage(ChatColor.GREEN + "Given " + o.getName() + " " + j + " loot boxes");
-                                Player p = getServer().getPlayer(o.getUniqueId());
-                                if(p != null)
-                                    p.sendMessage(ChatColor.YELLOW + "You have been given " + j + " loot boxes to open!");
-                            }else{
-                                p.sendMessage(ChatColor.RED + o.getName() + " has never played on this server!");
-                            }
-                        }
-                    });
+                    int j = Integer.parseInt(a[2]);
+                    OfflinePlayer o = getServer().getOfflinePlayer(a[1]);
+                    if(o.getFirstPlayed() > 0){
+                        final Island i = Island.load(o.getUniqueId());
+                        i.crates += j;
+                        Island.safeDispose(o.getUniqueId());
+                        p.sendMessage(ChatColor.GREEN + "Given " + o.getName() + " " + j + " loot boxes");
+                        Player po = getServer().getPlayer(o.getUniqueId());
+                        if(po != null)
+                            po.sendMessage(ChatColor.YELLOW + "You have been given " + j + " loot boxes to open!");
+                    }else{
+                        p.sendMessage(ChatColor.RED + o.getName() + " has never played on this server!");
+                    }
                 }else sendHelp(p,l);
             }else sendHelp(p,l);
             return false;
