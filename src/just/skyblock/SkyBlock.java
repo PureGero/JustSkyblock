@@ -123,9 +123,9 @@ public class SkyBlock extends JavaPlugin implements TabCompleter{
             sender.sendMessage(ChatColor.DARK_PURPLE + "[SkyCrafter] " + ChatColor.WHITE + "The beginner's rank");
             sender.sendMessage(ChatColor.YELLOW + "[SkyBuilder] " + ChatColor.GRAY + "2 objectives");
             sender.sendMessage(ChatColor.GOLD + "[SkyPrentice] " + ChatColor.WHITE + "4 objectives");
-            sender.sendMessage(ChatColor.LIGHT_PURPLE + "[SkyWalker] " + ChatColor.GRAY + "8 objectives");
-            sender.sendMessage(ChatColor.GREEN + "[SkyMaster] " + ChatColor.WHITE + "16 objectives");
-            sender.sendMessage(ChatColor.AQUA + "[SkyLord] " + ChatColor.GRAY + "32 objectives");
+            sender.sendMessage(ChatColor.GREEN + "[SkyWalker] " + ChatColor.GRAY + "8 objectives");
+            sender.sendMessage(ChatColor.AQUA + "[SkyMaster] " + ChatColor.WHITE + "16 objectives");
+            sender.sendMessage(ChatColor.LIGHT_PURPLE + "[SkyLord] " + ChatColor.GRAY + "32 objectives");
             sender.sendMessage(ChatColor.DARK_RED + "[SkyOverlord] " + ChatColor.WHITE + "64 objectives");
         }
         if(c.getName().equals("objectives")){
