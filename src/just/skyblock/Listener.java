@@ -14,6 +14,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.*;
@@ -362,7 +363,12 @@ public class Listener implements org.bukkit.event.Listener{
         }
     }
     
-    
+    @EventHandler
+    public void onCraftItem(CraftItemEvent e) {
+        if (e.getRecipe().getResult().getType() == Material.ENCHANTING_TABLE) {
+            Objective.enchantingTable(Island.load(e.getWhoClicked().getUniqueId()));
+        }
+    }
     
     
     // # --- --- --- #
