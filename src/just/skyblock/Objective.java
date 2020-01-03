@@ -64,7 +64,8 @@ public class Objective {
         "Drop the beat", "Play a music disc",
         "Welcome to Hell", "Enter the nether",
 /* 55 */"100s Club", "Obtain 100 xp levels",
-        "Enchantception", "Pull in an enchanted fishing rod with an enchanted fishing rod"
+        "Enchanception", "Pull in an enchanted fishing rod with an enchanted fishing rod",
+        "Sweet Dreams", "Sleep in a bed"
     };
     public static int length(){
         return fields.length/2;
@@ -280,6 +281,10 @@ public class Objective {
     public static void echantedRod(Island i) {
         if (!has(i, 55))
             give(i, 55);
+    }
+    public static void sleep(Island i) {
+        if (!has(i, 56))
+            give(i, 56);
     }
     public static void killShop(Island i, int c){
         if(c >= 1)

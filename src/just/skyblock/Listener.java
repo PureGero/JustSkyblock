@@ -350,6 +350,17 @@ public class Listener implements org.bukkit.event.Listener{
             }
         }
     }
+
+    @EventHandler
+    public void onPlayerSleep(PlayerInteractEvent e) {
+        if (e.getAction() == Action.RIGHT_CLICK_BLOCK
+                && e.getClickedBlock().getType().name().contains("BED")
+                && (e.getClickedBlock().getWorld().isThundering()
+                    || (e.getClickedBlock().getWorld().getTime() > 12541
+                        && e.getClickedBlock().getWorld().getTime() < 23458))) {
+            Objective.sleep(Island.load(e.getPlayer().getUniqueId()));
+        }
+    }
     
     
     
