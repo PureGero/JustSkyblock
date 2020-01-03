@@ -252,7 +252,12 @@ public class Island {
             }catch(Exception e){
                 e.printStackTrace();
             }
-            update = 1;
+            update = 2;
+        }
+        if (update == 1) {
+            SkyBlock.skyblock.world.getBlockAt(x*512+256-9,64,z*512+256-39).setType(Material.GRASS_BLOCK);
+            SkyBlock.skyblock.world.getBlockAt(x*512+256-9,64,z*512+256-39).setType(Material.BAMBOO_SAPLING);
+            update = 2;
         }
     }
 

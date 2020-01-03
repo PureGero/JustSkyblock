@@ -146,6 +146,7 @@ public class Generator extends BlockPopulator {
             }
         
         c.getBlock(9, 65, 7).setType(Material.MELON);
+        c.getBlock(7, 65, 9).setType(Material.BAMBOO_SAPLING);
     }
 
     public void genStoneIsland(Chunk c){
