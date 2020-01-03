@@ -16,9 +16,9 @@ public class Rank {
 	public static Rank DEFAULT = new Rank("default","SkyCrafter",ChatColor.DARK_PURPLE);
 	public static Rank SKYBUILDER = new Rank("skybuilder","SkyBuilder",ChatColor.YELLOW);
 	public static Rank SKYAPPRENTICE = new Rank("skyapprentice","SkyPrentice",ChatColor.GOLD);
-	public static Rank SKYWALKER = new Rank("skywalker","SkyWalker",ChatColor.LIGHT_PURPLE);
-	public static Rank SKYMASTER = new Rank("skymaster","SkyMaster",ChatColor.GREEN);
-	public static Rank SKYLORD = new Rank("skylord","SkyLord",ChatColor.AQUA);
+	public static Rank SKYWALKER = new Rank("skywalker","SkyWalker",ChatColor.GREEN);
+	public static Rank SKYMASTER = new Rank("skymaster","SkyMaster",ChatColor.AQUA);
+	public static Rank SKYLORD = new Rank("skylord","SkyLord",ChatColor.LIGHT_PURPLE);
 	public static Rank SKYOVERLORD = new Rank("skyoverlord","SkyOverlord",ChatColor.DARK_RED);
 	public static Rank MODERATOR = new Rank("moderator","Mod",ChatColor.AQUA);
 	public static Rank ADMIN = new Rank("admin","Admin",ChatColor.RED);
