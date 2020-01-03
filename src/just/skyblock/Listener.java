@@ -496,7 +496,7 @@ public class Listener implements org.bukkit.event.Listener{
                     e.setCancelled(true);
             }
         }
-        if(e.getRightClicked().hasPermission("skyblock.admin")){
+        if(e.getRightClicked().hasPermission("skyblock.admin") || e.getRightClicked().hasPermission("pure.helper")){
             Objective.punchStaff(Island.load(e.getPlayer().getUniqueId()));
         }
     }
