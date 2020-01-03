@@ -64,6 +64,7 @@ public class Objective {
         "Drop the beat", "Play a music disc",
         "Welcome to Hell", "Enter the nether",
 /* 55 */"100s Club", "Obtain 100 xp levels",
+        "Enchantception", "Pull in an enchanted fishing rod with an enchanted fishing rod"
     };
     public static int length(){
         return fields.length/2;
@@ -268,13 +269,17 @@ public class Objective {
         if(!has(i,52))
             give(i,52);
     }
-    public static void enterNether(Island i){
-        if(!has(i,53))
-            give(i,53);
+    public static void enterNether(Island i) {
+        if (!has(i, 53))
+            give(i, 53);
     }
-    public static void exp100(Island i){
-        if(!has(i,54))
-            give(i,54);
+    public static void exp100(Island i) {
+        if (!has(i, 54))
+            give(i, 54);
+    }
+    public static void echantedRod(Island i) {
+        if (!has(i, 55))
+            give(i, 55);
     }
     public static void killShop(Island i, int c){
         if(c >= 1)

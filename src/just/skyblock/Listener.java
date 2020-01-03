@@ -329,6 +329,27 @@ public class Listener implements org.bukkit.event.Listener{
             Objective.exp100(Island.load(e.getPlayer().getUniqueId()));
         }
     }
+
+    @EventHandler
+    public void onPlayerFish(PlayerFishEvent e) {
+        if (e.getState() == PlayerFishEvent.State.CAUGHT_FISH) {
+            Entity caught = e.getCaught();
+            if (caught instanceof Item) {
+                ItemStack item = ((Item) caught).getItemStack();
+                ItemStack rod = e.getPlayer().getInventory().getItemInMainHand();
+
+                if (rod == null || rod.getType() != Material.FISHING_ROD) {
+                    rod = e.getPlayer().getInventory().getItemInOffHand();
+                    if (rod == null || rod.getType() != Material.FISHING_ROD)
+                        return;
+                }
+
+                if (item.getType() == Material.FISHING_ROD && item.getEnchantments().size() > 0 && rod.getEnchantments().size() > 0) {
+                    Objective.echantedRod(Island.load(e.getPlayer().getUniqueId()));
+                }
+            }
+        }
+    }
     
     
     
