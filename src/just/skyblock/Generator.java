@@ -23,29 +23,41 @@ public class Generator extends BlockPopulator {
         try {
             if (world == skyblock.world) {
                 if ((chunk.getX() & 31) == 15 && (chunk.getZ() & 31) == 15) {
-                    if (empty(chunk))
+                    if (empty(chunk)) {
+                        System.out.println("Generating main island @ " + chunk);
                         genMainIsland(chunk);
+                    }
                 }
                 if ((chunk.getX() & 31) == 13 && (chunk.getZ() & 31) == 15) {
-                    if (empty(chunk))
+                    if (empty(chunk)) {
+                        System.out.println("Generating sand island @ " + chunk);
                         genSandIsland(chunk);
+                    }
                 }
                 if ((chunk.getX() & 31) == 17 && (chunk.getZ() & 31) == 15) {
-                    if (empty(chunk))
+                    if (empty(chunk)) {
+                        System.out.println("Generating farm island @ " + chunk);
                         genFarmIsland(chunk);
+                    }
                 }
                 if ((chunk.getX() & 31) == 15 && (chunk.getZ() & 31) == 13) {
-                    if (empty(chunk))
+                    if (empty(chunk)) {
+                        System.out.println("Generating jungle island @ " + chunk);
                         genJungleIsland(chunk);
+                    }
                 }
                 if ((chunk.getX() & 31) == 15 && (chunk.getZ() & 31) == 17) {
-                    if (empty(chunk))
+                    if (empty(chunk)) {
+                        System.out.println("Generating stone island @ " + chunk);
                         genStoneIsland(chunk);
+                    }
                 }
             } else if (world == skyblock.nether) {
                 if ((chunk.getX() & 0x1F) == 0xF && (chunk.getZ() & 0x1F) == 0xF) {
-                    if (empty(chunk))
+                    if (empty(chunk)) {
+                        System.out.println("Generating nether island @ " + chunk);
                         genNetherIsland(chunk);
+                    }
                 }
             }
         } catch (Exception e) {
@@ -136,12 +148,11 @@ public class Generator extends BlockPopulator {
         // Island
         for(int i=0;i<3;i++)
             for(int k=0;k<3;k++){
-                for(int j=0;j<3;j++)
-                    c.getBlock(7+i, 62+j, 7+k).setType(j==0?Material.STONE:Material.GRASS_BLOCK);
+                c.getBlock(7+i, 62, 7+k).setType(Material.STONE);
+                c.getBlock(7+i, 63, 7+k).setType(Material.DIRT);
+                c.getBlock(7+i, 64, 7+k).setType(Material.GRASS_BLOCK);
                 if(i < 2 && k < 2){
                     c.getBlock(7+i, 65, 7+k).setType(Material.JUNGLE_SAPLING);
-                }else{
-                    c.getBlock(7+i, 65, 7+k).setType(Material.OAK_LEAVES);
                 }
             }
         

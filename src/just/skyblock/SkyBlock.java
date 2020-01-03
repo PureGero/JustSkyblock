@@ -178,7 +178,7 @@ public class SkyBlock extends JavaPlugin implements TabCompleter{
                     sendHelp(p,l);
                 else if(a[0].equalsIgnoreCase("reset")){
                     Island i = Island.load(p.getUniqueId());
-                    if(i.resetCount >= 3 && i.lastReset > System.currentTimeMillis()-60*60*1000L){
+                    if(i.resetCount >= 3 && i.lastReset > System.currentTimeMillis()-60*60*1000L && p.getGameMode() == GameMode.SURVIVAL){
                         p.sendMessage(ChatColor.RED + "You can only reset your skyblock once every hour.");
                     }else if(i.lastResetRequest > System.currentTimeMillis()-30*1000L){
                         ArrayList<Player> ps = i.getPlayers();
