@@ -3,10 +3,7 @@ package just.skyblock;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
-import org.bukkit.WorldCreator;
+import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -27,6 +24,7 @@ public class SkyBlock extends JavaPlugin implements TabCompleter{
     public void onEnable(){
         skyblock = this;
         lobby = getServer().getWorlds().get(0);
+        lobby.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
         //world = getServer().createWorld(new WorldCreator("skyblock").type(WorldType.FLAT).generatorSettings("2;0;1;"));
         world = getServer().createWorld(new WorldCreator("skyblock").generator(new ChunkGenerator() {
             @Override
@@ -41,6 +39,7 @@ public class SkyBlock extends JavaPlugin implements TabCompleter{
             }
         }));
         world.setKeepSpawnInMemory(false);
+        world.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
         nether = getServer().createWorld(new WorldCreator("skyblock_nether").environment(World.Environment.NETHER).generator(new ChunkGenerator() {
             @Override
             public ChunkData generateChunkData(World w, Random r, int x, int z, BiomeGrid biome) {
@@ -54,6 +53,7 @@ public class SkyBlock extends JavaPlugin implements TabCompleter{
             }
         }));
         nether.setKeepSpawnInMemory(false);
+        nether.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
         getServer().setSpawnRadius(0);
         getServer().getPluginManager().registerEvents(new Listener(this), this);
         getCommand("skyblock").setTabCompleter(this);
