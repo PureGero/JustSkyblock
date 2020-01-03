@@ -63,10 +63,11 @@ public class Objective {
         "Double cobble horder", "Fill a double chest with cobblestone",
         "Drop the beat", "Play a music disc",
         "Welcome to Hell", "Enter the nether",
-/* 55 */"100s Club", "Obtain 100 xp levels",
-        "Enchanception", "Pull in an enchanted fishing rod with an enchanted fishing rod",
+        "100s Club", "Obtain 100 xp levels",
+/* 55 */"Enchanception", "Pull in an enchanted fishing rod with an enchanted fishing rod",
         "Sweet Dreams", "Sleep in a bed",
         "Time for magic", "Craft an enchanting table",
+        "Time to make some cat videos", "Tame a cat",
     };
     public static int length(){
         return fields.length/2;
@@ -290,6 +291,10 @@ public class Objective {
     public static void enchantingTable(Island i) {
         if (!has(i, 57))
             give(i, 57);
+    }
+    public static void tameCat(Island i) {
+        if (!has(i, 58))
+            give(i, 58);
     }
     public static void killShop(Island i, int c){
         if(c >= 1)

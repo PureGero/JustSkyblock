@@ -369,6 +369,13 @@ public class Listener implements org.bukkit.event.Listener{
             Objective.enchantingTable(Island.load(e.getWhoClicked().getUniqueId()));
         }
     }
+
+    @EventHandler
+    public void onEntityTame(EntityTameEvent e) {
+        if (e.getEntity().getType() == EntityType.CAT || e.getEntity().getType() == EntityType.OCELOT) {
+            Objective.tameCat(Island.load(e.getOwner().getUniqueId()));
+        }
+    }
     
     
     // # --- --- --- #
