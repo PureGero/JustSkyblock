@@ -1,6 +1,7 @@
 package just.skyblock;
 
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import org.bukkit.Bukkit;
@@ -140,6 +141,14 @@ public class Objective {
             p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
             p.sendMessage(ChatColor.GOLD + "Objective Complete: " + ChatColor.GREEN + getName(o) + ChatColor.WHITE + " - " + getDesc(o));
             p.sendTitle(ChatColor.GOLD + "Objective Complete:", ChatColor.GREEN + getName(o) + ChatColor.WHITE + " - " + getDesc(o), 10, 80, 10);
+            BaseComponent[] b = new ComponentBuilder(i.getRank() + " " + p.getName() + " has made the objective ")
+                    .append("[" + getName(o) + "]")
+                    .event(new HoverEvent(
+                            HoverEvent.Action.SHOW_TEXT,
+                            new ComponentBuilder(getName(o) + "\n" + getDesc(o))
+                                    .color(ChatColor.GREEN).create())
+                    ).create();
+            Bukkit.spigot().broadcast(b);
         }
         while(i.objectives.length() <= o){
             i.objectives += '0';
