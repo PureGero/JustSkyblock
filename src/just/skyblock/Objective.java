@@ -143,6 +143,7 @@ public class Objective {
             p.sendTitle(ChatColor.GOLD + "Objective Complete:", ChatColor.GREEN + getName(o) + ChatColor.WHITE + " - " + getDesc(o), 10, 80, 10);
             BaseComponent[] b = new ComponentBuilder(i.getRank() + " " + p.getName() + " has made the objective ")
                     .append("[" + getName(o) + "]")
+                    .color(ChatColor.GREEN)
                     .event(new HoverEvent(
                             HoverEvent.Action.SHOW_TEXT,
                             new ComponentBuilder(getName(o) + "\n" + getDesc(o))
