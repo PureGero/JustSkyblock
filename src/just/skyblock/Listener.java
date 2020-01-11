@@ -99,8 +99,12 @@ public class Listener implements org.bukkit.event.Listener{
             Island i = Island.load(e.getPlayer().getUniqueId());
             i.blocksPlaced += 1;
             Objective.blocks(i);
-            if(e.getBlockPlaced().getType() == Material.COMPARATOR)
+            if (e.getBlockPlaced().getType() == Material.COMPARATOR) {
                 Objective.placeComparator(i);
+            }
+            if (e.getBlockPlaced().getType() == Material.DIAMOND_BLOCK) {
+                Objective.placeDiamondBlock(i);
+            }
             if(e.getBlockPlaced().getY() == 255){
                 Objective.reachTop(i);
             }

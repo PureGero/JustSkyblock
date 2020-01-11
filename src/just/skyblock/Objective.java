@@ -72,6 +72,7 @@ public class Objective {
         "Fancy Suit", "Wear a full set of enchanted diamond armour",
 /* 60 */"Power Overwhelming", "Activate a full power beacon",
         "Massive Slaughter", "Slay 8 mobs at once with sweeping",
+        "Nobody likes a show off", "Place a diamond block",
     };
     public static int length(){
         return fields.length/2;
@@ -320,6 +321,10 @@ public class Objective {
     public static void kill8MobsAtOnce(Island i) {
         if (!has(i, 61))
             give(i, 61);
+    }
+    public static void placeDiamondBlock(Island i) {
+        if (!has(i, 62))
+            give(i, 62);
     }
     public static void killShop(Island i, int c){
         if(c >= 1)
