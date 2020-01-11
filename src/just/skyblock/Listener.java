@@ -422,25 +422,23 @@ public class Listener implements org.bukkit.event.Listener{
     }
 
     @EventHandler
-    public void onFullEnchantedDiamondArmour(InventoryClickEvent e) {
-        if (e.getInventory() instanceof PlayerInventory) {
-            PlayerInventory playerInventory = (PlayerInventory) e.getInventory();
-            boolean hasFullEnchantedDiamondArmour =
-                    playerInventory.getHelmet() != null &&
-                            playerInventory.getHelmet().getType() == Material.DIAMOND_HELMET &&
-                            !playerInventory.getHelmet().getEnchantments().isEmpty() &&
-                            playerInventory.getChestplate() != null &&
-                            playerInventory.getChestplate().getType() == Material.DIAMOND_CHESTPLATE &&
-                            !playerInventory.getChestplate().getEnchantments().isEmpty() &&
-                            playerInventory.getLeggings() != null &&
-                            playerInventory.getLeggings().getType() == Material.DIAMOND_LEGGINGS &&
-                            !playerInventory.getLeggings().getEnchantments().isEmpty() &&
-                            playerInventory.getBoots() != null &&
-                            playerInventory.getBoots().getType() == Material.DIAMOND_BOOTS &&
-                            !playerInventory.getBoots().getEnchantments().isEmpty();
-            if (hasFullEnchantedDiamondArmour) {
-                Objective.enchantedDiamondArmour(Island.load(playerInventory.getHolder().getUniqueId()));
-            }
+    public void onFullEnchantedDiamondArmour(InventoryCloseEvent e) {
+        PlayerInventory playerInventory = e.getPlayer().getInventory();
+        boolean hasFullEnchantedDiamondArmour =
+                playerInventory.getHelmet() != null &&
+                        playerInventory.getHelmet().getType() == Material.DIAMOND_HELMET &&
+                        !playerInventory.getHelmet().getEnchantments().isEmpty() &&
+                        playerInventory.getChestplate() != null &&
+                        playerInventory.getChestplate().getType() == Material.DIAMOND_CHESTPLATE &&
+                        !playerInventory.getChestplate().getEnchantments().isEmpty() &&
+                        playerInventory.getLeggings() != null &&
+                        playerInventory.getLeggings().getType() == Material.DIAMOND_LEGGINGS &&
+                        !playerInventory.getLeggings().getEnchantments().isEmpty() &&
+                        playerInventory.getBoots() != null &&
+                        playerInventory.getBoots().getType() == Material.DIAMOND_BOOTS &&
+                        !playerInventory.getBoots().getEnchantments().isEmpty();
+        if (hasFullEnchantedDiamondArmour) {
+            Objective.enchantedDiamondArmour(Island.load(playerInventory.getHolder().getUniqueId()));
         }
     }
     
