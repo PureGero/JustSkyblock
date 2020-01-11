@@ -31,13 +31,29 @@ public class Shop implements InventoryHolder{
     private static File cache = null;
     public static int CHEST_SIZE = 9 * 3;
     private static Profession[] profs = new Profession[]{
-        Profession.FARMER, Profession.BUTCHER, Profession.CLERIC,
-        Profession.ARMORER, Profession.LIBRARIAN
+            Profession.ARMORER,
+            Profession.BUTCHER,
+            Profession.CARTOGRAPHER,
+            Profession.CLERIC,
+            Profession.FARMER,
+            Profession.FLETCHER,
+            Profession.FISHERMAN,
+            Profession.LEATHERWORKER,
+            Profession.LIBRARIAN,
+            Profession.MASON,
+            Profession.SHEPHERD,
+            Profession.TOOLSMITH,
+            Profession.WEAPONSMITH
     };
-    
-    public static ArrayList<ItemStack> items = new ArrayList<>();
+
+    public static ArrayList<ItemStack> buyItems = new ArrayList<>();
     public static ArrayList<Integer> buyPrices = new ArrayList<>();
+
+    public static ArrayList<ItemStack> sellItems = new ArrayList<>();
     public static ArrayList<Integer> sellPrices = new ArrayList<>();
+
+    public static ArrayList<ItemStack> lootBoxItems = new ArrayList<>();
+    public static ArrayList<Integer> lootBoxValues = new ArrayList<>();
     public static ArrayList<Double> lootBoxChances = new ArrayList<>();
     public static ArrayList<Double> lootBoxChancesRare = new ArrayList<>();
     public static Location shopSpawn = null;
@@ -71,10 +87,16 @@ public class Shop implements InventoryHolder{
         try{
             DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(cache)));
             String h = in.readLine();
-            items.clear();
+
+            buyItems.clear();
             buyPrices.clear();
+            sellItems.clear();
             sellPrices.clear();
+            lootBoxItems.clear();
+            lootBoxValues.clear();
             lootBoxChances.clear();
+            lootBoxChancesRare.clear();
+
             while((h = in.readLine()) != null){
                 String[] a = h.split(",");
                 if(a[0].equalsIgnoreCase("shop_spawn") && a.length >= 4){
@@ -85,30 +107,53 @@ public class Shop implements InventoryHolder{
                 }else if(a.length >= 2){
                     try{
                         String id = a[0];
-                        String cost = a[1];
-                        int buycoins = Integer.parseInt(cost.trim());
-                        String sell = a[2];
-                        int sellcoins = Integer.parseInt(sell.trim());
-                        items.add(new ItemStack(Material.matchMaterial(id),1));
-                        buyPrices.add(buycoins);
-                        sellPrices.add(sellcoins);
-                        double lbc = 1.0/buycoins;
-                        if(buycoins <= 5)lbc = 0;
-                        double lbr = 0;
-                        if(lbc <= 1.0/99)
-                            lbr = lbc;
-                        if(lootBoxChances.size() == 0){
-                            lootBoxChances.add(lbc);
-                            lootBoxChancesRare.add(lbr);
-                        }else{
-                            lootBoxChances.add(lootBoxChances.get(lootBoxChances.size()-1)+lbc);
-                            lootBoxChancesRare.add(lootBoxChancesRare.get(lootBoxChancesRare.size()-1)+lbr);
+                        String cost = a[1].trim();
+                        int buycoins = cost.length() == 0 ? 0 : Integer.parseInt(cost);
+
+                        String sell = a[2].trim();
+                        int sellcoins = sell.length() == 0 ? 0 : Integer.parseInt(sell);
+
+                        Material material = Material.matchMaterial(id);
+                        ItemStack item = new ItemStack(material, 1);
+
+                        if (buycoins > 0) {
+                            buyItems.add(item);
+                            buyPrices.add(buycoins);
+                        }
+
+                        if (sellcoins > 0) {
+                            sellItems.add(item);
+                            sellPrices.add(sellcoins);
+                        }
+
+                        int lootBoxValue = Math.max(buycoins, sellcoins * 2);
+                        if (lootBoxValue > 0) {
+                            lootBoxItems.add(item);
+                            lootBoxValues.add(lootBoxValue);
+
+                            double lootBoxChance = 1.0 / lootBoxValue;
+                            if (lootBoxValue <= 5) {
+                                lootBoxChance = 0;
+                            }
+
+                            double lootBoxChanceRare = 0;
+                            if (lootBoxChance <= 1.0 / 99) {
+                                lootBoxChanceRare = lootBoxChance;
+                            }
+
+                            if (lootBoxChances.size() == 0) {
+                                lootBoxChances.add(lootBoxChance);
+                                lootBoxChancesRare.add(lootBoxChanceRare);
+                            } else {
+                                lootBoxChances.add(lootBoxChances.get(lootBoxChances.size() - 1) + lootBoxChance);
+                                lootBoxChancesRare.add(lootBoxChancesRare.get(lootBoxChancesRare.size() - 1) + lootBoxChanceRare);
+                            }
                         }
                     }catch(Exception e){C.log("Invalid syntax: " + h);}
                 }
             }
             in.close();
-            C.log("Loaded " + items.size() + " shop items.");
+            C.log("Loaded " + buyItems.size() + " shop items and " + sellItems.size() + " items to sell.");
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -125,7 +170,7 @@ public class Shop implements InventoryHolder{
     }
     
     public static void villagerChecker(){
-        boolean[] found = new boolean[(items.size()-1)/CHEST_SIZE+1];
+        boolean[] found = new boolean[(buyItems.size()-1)/CHEST_SIZE+1];
         for(Villager v : shopSpawn.getWorld().getEntitiesByClass(Villager.class)){
             int i = ArrayUtils.indexOf(profs, v.getProfession());
             if(i >= 0 && i < found.length)
@@ -158,8 +203,8 @@ public class Shop implements InventoryHolder{
         if (index < 0)
             return;
         int o = index*CHEST_SIZE;
-        for(int i=0;i<CHEST_SIZE && i+o < items.size();i++){
-            ItemStack s = items.get(i+o).clone();
+        for(int i=0;i<CHEST_SIZE && i+o < buyItems.size();i++){
+            ItemStack s = buyItems.get(i+o).clone();
             int c = buyPrices.get(i+o);
             ItemMeta m = s.getItemMeta();
             List<String> lore = m.getLore();
@@ -187,8 +232,8 @@ public class Shop implements InventoryHolder{
             if(e.getCurrentItem() != null){
                 e.setCancelled(true);
                 int j = e.getRawSlot() + ArrayUtils.indexOf(profs, prof)*CHEST_SIZE;
-                if(j >= items.size())return;
-                ItemStack i = items.get(j);
+                if(j >= buyItems.size())return;
+                ItemStack i = buyItems.get(j);
                 int c = buyPrices.get(j);
                 Island is = Island.load(e.getWhoClicked().getUniqueId());
                 if(e.isShiftClick()){

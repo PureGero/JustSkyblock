@@ -97,8 +97,8 @@ public class Crate implements InventoryHolder{
 			for(int i=0;i<POS.length;i++){
 				ArrayList<Double> chances = new ArrayList<Double>();
 				double lc = 0;
-				for(int j=0;j<Shop.items.size();j++){
-					int c = Shop.buyPrices.get(j);
+				for(int j=0;j<Shop.lootBoxItems.size();j++){
+					int c = Shop.lootBoxValues.get(j);
 					if(c >= VALUES[i]){
 						lc += 1/Math.log(c);
 					}
@@ -107,7 +107,7 @@ public class Crate implements InventoryHolder{
 				double c = r.nextDouble()*chances.get(chances.size()-1);
 				for(int j=0;j<chances.size();j++)
 					if(chances.get(j) > c){
-						item[i] = Shop.items.get(j).clone();
+						item[i] = Shop.lootBoxItems.get(j).clone();
 						if(Shop.buyPrices.get(j) < WORTH[i]){
 							item[i].setAmount(WORTH[i]/Shop.buyPrices.get(j)); // Make the value at least WORTH[i]
 						}

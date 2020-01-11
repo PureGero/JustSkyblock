@@ -585,7 +585,7 @@ public class Listener implements org.bukkit.event.Listener{
     public void onPlayerDropItem(final PlayerDropItemEvent e){
         if(e.getItemDrop().getWorld() == skyblock.lobby){
             ItemStack i = e.getItemDrop().getItemStack();
-            for(ItemStack s : Shop.items)
+            for(ItemStack s : Shop.sellItems)
                 if(s.getType().equals(i.getType())){
                     new SellItem(e.getPlayer(), e.getItemDrop());
                     break;
@@ -615,9 +615,9 @@ public class Listener implements org.bukkit.event.Listener{
                     if(i.getType().name().contains("SPAWN_EGG") || i.getType() == Material.COW_SPAWN_EGG) // if SPAWN_EGG changes, this'll detect it
                         Objective.sellSpawnEgg(Island.load(player.getUniqueId()));
                     else
-                        for(int k=0;k<Shop.items.size();k++){
-                            if(Shop.items.get(k).getType() == i.getType()
-                                    && Shop.items.get(k).getDurability() == i.getDurability()){
+                        for(int k=0;k<Shop.sellItems.size();k++){
+                            if(Shop.sellItems.get(k).getType() == i.getType()
+                                    && Shop.sellItems.get(k).getDurability() == i.getDurability()){
                                 
                                 // Sold
                                 Island is = Island.load(player.getUniqueId());
