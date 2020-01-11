@@ -71,6 +71,7 @@ public class Objective {
         "Time to make some cat videos", "Tame a cat",
         "Fancy Suit", "Wear a full set of enchanted diamond armour",
 /* 60 */"Power Overwhelming", "Activate a full power beacon",
+        "Massive Slaughter", "Slay 8 mobs at once with sweeping",
     };
     public static int length(){
         return fields.length/2;
@@ -315,6 +316,10 @@ public class Objective {
     public static void fullPowerBeacon(Island i) {
         if (!has(i, 60))
             give(i, 60);
+    }
+    public static void kill8MobsAtOnce(Island i) {
+        if (!has(i, 61))
+            give(i, 61);
     }
     public static void killShop(Island i, int c){
         if(c >= 1)

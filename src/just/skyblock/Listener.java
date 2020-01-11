@@ -24,6 +24,9 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffectType;
 import puregero.network.VoteEvent;
 
+import java.util.HashMap;
+import java.util.UUID;
+
 public class Listener implements org.bukkit.event.Listener{
     SkyBlock skyblock;
     public Listener(SkyBlock b){
@@ -407,6 +410,30 @@ public class Listener implements org.bukkit.event.Listener{
                 (e.getNewEffect().getAmplifier() >= 1 || e.getNewEffect().getType() == PotionEffectType.REGENERATION)
         ) {
             Objective.fullPowerBeacon(Island.load(e.getEntity().getUniqueId()));
+        }
+    }
+
+    private HashMap<UUID, Integer> massiveSlaughterMap = new HashMap<>();
+    private long lastMassiveSlaughterClear = 0;
+
+    @EventHandler
+    public void onEntityDeathEvent(EntityDeathEvent e) {
+        if (e.getEntity().getLastDamageCause() != null &&
+                e.getEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent &&
+                ((EntityDamageByEntityEvent) e.getEntity().getLastDamageCause()).getDamager() instanceof Player) {
+            Player player = (Player) ((EntityDamageByEntityEvent) e.getEntity().getLastDamageCause()).getDamager();
+            UUID uuid = player.getUniqueId();
+            if (lastMassiveSlaughterClear < System.currentTimeMillis() - 100) {
+                lastMassiveSlaughterClear = System.currentTimeMillis();
+                massiveSlaughterMap.clear();
+            }
+            if (!massiveSlaughterMap.containsKey(uuid)) {
+                massiveSlaughterMap.put(uuid, 0);
+            }
+            massiveSlaughterMap.put(uuid, massiveSlaughterMap.get(uuid) + 1);
+            if (massiveSlaughterMap.get(uuid) >= 8) {
+                Objective.kill8MobsAtOnce(Island.load(uuid));
+            }
         }
     }
     
