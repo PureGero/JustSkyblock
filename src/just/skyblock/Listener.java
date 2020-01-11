@@ -293,26 +293,6 @@ public class Listener implements org.bukkit.event.Listener{
             Objective.fillChestCobble(Island.load(e.getPlayer().getUniqueId()));
         if(c >= 2*27*64)
             Objective.fillDoubleChestCobble(Island.load(e.getPlayer().getUniqueId()));
-
-        if (e.getInventory() instanceof PlayerInventory) {
-            PlayerInventory playerInventory = (PlayerInventory) e.getInventory();
-            boolean hasFullEnchantedDiamondArmour =
-                    playerInventory.getHelmet() != null &&
-                    playerInventory.getHelmet().getType() == Material.DIAMOND_HELMET &&
-                    !playerInventory.getHelmet().getEnchantments().isEmpty() &&
-                    playerInventory.getChestplate() != null &&
-                    playerInventory.getChestplate().getType() == Material.DIAMOND_CHESTPLATE &&
-                    !playerInventory.getChestplate().getEnchantments().isEmpty() &&
-                    playerInventory.getLeggings() != null &&
-                    playerInventory.getLeggings().getType() == Material.DIAMOND_LEGGINGS &&
-                    !playerInventory.getLeggings().getEnchantments().isEmpty() &&
-                    playerInventory.getBoots() != null &&
-                    playerInventory.getBoots().getType() == Material.DIAMOND_BOOTS &&
-                    !playerInventory.getBoots().getEnchantments().isEmpty();
-            if (hasFullEnchantedDiamondArmour) {
-                Objective.enchantedDiamondArmour(Island.load(e.getPlayer().getUniqueId()));
-            }
-        }
     }
     
     @EventHandler
@@ -437,6 +417,29 @@ public class Listener implements org.bukkit.event.Listener{
             massiveSlaughterMap.put(uuid, massiveSlaughterMap.get(uuid) + 1);
             if (massiveSlaughterMap.get(uuid) >= 8) {
                 Objective.kill8MobsAtOnce(Island.load(uuid));
+            }
+        }
+    }
+
+    @EventHandler
+    public void onFullEnchantedDiamondArmour(InventoryClickEvent e) {
+        if (e.getInventory() instanceof PlayerInventory) {
+            PlayerInventory playerInventory = (PlayerInventory) e.getInventory();
+            boolean hasFullEnchantedDiamondArmour =
+                    playerInventory.getHelmet() != null &&
+                            playerInventory.getHelmet().getType() == Material.DIAMOND_HELMET &&
+                            !playerInventory.getHelmet().getEnchantments().isEmpty() &&
+                            playerInventory.getChestplate() != null &&
+                            playerInventory.getChestplate().getType() == Material.DIAMOND_CHESTPLATE &&
+                            !playerInventory.getChestplate().getEnchantments().isEmpty() &&
+                            playerInventory.getLeggings() != null &&
+                            playerInventory.getLeggings().getType() == Material.DIAMOND_LEGGINGS &&
+                            !playerInventory.getLeggings().getEnchantments().isEmpty() &&
+                            playerInventory.getBoots() != null &&
+                            playerInventory.getBoots().getType() == Material.DIAMOND_BOOTS &&
+                            !playerInventory.getBoots().getEnchantments().isEmpty();
+            if (hasFullEnchantedDiamondArmour) {
+                Objective.enchantedDiamondArmour(Island.load(playerInventory.getHolder().getUniqueId()));
             }
         }
     }
