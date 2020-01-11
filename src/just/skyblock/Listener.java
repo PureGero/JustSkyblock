@@ -21,6 +21,7 @@ import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleCreateEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.potion.PotionEffectType;
 import puregero.network.VoteEvent;
 
 public class Listener implements org.bukkit.event.Listener{
@@ -395,6 +396,17 @@ public class Listener implements org.bukkit.event.Listener{
     public void onEntityTame(EntityTameEvent e) {
         if (e.getEntity().getType() == EntityType.CAT || e.getEntity().getType() == EntityType.OCELOT) {
             Objective.tameCat(Island.load(e.getOwner().getUniqueId()));
+        }
+    }
+
+    @EventHandler
+    public void onEntityPotionEffect(EntityPotionEffectEvent e) {
+        if (e.getEntity() instanceof Player &&
+                e.getCause() == EntityPotionEffectEvent.Cause.BEACON &&
+                e.getNewEffect() != null &&
+                (e.getNewEffect().getAmplifier() >= 1 || e.getNewEffect().getType() == PotionEffectType.REGENERATION)
+        ) {
+            Objective.fullPowerBeacon(Island.load(e.getEntity().getUniqueId()));
         }
     }
     

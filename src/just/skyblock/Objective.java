@@ -70,6 +70,7 @@ public class Objective {
         "Time for magic", "Craft an enchanting table",
         "Time to make some cat videos", "Tame a cat",
         "Fancy Suit", "Wear a full set of enchanted diamond armour",
+/* 60 */"Power Overwhelming", "Activate a full power beacon",
     };
     public static int length(){
         return fields.length/2;
@@ -310,6 +311,10 @@ public class Objective {
     public static void enchantedDiamondArmour(Island i) {
         if (!has(i, 59))
             give(i, 59);
+    }
+    public static void fullPowerBeacon(Island i) {
+        if (!has(i, 60))
+            give(i, 60);
     }
     public static void killShop(Island i, int c){
         if(c >= 1)
