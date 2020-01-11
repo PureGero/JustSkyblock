@@ -69,6 +69,7 @@ public class Objective {
         "Sweet Dreams", "Sleep in a bed",
         "Time for magic", "Craft an enchanting table",
         "Time to make some cat videos", "Tame a cat",
+        "Fancy Suit", "Wear a full set of enchanted diamond armour",
     };
     public static int length(){
         return fields.length/2;
@@ -305,6 +306,10 @@ public class Objective {
     public static void tameCat(Island i) {
         if (!has(i, 58))
             give(i, 58);
+    }
+    public static void enchantedDiamondArmour(Island i) {
+        if (!has(i, 59))
+            give(i, 59);
     }
     public static void killShop(Island i, int c){
         if(c >= 1)

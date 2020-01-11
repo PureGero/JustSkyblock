@@ -20,6 +20,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleCreateEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import puregero.network.VoteEvent;
 
 public class Listener implements org.bukkit.event.Listener{
@@ -284,6 +285,26 @@ public class Listener implements org.bukkit.event.Listener{
             Objective.fillChestCobble(Island.load(e.getPlayer().getUniqueId()));
         if(c >= 2*27*64)
             Objective.fillDoubleChestCobble(Island.load(e.getPlayer().getUniqueId()));
+
+        if (e.getInventory() instanceof PlayerInventory) {
+            PlayerInventory playerInventory = (PlayerInventory) e.getInventory();
+            boolean hasFullEnchantedDiamondArmour =
+                    playerInventory.getHelmet() != null &&
+                    playerInventory.getHelmet().getType() == Material.DIAMOND_HELMET &&
+                    !playerInventory.getHelmet().getEnchantments().isEmpty() &&
+                    playerInventory.getChestplate() != null &&
+                    playerInventory.getChestplate().getType() == Material.DIAMOND_CHESTPLATE &&
+                    !playerInventory.getChestplate().getEnchantments().isEmpty() &&
+                    playerInventory.getLeggings() != null &&
+                    playerInventory.getLeggings().getType() == Material.DIAMOND_LEGGINGS &&
+                    !playerInventory.getLeggings().getEnchantments().isEmpty() &&
+                    playerInventory.getBoots() != null &&
+                    playerInventory.getBoots().getType() == Material.DIAMOND_BOOTS &&
+                    !playerInventory.getBoots().getEnchantments().isEmpty();
+            if (hasFullEnchantedDiamondArmour) {
+                Objective.enchantedDiamondArmour(Island.load(e.getPlayer().getUniqueId()));
+            }
+        }
     }
     
     @EventHandler
