@@ -75,6 +75,12 @@ public class SkyBlock extends JavaPlugin implements TabCompleter{
                     Island i = Island.load(p.getUniqueId());
                     i.ontime += 10;
                     Objective.ontime(i);
+                    if (i.coins >= 1000000) {
+                        Objective.millionCoins(i);
+                    }
+                    if (i.coins >= 1000000000) {
+                        Objective.billionCoins(i);
+                    }
                 }
             }
         }, 10*20, 10*20);

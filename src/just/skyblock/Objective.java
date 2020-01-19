@@ -73,7 +73,9 @@ public class Objective {
 /* 60 */"Power Overwhelming", "Activate a full power beacon",
         "Massive Slaughter", "Slay 8 mobs at once with sweeping",
         "Nobody likes a show off", "Place a diamond block",
-        "Risky Transaction", "Pay another player 10000 coins",
+        "Risky Transaction", "Pay another player 10,000 coins",
+        "Millionaire", "Have 1,000,000 coins",
+        "Billionaire", "Have 1,000,000,000 coins",
     };
     public static int length(){
         return fields.length/2;
@@ -330,6 +332,14 @@ public class Objective {
     public static void pay10000(Island i) {
         if (!has(i, 63))
             give(i, 63);
+    }
+    public static void millionCoins(Island i) {
+        if (!has(i, 64))
+            give(i, 64);
+    }
+    public static void billionCoins(Island i) {
+        if (!has(i, 65))
+            give(i, 65);
     }
     public static void killShop(Island i, int c){
         if(c >= 1)
