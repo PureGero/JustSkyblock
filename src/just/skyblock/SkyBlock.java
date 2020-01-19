@@ -92,12 +92,17 @@ public class SkyBlock extends JavaPlugin implements TabCompleter{
             p.teleport(getServer().getWorlds().get(0).getSpawnLocation().add(0.5, 0.5, 0.5));
             return true;
         }
+
+        if (l.equals("wallet")) {
+            sender.sendMessage(ChatColor.YELLOW + "" + ChatColor.ITALIC + "You open your wallet...");
+        }
         if(c.getName().equals("money")){
             Player p = (Player) sender;
             Island i = Island.load(p.getUniqueId());
             p.sendMessage(ChatColor.YELLOW + "You have " + i.coins + " coins!");
             return true;
         }
+
         if(c.getName().equals("pay")){
             Player p = (Player) sender;
             Island i = Island.load(p.getUniqueId());
@@ -106,8 +111,32 @@ public class SkyBlock extends JavaPlugin implements TabCompleter{
                 return false;
             }
             OfflinePlayer other = Bukkit.getOfflinePlayer(a[0]);
+            if (other.getFirstPlayed() == 0) {
+                p.sendMessage(ChatColor.RED + a[0] + " has never played on this server!");
+                return false;
+            }
+            Island o = Island.load(other.getUniqueId());
             int amount = Integer.parseInt(a[1]);
+
+            if (amount > i.coins) {
+                p.sendMessage(ChatColor.RED + "You do not have enough coins!");
+                return false;
+            }
+
+            o.coins += amount;
+            i.coins -= amount;
+
+            if (amount >= 10000) {
+                Objective.pay10000(i);
+            }
+
+            p.sendMessage(ChatColor.GREEN + "Paid " + other.getName() + " " + amount + " coins!");
             p.sendMessage(ChatColor.YELLOW + "You have " + i.coins + " coins!");
+            if (other.isOnline()) {
+                Player po = Bukkit.getPlayer(other.getUniqueId());
+                po.playSound(po.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
+                po.sendMessage(ChatColor.GREEN + "You have received " + amount + " coins from " + p.getName());
+            }
             return true;
         }
         if(c.getName().equals("rank")){
