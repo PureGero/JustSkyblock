@@ -297,12 +297,11 @@ public class Listener implements org.bukkit.event.Listener{
     
     @EventHandler
     public void onInteract2(PlayerInteractEvent e){
-        if(e.getAction() == Action.RIGHT_CLICK_BLOCK){
-            if(e.getClickedBlock().getType() == Material.JUKEBOX
-                    && e.getItem() != null
-                    && e.getItem().getType().name().contains("RECORD")){
-                Objective.musicDisc(Island.load(e.getPlayer().getUniqueId()));
-            }
+        if (e.getAction() == Action.RIGHT_CLICK_BLOCK
+                && e.getClickedBlock().getType() == Material.JUKEBOX
+                && e.getItem() != null
+                && e.getItem().getType().name().contains("MUSIC_DISC")){
+            Objective.musicDisc(Island.load(e.getPlayer().getUniqueId()));
         }
     }
 
