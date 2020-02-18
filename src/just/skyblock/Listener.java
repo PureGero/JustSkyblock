@@ -417,6 +417,9 @@ public class Listener implements org.bukkit.event.Listener{
             if (massiveSlaughterMap.get(uuid) >= 8) {
                 Objective.kill8MobsAtOnce(Island.load(uuid));
             }
+            if (massiveSlaughterMap.get(uuid) >= 20) {
+                Objective.kill20MobsAtOnce(Island.load(uuid));
+            }
         }
     }
 

@@ -75,7 +75,8 @@ public class Objective {
         "Nobody likes a show off", "Place a diamond block",
         "Risky Transaction", "Pay another player 10,000 coins",
         "Millionaire", "Have 1,000,000 coins",
-        "Billionaire", "Have 1,000,000,000 coins",
+/* 65 */"Billionaire", "Have 1,000,000,000 coins",
+        "Grim Reaper", "Slay 20 mobs at once with sweeping",
     };
     public static int length(){
         return fields.length/2;
@@ -340,6 +341,10 @@ public class Objective {
     public static void billionCoins(Island i) {
         if (!has(i, 65))
             give(i, 65);
+    }
+    public static void kill20MobsAtOnce(Island i) {
+        if (!has(i, 66))
+            give(i, 66);
     }
     public static void killShop(Island i, int c){
         if(c >= 1)
