@@ -78,6 +78,7 @@ public class Objective {
 /* 65 */"Billionaire", "Have 1,000,000,000 coins",
         "Grim Reaper", "Slay 20 mobs at once with sweeping",
         "Fugu Chuudoku", "Eat a pufferfish",
+        "The Beginning.", "Kill the wither",
     };
     public static int length(){
         return fields.length/2;
@@ -350,6 +351,10 @@ public class Objective {
     public static void eatPufferfish(Island i) {
         if (!has(i, 67))
             give(i, 67);
+    }
+    public static void killWither(Island i) {
+        if (!has(i, 68))
+            give(i, 68);
     }
     public static void killShop(Island i, int c){
         if(c >= 1)

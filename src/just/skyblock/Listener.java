@@ -75,6 +75,16 @@ public class Listener implements org.bukkit.event.Listener{
                 }
             }
         }
+
+        if (e.getEntityType() == EntityType.PIG_ZOMBIE && e.getLocation().getWorld().getEnvironment() == World.Environment.NETHER) {
+            if (Math.random() < 0.01) { // Replace pig zombie with a wither skeleton
+                e.setCancelled(true);
+                e.getLocation().getWorld().spawnEntity(e.getLocation(), EntityType.WITHER_SKELETON);
+            } else if (Math.random() < 0.05) { // Replace pig zombie with a blaze
+                e.setCancelled(true);
+                e.getLocation().getWorld().spawnEntity(e.getLocation(), EntityType.BLAZE);
+            }
+        }
     }
     
     private static final Material[] SAPLINGS = new Material[] {
@@ -235,6 +245,18 @@ public class Listener implements org.bukkit.event.Listener{
                         Island j = Island.load(p.getUniqueId());
                         Objective.explodeCreeper(j);
                     }
+            }
+        }
+
+        if (e.getEntityType() == EntityType.WITHER) {
+            Island i = Island.get(e.getEntity().getLocation());
+            if (i != null) {
+                for (Player p : Bukkit.getOnlinePlayers()) {
+                    if (i.inIsland(p.getLocation())) {
+                        Island j = Island.load(p.getUniqueId());
+                        Objective.killWither(j);
+                    }
+                }
             }
         }
     }
