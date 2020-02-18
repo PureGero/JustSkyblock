@@ -443,6 +443,13 @@ public class Listener implements org.bukkit.event.Listener{
             Objective.enchantedDiamondArmour(Island.load(playerInventory.getHolder().getUniqueId()));
         }
     }
+
+    @EventHandler
+    public void onPlayerConsumeItem(PlayerItemConsumeEvent e) {
+        if (e.getItem().getType() == Material.PUFFERFISH) {
+            Objective.eatPufferfish(Island.load(e.getPlayer().getUniqueId()));
+        }
+    }
     
     
     // # --- --- --- #
