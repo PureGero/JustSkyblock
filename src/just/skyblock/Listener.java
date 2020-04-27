@@ -65,7 +65,7 @@ public class Listener implements org.bukkit.event.Listener{
     
     @EventHandler
     public void onCreatureSpawn(CreatureSpawnEvent e){
-        if(e.getEntity() instanceof Monster){
+        /*f(e.getEntity() instanceof Monster){
             for(Entity y : e.getLocation().getChunk().getEntities()){
                 if(y instanceof Monster){
                     if(y.getLocation().distanceSquared(e.getEntity().getLocation()) <= 5){
@@ -74,7 +74,7 @@ public class Listener implements org.bukkit.event.Listener{
                     }
                 }
             }
-        }
+        }*/
 
         if (e.getEntityType() == EntityType.PIG_ZOMBIE && e.getLocation().getWorld().getEnvironment() == World.Environment.NETHER) {
             if (Math.random() < 0.01) { // Replace pig zombie with a wither skeleton
