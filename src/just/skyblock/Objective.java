@@ -50,7 +50,7 @@ public class Objective {
         "What a slayer", "Kill 100 mobs",
         "Warrier", "Kill 200 mobs",
         "Mom, get the camera!", "Kill 500 mobs",
-/* 40 */"Redstone Export", "Place a comparator",
+/* 40 */"Redstone Expert", "Place a comparator",
         "Diamonds aren't forever", "Break a diamond tool",
         "Reach for the sky", "Reach the build height limit",
         "Green", "Place one of every tree sapling", 
