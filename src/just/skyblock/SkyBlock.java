@@ -115,6 +115,12 @@ public class SkyBlock extends JavaPlugin implements TabCompleter {
                 p.sendMessage(ChatColor.RED + a[0] + " has never played on this server!");
                 return false;
             }
+
+            if (other.getUniqueId().equals(p.getUniqueId())) {
+                p.sendMessage(ChatColor.RED + "You cannot pay yourself!");
+                return false;
+            }
+
             Island o = Island.load(other.getUniqueId());
             int amount = Integer.parseInt(a[1]);
 
@@ -197,7 +203,7 @@ public class SkyBlock extends JavaPlugin implements TabCompleter {
             }
             return true;
         }
-        
+
         if (c.getName().equals("skyblock")) {
 
 
