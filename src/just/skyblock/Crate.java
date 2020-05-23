@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
-public class Crate implements InventoryHolder{
+public class Crate implements InventoryHolder {
 	
 	public static void islandCrateTicker(){
 		Bukkit.getScheduler().runTaskTimer(SkyBlock.skyblock, new Runnable(){

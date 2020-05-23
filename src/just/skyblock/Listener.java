@@ -27,9 +27,10 @@ import puregero.network.VoteEvent;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class Listener implements org.bukkit.event.Listener{
+public class Listener implements org.bukkit.event.Listener {
     SkyBlock skyblock;
-    public Listener(SkyBlock b){
+
+    public Listener(SkyBlock b) {
         skyblock = b;
     }
 
@@ -37,34 +38,35 @@ public class Listener implements org.bukkit.event.Listener{
     public void onVote(VoteEvent e) {
         e.getPlayer().sendMessage(ChatColor.GREEN + "Thank you for voting for us at " + e.getWebsite() + ".");
         e.getPlayer().sendMessage(ChatColor.GREEN + "You have earnt a lootbox as a reward!");
+
         final Island i = Island.load(e.getPlayer().getUniqueId());
         i.crates += 1;
         i.votes += 1;
+        Objective.vote(i);
+
         Bukkit.getScheduler().runTask(SkyBlock.skyblock, () -> {
             Crate.newCrate(i); // Run in sync
         });
-        Objective.vote(i);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void chat(AsyncPlayerChatEvent e){
+    public void chat(AsyncPlayerChatEvent e) {
         Rank c = Island.load(e.getPlayer().getUniqueId()).getRank();
-        if(c != null && c.color != null){
-            e.setFormat(e.getFormat().replaceAll("\\%1\\$s", c.color + "["+c.prefix+"] "+"\\%1\\$s"+ChatColor.RESET));
+
+        if (c != null && c.color != null) {
+            e.setFormat(e.getFormat().replaceAll("\\%1\\$s", c.color + "[" + c.prefix + "] " + "\\%1\\$s" + ChatColor.RESET));
             //e.setFormat(e.getFormat().replaceAll("\\%2\\$s", c.chatcolor+"\\%2\\$s"));
         }
     }
+
     @EventHandler
-    public void onPlayerQuit(final PlayerQuitEvent e){
-        skyblock.getServer().getScheduler().runTask(skyblock, new Runnable(){
-            public void run(){
-                Island.safeDispose(e.getPlayer().getUniqueId());
-            }
-        });
+    public void onPlayerQuit(final PlayerQuitEvent e) {
+        // Remove player's skyblock data from memory
+        skyblock.getServer().getScheduler().runTask(skyblock, () -> Island.safeDispose(e.getPlayer().getUniqueId()));
     }
-    
+
     @EventHandler
-    public void onCreatureSpawn(CreatureSpawnEvent e){
+    public void onCreatureSpawn(CreatureSpawnEvent e) {
         /*f(e.getEntity() instanceof Monster){
             for(Entity y : e.getLocation().getChunk().getEntities()){
                 if(y instanceof Monster){
@@ -86,8 +88,8 @@ public class Listener implements org.bukkit.event.Listener{
             }
         }
     }
-    
-    private static final Material[] SAPLINGS = new Material[] {
+
+    private static final Material[] SAPLINGS = new Material[]{
             Material.OAK_SAPLING,
             Material.SPRUCE_SAPLING,
             Material.BIRCH_SAPLING,
@@ -95,32 +97,36 @@ public class Listener implements org.bukkit.event.Listener{
             Material.ACACIA_SAPLING,
             Material.DARK_OAK_SAPLING
     };
-    
+
     private static int getSapling(Material m) {
         for (int i = 0; i < SAPLINGS.length; i++)
             if (m.equals(SAPLINGS[i]))
                 return i;
         return -1;
     }
-    
-    @EventHandler(ignoreCancelled=true, priority=EventPriority.MONITOR)
-    public void onBlockPlaceMonitor(BlockPlaceEvent e){
-        if(e.getBlock().getWorld() == skyblock.world){
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    public void onBlockPlaceMonitor(BlockPlaceEvent e) {
+        if (e.getBlock().getWorld() == skyblock.world) {
             Island i = Island.load(e.getPlayer().getUniqueId());
             i.blocksPlaced += 1;
             Objective.blocks(i);
+
             if (e.getBlockPlaced().getType() == Material.COMPARATOR) {
                 Objective.placeComparator(i);
             }
+
             if (e.getBlockPlaced().getType() == Material.DIAMOND_BLOCK) {
                 Objective.placeDiamondBlock(i);
             }
-            if(e.getBlockPlaced().getY() == 255){
+
+            if (e.getBlockPlaced().getY() == 255) {
                 Objective.reachTop(i);
             }
-            if(e.getItemInHand() != null && getSapling(e.getItemInHand().getType()) >= 0){
+
+            if (getSapling(e.getBlockPlaced().getType()) >= 0) {
                 i.saplings |= (1 << getSapling(e.getItemInHand().getType()));
-                if(i.saplings == 63){
+                if (i.saplings == 63) {
                     Objective.placeSaplings(i);
                 }
             }
@@ -128,56 +134,51 @@ public class Listener implements org.bukkit.event.Listener{
     }
 
     @EventHandler
-    public void onBlockBreak(final BlockBreakEvent e){
-        if(e.getBlock().getWorld() == skyblock.world){
-            if(e.getBlock().getType() == Material.CHEST
-                    && Crate.isCrate(e.getBlock())){
+    public void onBlockBreak(final BlockBreakEvent e) {
+        if (e.getBlock().getWorld() == skyblock.world) {
+            if (e.getBlock().getType() == Material.CHEST
+                    && Crate.isCrate(e.getBlock())) {
                 e.setCancelled(true);
-                Bukkit.getScheduler().runTaskLater(skyblock, new Runnable(){
-                    public void run(){
-                        Island i = Island.get(e.getBlock().getLocation());
-                        if(i != null)
-                            Crate.removeCrate(i);
-                        e.getBlock().setType(Material.AIR); // Just incase doesnt work
-                    }
+                Bukkit.getScheduler().runTaskLater(skyblock, () -> {
+                    Island i = Island.get(e.getBlock().getLocation());
+                    if (i != null)
+                        Crate.removeCrate(i);
+                    e.getBlock().setType(Material.AIR); // Just incase doesnt work
                 }, 1);
             } else {
-                Bukkit.getScheduler().runTaskLater(skyblock, new Runnable(){
-                    public void run(){
-                        Location loc = e.getBlock().getLocation().add(0.5, 0.5, 0.5);
-                        for (Item i : loc.getWorld().getEntitiesByClass(Item.class)) {
-                            if (i.getLocation().distanceSquared(loc) < 0.25) { // Squared more efficient
-                                i.setPickupDelay(0);
-                                i.teleport(e.getPlayer().getEyeLocation());
-                            }
+                Bukkit.getScheduler().runTaskLater(skyblock, () -> {
+                    Location loc = e.getBlock().getLocation().add(0.5, 0.5, 0.5);
+                    for (Item i : loc.getWorld().getEntitiesByClass(Item.class)) {
+                        if (i.getLocation().distanceSquared(loc) < 0.25) { // Squared more efficient
+                            i.setPickupDelay(0);
+                            i.teleport(e.getPlayer().getEyeLocation());
                         }
                     }
                 }, 1);
             }
         }
     }
-    
+
     @EventHandler
-    public void onCommand(PlayerCommandPreprocessEvent e){
-        if(e.getMessage().toLowerCase().startsWith("/tpa")){
+    public void onCommand(PlayerCommandPreprocessEvent e) {
+        if (e.getMessage().toLowerCase().startsWith("/tpa")) {
             e.getPlayer().sendMessage(ChatColor.YELLOW + "/tpa is currently not avaliable.");
             e.getPlayer().sendMessage(ChatColor.YELLOW + "Add someone to your skyblock with /s add <player>");
             e.setCancelled(true);
         }
     }
-    
+
     @EventHandler
-    public void onTeleport(PlayerTeleportEvent e){
+    public void onTeleport(PlayerTeleportEvent e) {
         Island i = Island.load(e.getPlayer().getUniqueId());
-        if(i.inIsland(e.getFrom()) && !i.inIsland(e.getTo())){
+        if (i.inIsland(e.getFrom()) && !i.inIsland(e.getTo())) {
             i.lx = e.getFrom().getX();
             i.ly = e.getFrom().getY();
             i.lz = e.getFrom().getZ();
             i.lyaw = e.getFrom().getYaw();
             i.lpitch = e.getFrom().getPitch();
-        }else
-        if(!i.inIsland(e.getFrom()) && i.inIsland(e.getTo()) && i.lx != 0 && i.lz != 0){
-            e.setTo(new Location(e.getTo().getWorld(),i.lx,i.ly,i.lz,i.lyaw,i.lpitch));
+        } else if (!i.inIsland(e.getFrom()) && i.inIsland(e.getTo()) && i.lx != 0 && i.lz != 0) {
+            e.setTo(new Location(e.getTo().getWorld(), i.lx, i.ly, i.lz, i.lyaw, i.lpitch));
             e.getPlayer().sendMessage(ChatColor.GOLD + "Teleporting to previous location...");
             i.lx = 0;
             i.lz = 0;
@@ -225,26 +226,30 @@ public class Listener implements org.bukkit.event.Listener{
             e.setCancelled(true);
         }
     }
-    
+
     @EventHandler
-    public void onEntityDeath(EntityDeathEvent e){
+    public void onEntityDeath(EntityDeathEvent e) {
         EntityDamageEvent d = e.getEntity().getLastDamageCause();
-        if(d instanceof EntityDamageByEntityEvent){
-            EntityDamageByEntityEvent b = (EntityDamageByEntityEvent) d;
-            if(b.getDamager() instanceof Player){
-                Island i = Island.load(b.getDamager().getUniqueId());
-                i.mobKills += 1;
-                Objective.mobs(i);
+
+        if (d != null) {
+            if (d instanceof EntityDamageByEntityEvent) {
+                EntityDamageByEntityEvent b = (EntityDamageByEntityEvent) d;
+                if (b.getDamager() instanceof Player) {
+                    Island i = Island.load(b.getDamager().getUniqueId());
+                    i.mobKills += 1;
+                    Objective.mobs(i);
+                }
             }
-        }
-        if(e.getEntityType() == EntityType.CREEPER && d.getCause() == DamageCause.ENTITY_EXPLOSION){
-            Island i = Island.get(e.getEntity().getLocation());
-            if(i != null){
-                for(Player p : Bukkit.getOnlinePlayers())
-                    if(i.inIsland(p.getLocation())){
-                        Island j = Island.load(p.getUniqueId());
-                        Objective.explodeCreeper(j);
-                    }
+
+            if (e.getEntityType() == EntityType.CREEPER && d.getCause() == DamageCause.ENTITY_EXPLOSION) {
+                Island i = Island.get(e.getEntity().getLocation());
+                if (i != null) {
+                    for (Player p : Bukkit.getOnlinePlayers())
+                        if (i.inIsland(p.getLocation())) {
+                            Island j = Island.load(p.getUniqueId());
+                            Objective.explodeCreeper(j);
+                        }
+                }
             }
         }
 
@@ -260,69 +265,77 @@ public class Listener implements org.bukkit.event.Listener{
             }
         }
     }
+
     @EventHandler
-    public void onEntityDamage2(EntityDamageEvent e){
-        if(e.getCause() == DamageCause.VOID){
+    public void onEntityDamage2(EntityDamageEvent e) {
+        if (e.getCause() == DamageCause.VOID) {
             EntityDamageEvent d = e.getEntity().getLastDamageCause();
-            if(d instanceof EntityDamageByEntityEvent){
+            if (d instanceof EntityDamageByEntityEvent) {
                 EntityDamageByEntityEvent b = (EntityDamageByEntityEvent) d;
-                if(b.getDamager() instanceof Player){
+                if (b.getDamager() instanceof Player) {
                     Island i = Island.load(b.getDamager().getUniqueId());
                     i.mobKills += 1;
                     Objective.mobs(i);
                 }
             }
         }
-        if(e.getCause() == DamageCause.LIGHTNING && e.getEntity() instanceof Player){
+
+        if (e.getCause() == DamageCause.LIGHTNING && e.getEntity() instanceof Player) {
             Objective.lightningStruck(Island.load(e.getEntity().getUniqueId()));
         }
     }
-    
+
     @EventHandler
-    public void onItemBreak(PlayerItemBreakEvent e){
-        if(e.getBrokenItem().getType() == Material.DIAMOND_PICKAXE
+    public void onItemBreak(PlayerItemBreakEvent e) {
+        if (e.getBrokenItem().getType() == Material.DIAMOND_PICKAXE
                 || e.getBrokenItem().getType() == Material.DIAMOND_SHOVEL
                 || e.getBrokenItem().getType() == Material.DIAMOND_SWORD
                 || e.getBrokenItem().getType() == Material.DIAMOND_HOE
-                || e.getBrokenItem().getType() == Material.DIAMOND_AXE){
+                || e.getBrokenItem().getType() == Material.DIAMOND_AXE) {
             Island i = Island.load(e.getPlayer().getUniqueId());
             Objective.breakDiamond(i);
         }
     }
-    
+
     @EventHandler
-    public void onVehicleCreate(VehicleCreateEvent e){
-        if(e.getVehicle().getType() == EntityType.BOAT){
+    public void onVehicleCreate(VehicleCreateEvent e) {
+        if (e.getVehicle().getType() == EntityType.BOAT) {
             Island i = Island.get(e.getVehicle().getLocation());
-            if(i != null){
-                for(Player p : Bukkit.getOnlinePlayers())
-                    if(i.inIsland(p.getLocation())){
+            if (i != null) {
+                for (Player p : Bukkit.getOnlinePlayers()) {
+                    if (i.inIsland(p.getLocation())) {
                         Island j = Island.load(p.getUniqueId());
                         Objective.placeBoat(j);
                     }
+                }
             }
         }
     }
 
     @EventHandler
-    public void onInventoryClose2(InventoryCloseEvent e){
+    public void onInventoryClose2(InventoryCloseEvent e) {
         int c = 0;
-        for(ItemStack i : e.getInventory().getContents()){
-            if(i != null && i.getType() == Material.COBBLESTONE)
+        for (ItemStack i : e.getInventory().getContents()) {
+            if (i != null && i.getType() == Material.COBBLESTONE) {
                 c += i.getAmount();
+            }
         }
-        if(c >= 27*64)
+
+        if (c >= 27 * 64) {
             Objective.fillChestCobble(Island.load(e.getPlayer().getUniqueId()));
-        if(c >= 2*27*64)
+        }
+
+        if (c >= 2 * 27 * 64) {
             Objective.fillDoubleChestCobble(Island.load(e.getPlayer().getUniqueId()));
+        }
     }
-    
+
     @EventHandler
-    public void onInteract2(PlayerInteractEvent e){
+    public void onInteract2(PlayerInteractEvent e) {
         if (e.getAction() == Action.RIGHT_CLICK_BLOCK
                 && e.getClickedBlock().getType() == Material.JUKEBOX
                 && e.getItem() != null
-                && e.getItem().getType().name().contains("MUSIC_DISC")){
+                && e.getItem().getType().name().contains("MUSIC_DISC")) {
             Objective.musicDisc(Island.load(e.getPlayer().getUniqueId()));
         }
     }
@@ -369,10 +382,11 @@ public class Listener implements org.bukkit.event.Listener{
                 ItemStack item = ((Item) caught).getItemStack();
                 ItemStack rod = e.getPlayer().getInventory().getItemInMainHand();
 
-                if (rod == null || rod.getType() != Material.FISHING_ROD) {
+                if (rod.getType() != Material.FISHING_ROD) {
                     rod = e.getPlayer().getInventory().getItemInOffHand();
-                    if (rod == null || rod.getType() != Material.FISHING_ROD)
+                    if (rod.getType() != Material.FISHING_ROD) {
                         return;
+                    }
                 }
 
                 if (item.getType() == Material.FISHING_ROD && item.getEnchantments().size() > 0 && rod.getEnchantments().size() > 0) {
@@ -387,12 +401,12 @@ public class Listener implements org.bukkit.event.Listener{
         if (e.getAction() == Action.RIGHT_CLICK_BLOCK
                 && e.getClickedBlock().getType().name().contains("_BED")
                 && (e.getClickedBlock().getWorld().isThundering()
-                    || (e.getClickedBlock().getWorld().getTime() > 12541
-                        && e.getClickedBlock().getWorld().getTime() < 23458))) {
+                || (e.getClickedBlock().getWorld().getTime() > 12541
+                && e.getClickedBlock().getWorld().getTime() < 23458))) {
             Objective.sleep(Island.load(e.getPlayer().getUniqueId()));
         }
     }
-    
+
     @EventHandler
     public void onCraftItem(CraftItemEvent e) {
         if (e.getRecipe().getResult().getType() == Material.ENCHANTING_TABLE) {
@@ -426,20 +440,24 @@ public class Listener implements org.bukkit.event.Listener{
         if (e.getEntity().getLastDamageCause() != null &&
                 e.getEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent &&
                 ((EntityDamageByEntityEvent) e.getEntity().getLastDamageCause()).getDamager() instanceof Player) {
+
             Player player = (Player) ((EntityDamageByEntityEvent) e.getEntity().getLastDamageCause()).getDamager();
             UUID uuid = player.getUniqueId();
+
             if (lastMassiveSlaughterClear < System.currentTimeMillis() - 100) {
                 lastMassiveSlaughterClear = System.currentTimeMillis();
                 massiveSlaughterMap.clear();
             }
-            if (!massiveSlaughterMap.containsKey(uuid)) {
-                massiveSlaughterMap.put(uuid, 0);
-            }
-            massiveSlaughterMap.put(uuid, massiveSlaughterMap.get(uuid) + 1);
-            if (massiveSlaughterMap.get(uuid) >= 8) {
+
+            int slaughterCount = massiveSlaughterMap.getOrDefault(uuid, 0) + 1;
+
+            massiveSlaughterMap.put(uuid, slaughterCount);
+
+            if (slaughterCount >= 8) {
                 Objective.kill8MobsAtOnce(Island.load(uuid));
             }
-            if (massiveSlaughterMap.get(uuid) >= 20) {
+
+            if (slaughterCount >= 20) {
                 Objective.kill20MobsAtOnce(Island.load(uuid));
             }
         }
@@ -449,21 +467,19 @@ public class Listener implements org.bukkit.event.Listener{
     public void onFullEnchantedDiamondArmour(InventoryCloseEvent e) {
         PlayerInventory playerInventory = e.getPlayer().getInventory();
         boolean hasFullEnchantedDiamondArmour =
-                playerInventory.getHelmet() != null &&
-                        playerInventory.getHelmet().getType() == Material.DIAMOND_HELMET &&
-                        !playerInventory.getHelmet().getEnchantments().isEmpty() &&
-                        playerInventory.getChestplate() != null &&
-                        playerInventory.getChestplate().getType() == Material.DIAMOND_CHESTPLATE &&
-                        !playerInventory.getChestplate().getEnchantments().isEmpty() &&
-                        playerInventory.getLeggings() != null &&
-                        playerInventory.getLeggings().getType() == Material.DIAMOND_LEGGINGS &&
-                        !playerInventory.getLeggings().getEnchantments().isEmpty() &&
-                        playerInventory.getBoots() != null &&
-                        playerInventory.getBoots().getType() == Material.DIAMOND_BOOTS &&
-                        !playerInventory.getBoots().getEnchantments().isEmpty();
+                isEnchantedDiamond(playerInventory.getHelmet()) &&
+                isEnchantedDiamond(playerInventory.getChestplate()) &&
+                isEnchantedDiamond(playerInventory.getLeggings()) &&
+                isEnchantedDiamond(playerInventory.getBoots());
         if (hasFullEnchantedDiamondArmour) {
             Objective.enchantedDiamondArmour(Island.load(playerInventory.getHolder().getUniqueId()));
         }
+    }
+
+    private boolean isEnchantedDiamond(ItemStack item) {
+        return item != null &&
+                item.getType().name().contains("DIAMOND") &&
+                !item.getEnchantments().isEmpty();
     }
 
     @EventHandler
@@ -472,16 +488,16 @@ public class Listener implements org.bukkit.event.Listener{
             Objective.eatPufferfish(Island.load(e.getPlayer().getUniqueId()));
         }
     }
-    
-    
+
+
     // # --- --- --- #
     // |    SPAWN    |
     // # --- --- --- #
 
     @EventHandler
-    public void onBlockPlaceSpawn(BlockPlaceEvent e){
+    public void onBlockPlaceSpawn(BlockPlaceEvent e) {
         if (e.getBlock().getWorld() == skyblock.lobby) {
-            if(!e.getPlayer().hasPermission("skyblock.admin")){
+            if (!e.getPlayer().hasPermission("skyblock.admin")) {
                 e.setCancelled(true);
             }
         }
@@ -497,140 +513,147 @@ public class Listener implements org.bukkit.event.Listener{
     }
 
     @EventHandler
-    public void onEntityDamage(final EntityDamageEvent e){
-        if(e.getEntity() instanceof Player && e.getEntity().getWorld() == skyblock.lobby){
-            if(e.getCause() == DamageCause.VOID){
+    public void onEntityDamage(final EntityDamageEvent e) {
+        if (e.getEntity() instanceof Player && e.getEntity().getWorld() == skyblock.lobby) {
+            if (e.getCause() == DamageCause.VOID) {
                 e.getEntity().setFallDistance(0);
                 e.getEntity().teleport(skyblock.lobby.getSpawnLocation().add(0.5, 0.5, 0.5));
-                Bukkit.getScheduler().runTaskLater(skyblock, new Runnable(){
-                    public void run(){
-                        e.getEntity().teleport(skyblock.lobby.getSpawnLocation().add(0.5, 0.5, 0.5));
-                    }
-                }, 1);
+                Bukkit.getScheduler().runTaskLater(skyblock, () ->
+                        e.getEntity().teleport(skyblock.lobby.getSpawnLocation().add(0.5, 0.5, 0.5)),
+                1);
             }
             e.setCancelled(true);
         }
-        if(e.getEntity().getType() == EntityType.VILLAGER && e.getEntity().getWorld() == skyblock.lobby){
-            if(e.getCause() == DamageCause.VOID){
+
+        if (e.getEntity().getType() == EntityType.VILLAGER && e.getEntity().getWorld() == skyblock.lobby) {
+            if (e.getCause() == DamageCause.VOID) {
                 Player p = null;
-                double d = 200*200;
-                for(Player a : e.getEntity().getWorld().getPlayers())
-                    if(a.getLocation().distanceSquared(e.getEntity().getLocation()) < d){
+                double d = 200 * 200;
+
+                for (Player a : e.getEntity().getWorld().getPlayers()) {
+                    if (a.getLocation().distanceSquared(e.getEntity().getLocation()) < d) {
                         d = a.getLocation().distanceSquared(e.getEntity().getLocation());
                         p = a;
                     }
-                if(p != null){
+                }
+
+                if (p != null) {
                     int c = 0;
-                    for(Entity a : e.getEntity().getLocation().getChunk().getEntities())
-                        if(a instanceof Villager && a.getLocation().getY() <= 0)
+                    for (Entity a : e.getEntity().getLocation().getChunk().getEntities()) {
+                        if (a instanceof Villager && a.getLocation().getY() <= 0) {
                             c += 1;
-                    Objective.killShop(Island.load(p.getUniqueId()),c);
+                        }
+                    }
+                    Objective.killShop(Island.load(p.getUniqueId()), c);
                 }
             }
-            Bukkit.getScheduler().runTaskLater(skyblock, new Runnable(){
-                public void run(){
-                    Shop.villagerChecker();
-                }
-            }, 20);
+
+            Bukkit.getScheduler().runTaskLater(skyblock, () -> Shop.villagerChecker(), 20);
         }
-        if(e instanceof EntityDamageByEntityEvent && e.getEntity().hasPermission("skyblock.admin")){
-            Entity d = ((EntityDamageByEntityEvent)e).getDamager();
-            if(d instanceof Player){
+
+        if (e instanceof EntityDamageByEntityEvent && e.getEntity().hasPermission("skyblock.admin")) {
+            Entity d = ((EntityDamageByEntityEvent) e).getDamager();
+            if (d instanceof Player) {
                 Objective.punchStaff(Island.load(d.getUniqueId()));
             }
         }
     }
 
     @EventHandler
-    public void onJoin(final PlayerJoinEvent e){
+    public void onJoin(final PlayerJoinEvent e) {
         e.getPlayer().sendMessage(ChatColor.BLUE + "Welcome back to " + ChatColor.AQUA + ChatColor.BOLD + "Just Skyblock"
                 + ChatColor.BLUE + ", " + e.getPlayer().getName() + "!");
         e.getPlayer().sendMessage(ChatColor.AQUA + "/skyblock" + ChatColor.BLUE + " to start your own skyblock!");
+
         Rank.giveRank(e.getPlayer(), Island.load(e.getPlayer().getUniqueId()).getRank());
-        if(e.getPlayer().getWorld() == skyblock.lobby){
+
+        if (e.getPlayer().getWorld() == skyblock.lobby) {
             e.getPlayer().teleport(skyblock.lobby.getSpawnLocation().add(0.5, 0.5, 0.5));
-            Bukkit.getScheduler().runTaskLater(skyblock, new Runnable(){
-                public void run(){
-                    e.getPlayer().teleport(skyblock.lobby.getSpawnLocation().add(0.5, 0.5, 0.5));
-                }
-            }, 1);
+            Bukkit.getScheduler().runTaskLater(skyblock, () ->
+                    e.getPlayer().teleport(skyblock.lobby.getSpawnLocation().add(0.5, 0.5, 0.5)),
+            1);
         }
     }
 
     @EventHandler
-    public void onInteract(PlayerInteractEvent e){
-        if(e.getAction() == Action.RIGHT_CLICK_BLOCK){
-            if(e.getClickedBlock().getType() == Material.CHEST){
-                if(e.getPlayer().getWorld() == skyblock.lobby
-                        || Crate.isCrate(e.getClickedBlock())){
-                    new Crate(e.getPlayer(),e.getClickedBlock());
+    public void onInteract(PlayerInteractEvent e) {
+        if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            if (e.getClickedBlock().getType() == Material.CHEST) {
+                if (e.getPlayer().getWorld() == skyblock.lobby
+                        || Crate.isCrate(e.getClickedBlock())) {
+                    new Crate(e.getPlayer(), e.getClickedBlock());
                     e.setCancelled(true);
                 }
             }
         }
-        if(e.getPlayer().getWorld() == skyblock.lobby &&
-                (e.getAction() == Action.LEFT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_BLOCK)){
-            if(!e.getPlayer().hasPermission("skyblock.admin"))
+        if (e.getPlayer().getWorld() == skyblock.lobby &&
+                (e.getAction() == Action.LEFT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_BLOCK)) {
+            if (!e.getPlayer().hasPermission("skyblock.admin")) {
                 e.setCancelled(true);
+            }
         }
     }
 
     @EventHandler
-    public void onBucketEmtpty(final PlayerBucketEmptyEvent e){
-        if(e.getPlayer().getWorld() == skyblock.lobby)
-            if(!e.getPlayer().hasPermission("skyblock.admin")){
+    public void onBucketEmtpty(final PlayerBucketEmptyEvent e) {
+        if (e.getPlayer().getWorld() == skyblock.lobby) {
+            if (!e.getPlayer().hasPermission("skyblock.admin")) {
                 e.setCancelled(true);
             }
+        }
     }
 
     @EventHandler
-    public void onInteractEntity(PlayerInteractEntityEvent e){
-        if(e.getPlayer().getWorld() == skyblock.lobby){
-            if(e.getRightClicked().getType() == EntityType.VILLAGER){
-                Shop shop = new Shop(e.getPlayer(),(Villager) e.getRightClicked());
-                if (shop.isValid())
+    public void onInteractEntity(PlayerInteractEntityEvent e) {
+        if (e.getPlayer().getWorld() == skyblock.lobby) {
+            if (e.getRightClicked().getType() == EntityType.VILLAGER) {
+                Shop shop = new Shop(e.getPlayer(), (Villager) e.getRightClicked());
+                if (shop.isValid()) {
                     e.setCancelled(true);
+                }
             }
         }
-        if(e.getRightClicked().hasPermission("skyblock.admin") || e.getRightClicked().hasPermission("pure.helper")){
+
+        if (e.getRightClicked().hasPermission("skyblock.admin") || e.getRightClicked().hasPermission("pure.helper")) {
             Objective.punchStaff(Island.load(e.getPlayer().getUniqueId()));
         }
     }
 
     @EventHandler
-    public void onInventoryClose(InventoryCloseEvent e){
-        if(e.getInventory().getHolder() instanceof Crate){
-            ((Crate)e.getInventory().getHolder()).onClose(e.getPlayer());
-        }else if(e.getInventory().getHolder() instanceof Shop){
-            ((Shop)e.getInventory().getHolder()).onClose(e.getPlayer());
+    public void onInventoryClose(InventoryCloseEvent e) {
+        if (e.getInventory().getHolder() instanceof Crate) {
+            ((Crate) e.getInventory().getHolder()).onClose(e.getPlayer());
+        } else if (e.getInventory().getHolder() instanceof Shop) {
+            ((Shop) e.getInventory().getHolder()).onClose(e.getPlayer());
         }
     }
 
     @EventHandler
-    public void onInventoryClick(InventoryClickEvent e){
-        if(e.getInventory().getHolder() instanceof Shop){
-            ((Shop)e.getInventory().getHolder()).onClick(e);
+    public void onInventoryClick(InventoryClickEvent e) {
+        if (e.getInventory().getHolder() instanceof Shop) {
+            ((Shop) e.getInventory().getHolder()).onClick(e);
         }
     }
 
     @EventHandler
-    public void onPlayerDropItem(final PlayerDropItemEvent e){
-        if(e.getItemDrop().getWorld() == skyblock.lobby){
+    public void onPlayerDropItem(final PlayerDropItemEvent e) {
+        if (e.getItemDrop().getWorld() == skyblock.lobby) {
             ItemStack i = e.getItemDrop().getItemStack();
-            for(ItemStack s : Shop.sellItems)
-                if(s.getType().equals(i.getType())){
+            for (ItemStack s : Shop.sellItems) {
+                if (s.getType().equals(i.getType())) {
                     new SellItem(e.getPlayer(), e.getItemDrop());
                     break;
                 }
+            }
         }
     }
 
-    private class SellItem implements Runnable{
+    private class SellItem implements Runnable {
         Item item;
         Player player;
         Location last;
 
-        public SellItem(Player p, Item i){
+        public SellItem(Player p, Item i) {
             player = p;
             item = i;
             last = item.getLocation();
@@ -639,41 +662,48 @@ public class Listener implements org.bukkit.event.Listener{
 
         @Override
         public void run() {
-            if(!item.isValid() || item.getLocation().getBlockY() < 3)return;
+            if (!item.isValid() || item.getLocation().getBlockY() < 3) {
+                return;
+            }
+
             Block b = item.getLocation().getBlock();
-            for(int j=0;j<2;j++){
-                if(b.getType() == Material.HOPPER){
+
+            for (int j = 0; j < 2; j++) {
+                if (b.getType() == Material.HOPPER) {
                     ItemStack i = item.getItemStack();
-                    if(i.getType().name().contains("SPAWN_EGG") || i.getType() == Material.COW_SPAWN_EGG) // if SPAWN_EGG changes, this'll detect it
+                    if (i.getType().name().contains("SPAWN_EGG") || i.getType() == Material.COW_SPAWN_EGG) { // if SPAWN_EGG changes, this'll detect it
                         Objective.sellSpawnEgg(Island.load(player.getUniqueId()));
-                    else
-                        for(int k=0;k<Shop.sellItems.size();k++){
-                            if(Shop.sellItems.get(k).getType() == i.getType()
-                                    && Shop.sellItems.get(k).getDurability() == i.getDurability()){
-                                
+                    } else {
+                        for (int k = 0; k < Shop.sellItems.size(); k++) {
+                            if (Shop.sellItems.get(k).getType() == i.getType()
+                                    && Shop.sellItems.get(k).getDurability() == i.getDurability()) {
+
                                 // Sold
                                 Island is = Island.load(player.getUniqueId());
-                                int coins = i.getAmount()*Shop.sellPrices.get(k);
+                                int coins = i.getAmount() * Shop.sellPrices.get(k);
                                 is.coins += coins;
                                 player.sendMessage(ChatColor.GOLD + " + " + coins + " coins");
-                                if(i.getType() == Material.COBBLESTONE){
+                                if (i.getType() == Material.COBBLESTONE) {
                                     is.cobbleSold += i.getAmount();
                                     Objective.cobblesell(is);
                                 }
-                                
+
                                 item.remove();
                             }
                         }
+                    }
                     return;
                 }
                 b = b.getRelative(0, -1, 0);
             }
-            if(item.getLocation().distanceSquared(last) < 0.01){ // Item hasnt moved
+
+            if (item.getLocation().distanceSquared(last) < 0.01) { // Item hasnt moved
                 return;
             }
+
             last = item.getLocation();
             Bukkit.getScheduler().runTaskLater(skyblock, this, 4);
         }
-        
+
     }
 }
