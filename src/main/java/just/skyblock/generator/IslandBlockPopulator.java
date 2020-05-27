@@ -69,8 +69,8 @@ public class IslandBlockPopulator extends BlockPopulator {
     private boolean isChunkEmpty(Chunk c) {
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
-                for (int y = 60; y < 66; y++) {
-                    if (c.getBlock(x, y, z).getType() != Material.AIR) {
+                for (int y = 60; y < 100; y++) {
+                    if (!c.getBlock(x, y, z).isEmpty()) {
                         return false;
                     }
                 }
