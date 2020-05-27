@@ -58,14 +58,14 @@ public class Shop implements InventoryHolder{
     public static ArrayList<Double> lootBoxChancesRare = new ArrayList<>();
     public static Location shopSpawn = null;
     public static void load(){
-        shopSpawn = SkyblockPlugin.skyblock.lobby.getSpawnLocation();
-        cache = new File(SkyblockPlugin.skyblock.getDataFolder(), CACHE_PATH);
+        shopSpawn = SkyblockPlugin.plugin.lobby.getSpawnLocation();
+        cache = new File(SkyblockPlugin.plugin.getDataFolder(), CACHE_PATH);
         cache.getParentFile().mkdirs();
-        Bukkit.getScheduler().runTaskAsynchronously(SkyblockPlugin.skyblock, () -> {
+        Bukkit.getScheduler().runTaskAsynchronously(SkyblockPlugin.plugin, () -> {
                 refreshCache();
                 if(downloadCache())
                     refreshCache();
-                Bukkit.getScheduler().runTaskTimer(SkyblockPlugin.skyblock, Shop::villagerChecker, 0, 2*60*20L);
+                Bukkit.getScheduler().runTaskTimer(SkyblockPlugin.plugin, Shop::villagerChecker, 0, 2*60*20L);
         });
     }
     private static boolean downloadCache(){
@@ -101,7 +101,7 @@ public class Shop implements InventoryHolder{
                 String[] a = h.split(",");
                 if(a[0].equalsIgnoreCase("shop_spawn") && a.length >= 4){
                     try{
-                        shopSpawn = new Location(SkyblockPlugin.skyblock.lobby,Double.parseDouble(a[1]),
+                        shopSpawn = new Location(SkyblockPlugin.plugin.lobby,Double.parseDouble(a[1]),
                                 Double.parseDouble(a[2]),Double.parseDouble(a[3]));
                     }catch(Exception e){C.log("Invalid syntax: " + h);}
                 }else if(a.length >= 2){

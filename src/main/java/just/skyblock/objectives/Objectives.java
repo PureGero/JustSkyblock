@@ -168,7 +168,7 @@ public class Objectives {
             i.objectives += '0';
         }
         i.objectives = i.objectives.substring(0, o) + '1' + i.objectives.substring(o+1);
-        Bukkit.getScheduler().runTaskLater(SkyblockPlugin.skyblock, new Runnable(){
+        Bukkit.getScheduler().runTaskLater(SkyblockPlugin.plugin, new Runnable(){
             public void run(){
                 i.calcRank();
             }

@@ -70,14 +70,14 @@ public class Skyblock {
     public ArrayList<UUID> allowed = new ArrayList<UUID>();
     
     public boolean inIsland(Location l){
-        return l.getWorld() == SkyblockPlugin.skyblock.world &&
+        return l.getWorld() == SkyblockPlugin.plugin.world &&
             Math.floor(l.getBlockX()/512.0) == x && 
             Math.floor(l.getBlockZ()/512.0) == z;
     }
     private Skyblock(){}
 
     public Location getSpawnLocation(){
-        Location il = new Location(SkyblockPlugin.skyblock.world,x*512+256.5-8,65.5,z*512+256.5-8);
+        Location il = new Location(SkyblockPlugin.plugin.world,x*512+256.5-8,65.5,z*512+256.5-8);
         while(il.getBlockY() < 256 && (il.getBlock().getType() != Material.AIR
                 || il.getBlock().getRelative(BlockFace.UP).getType() != Material.AIR)){
             il = il.add(0, 1, 0);
@@ -86,7 +86,7 @@ public class Skyblock {
     }
 
     public Location getNetherSpawnLocation(){
-        Location il = new Location(SkyblockPlugin.skyblock.nether,x*512+256.5-8,65.5,z*512+256.5-8);
+        Location il = new Location(SkyblockPlugin.plugin.nether,x*512+256.5-8,65.5,z*512+256.5-8);
         while(il.getBlockY() < 256 && (il.getBlock().getType() != Material.AIR
                 || il.getBlock().getRelative(BlockFace.UP).getType() != Material.AIR)){
             il = il.add(0, 1, 0);
@@ -102,7 +102,7 @@ public class Skyblock {
     public ArrayList<Player> getPlayers(){
         ArrayList<Player> a = new ArrayList<Player>();
         for(Player p : Bukkit.getOnlinePlayers()){
-            if(p.getWorld() == SkyblockPlugin.skyblock.world){
+            if(p.getWorld() == SkyblockPlugin.plugin.world){
                 if(inIsland(p.getLocation()))
                     a.add(p);
             }
@@ -124,7 +124,7 @@ public class Skyblock {
         checkUpdates();
         save();
 
-        new File(SkyblockPlugin.skyblock.world.getWorldFolder(),
+        new File(SkyblockPlugin.plugin.world.getWorldFolder(),
                 "region/r." + oldx + "." + oldz + ".mca")
                 .deleteOnExit(); // Delete region file once server has exited
 
@@ -157,7 +157,7 @@ public class Skyblock {
     }
     
     public static Skyblock get(Location l){
-        if (l.getWorld() != SkyblockPlugin.skyblock.world && l.getWorld() != SkyblockPlugin.skyblock.nether) return null;
+        if (l.getWorld() != SkyblockPlugin.plugin.world && l.getWorld() != SkyblockPlugin.plugin.nether) return null;
         int x = (int) Math.floor(l.getBlockX()/512.0);
         int z = (int) Math.floor(l.getBlockZ()/512.0);
         for (Skyblock i : cache.values()) {
@@ -175,7 +175,7 @@ public class Skyblock {
         Skyblock c = new Skyblock();
         c.uuid = u;
         c.temp = new Temp(c.uuid);
-        File f = new File(SkyblockPlugin.skyblock.getDataFolder(), "skyblocks/" + s + ".json");
+        File f = new File(SkyblockPlugin.plugin.getDataFolder(), "skyblocks/" + s + ".json");
         try{
             if(f.isFile()){
                 JSONObject o = (JSONObject) new JSONParser().parse(new String(Files.readAllBytes(f.toPath())));
@@ -214,7 +214,7 @@ public class Skyblock {
     public void checkUpdates(){
         if(update == 0){ // First time loading island
             try{
-                FileInputStream fin = new FileInputStream(new File(SkyblockPlugin.skyblock.getDataFolder(),"nextskyblock.csv"));
+                FileInputStream fin = new FileInputStream(new File(SkyblockPlugin.plugin.getDataFolder(),"nextskyblock.csv"));
                 byte[] b = new byte[4096];
                 int i = fin.read(b);
                 fin.close();
@@ -247,8 +247,8 @@ public class Skyblock {
                         x++;
                     else
                         x--;
-                SkyblockPlugin.skyblock.getDataFolder().mkdirs();
-                FileOutputStream fout = new FileOutputStream(new File(SkyblockPlugin.skyblock.getDataFolder(),"nextskyblock.csv"));
+                SkyblockPlugin.plugin.getDataFolder().mkdirs();
+                FileOutputStream fout = new FileOutputStream(new File(SkyblockPlugin.plugin.getDataFolder(),"nextskyblock.csv"));
                 fout.write((x + "," + y + ",1," + uuid + "\r\n").getBytes());
                 fout.close();
             }catch(Exception e){
@@ -257,8 +257,8 @@ public class Skyblock {
             update = 2;
         }
         if (update == 1) {
-            SkyblockPlugin.skyblock.world.getBlockAt(x*512+256-9,64,z*512+256-39).setType(Material.GRASS_BLOCK);
-            SkyblockPlugin.skyblock.world.getBlockAt(x*512+256-9,65,z*512+256-39).setType(Material.BAMBOO_SAPLING);
+            SkyblockPlugin.plugin.world.getBlockAt(x*512+256-9,64,z*512+256-39).setType(Material.GRASS_BLOCK);
+            SkyblockPlugin.plugin.world.getBlockAt(x*512+256-9,65,z*512+256-39).setType(Material.BAMBOO_SAPLING);
             update = 2;
         }
     }
@@ -299,7 +299,7 @@ public class Skyblock {
     
     public void save(){
         String s = uuid.toString().toLowerCase();
-        final File f = new File(SkyblockPlugin.skyblock.getDataFolder(), "skyblocks/" + s + ".json");
+        final File f = new File(SkyblockPlugin.plugin.getDataFolder(), "skyblocks/" + s + ".json");
         f.getParentFile().mkdirs();
         
         JSONObject o = new JSONObject();
@@ -324,8 +324,8 @@ public class Skyblock {
             }
         }
         final byte[] b = o.toString().getBytes();
-        if(SkyblockPlugin.skyblock.isEnabled() && Bukkit.isPrimaryThread()) // Run async
-            Bukkit.getScheduler().runTaskAsynchronously(SkyblockPlugin.skyblock, new Runnable(){
+        if(SkyblockPlugin.plugin.isEnabled() && Bukkit.isPrimaryThread()) // Run async
+            Bukkit.getScheduler().runTaskAsynchronously(SkyblockPlugin.plugin, new Runnable(){
                 public void run(){
                     try {
                         Files.write(f.toPath(), b);

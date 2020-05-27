@@ -8,6 +8,6 @@ public class C {
 				s += " ";
 			s += o.toString();
 		}
-		SkyblockPlugin.skyblock.getLogger().info(s);
+		SkyblockPlugin.plugin.getLogger().info(s);
 	}
 }

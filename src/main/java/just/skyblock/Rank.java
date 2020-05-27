@@ -69,7 +69,7 @@ public class Rank {
         }
         PermissionAttachment m = attachs.get(p.getUniqueId());
         if(m == null){
-            m = p.addAttachment(SkyblockPlugin.skyblock);
+            m = p.addAttachment(SkyblockPlugin.plugin);
             attachs.put(p.getUniqueId(), m);
         }else{
             for(String s : m.getPermissions().keySet())

@@ -17,7 +17,7 @@ import java.util.Random;
 public class Crate implements InventoryHolder {
 	
 	public static void islandCrateTicker(){
-		Bukkit.getScheduler().runTaskTimer(SkyblockPlugin.skyblock, new Runnable(){
+		Bukkit.getScheduler().runTaskTimer(SkyblockPlugin.plugin, new Runnable(){
 			public void run(){
 				for(Player p : Bukkit.getOnlinePlayers()){
 					Skyblock i = Skyblock.load(p.getUniqueId());
@@ -41,7 +41,7 @@ public class Crate implements InventoryHolder {
 	}
 	
 	public static boolean isCrate(Block b){
-		if(b.getWorld() == SkyblockPlugin.skyblock.world){
+		if(b.getWorld() == SkyblockPlugin.plugin.world){
 			Skyblock i = Skyblock.get(b.getLocation());
 			return i != null && i.crateX == b.getX()
 					&& i.crateY == b.getY() && i.crateZ == b.getZ();
@@ -51,7 +51,7 @@ public class Crate implements InventoryHolder {
 	
 	public static void removeCrate(Skyblock i){
 		if(i.crateX != 0){ // Crate doesnt exist
-			Block b = SkyblockPlugin.skyblock.world.getBlockAt(i.crateX, i.crateY, i.crateZ);
+			Block b = SkyblockPlugin.plugin.world.getBlockAt(i.crateX, i.crateY, i.crateZ);
 			if(b.getType() == Material.CHEST)
 				b.setType(Material.AIR);
 			i.crateX = 0;
@@ -62,7 +62,7 @@ public class Crate implements InventoryHolder {
 	
 	public static void makeCrate(Skyblock i){
 		if(i.crateX == 0){ // Crate doesnt exist
-			Location il = new Location(SkyblockPlugin.skyblock.world,i.x*512+256.5-8,65.5,i.z*512+256.5-8);
+			Location il = new Location(SkyblockPlugin.plugin.world,i.x*512+256.5-8,65.5,i.z*512+256.5-8);
 			while(il.getBlockY() < 256 && il.getBlock().getType() != Material.AIR){
 				il = il.add(0, 1, 0);
 			}
@@ -70,7 +70,7 @@ public class Crate implements InventoryHolder {
 			i.crateY = il.getBlockY();
 			i.crateZ = il.getBlockZ();
 		}
-		Block b = SkyblockPlugin.skyblock.world.getBlockAt(i.crateX, i.crateY, i.crateZ);
+		Block b = SkyblockPlugin.plugin.world.getBlockAt(i.crateX, i.crateY, i.crateZ);
 		b.setType(Material.CHEST);
 		Firework fw = (Firework) b.getWorld().spawnEntity(b.getLocation(), EntityType.FIREWORK);
         FireworkMeta fwm = fw.getFireworkMeta();

@@ -1,7 +1,11 @@
 package just.skyblock;
 
 import just.skyblock.commands.*;
-import just.skyblock.generator.IslandGenerator;
+import just.skyblock.generator.IslandBlockPopulator;
+import just.skyblock.generator.SkyblockChunkGenerator;
+import just.skyblock.listeners.SkyblockListener;
+import just.skyblock.listeners.SpawnListener;
+import just.skyblock.listeners.VoteListener;
 import just.skyblock.objectives.Objectives;
 import just.skyblock.objectives.ObjectivesListener;
 import org.bukkit.*;
@@ -14,29 +18,18 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.*;
 
 public class SkyblockPlugin extends JavaPlugin {
-    public static SkyblockPlugin skyblock = null;
+    public static SkyblockPlugin plugin = null;
     public World world = null;
     public World nether = null;
     public World lobby = null;
 
     @Override
     public void onEnable() {
-        skyblock = this;
+        plugin = this;
         lobby = getServer().getWorlds().get(0);
         lobby.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
         //world = getServer().createWorld(new WorldCreator("skyblock").type(WorldType.FLAT).generatorSettings("2;0;1;"));
-        world = getServer().createWorld(new WorldCreator("skyblock").generator(new ChunkGenerator() {
-            @Override
-            public ChunkData generateChunkData(World w, Random r, int x, int z, BiomeGrid biome) {
-                // Do nothing
-                return createChunkData(w);
-            }
-
-            @Override
-            public List<BlockPopulator> getDefaultPopulators(World world) {
-                return Arrays.asList(new IslandGenerator(SkyblockPlugin.this));
-            }
-        }));
+        world = getServer().createWorld(new WorldCreator("skyblock").generator(new SkyblockChunkGenerator(this)));
         world.setKeepSpawnInMemory(false);
         world.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
         nether = getServer().createWorld(new WorldCreator("skyblock_nether").environment(World.Environment.NETHER).generator(new ChunkGenerator() {
@@ -48,7 +41,7 @@ public class SkyblockPlugin extends JavaPlugin {
 
             @Override
             public List<BlockPopulator> getDefaultPopulators(World world) {
-                return Arrays.asList(new IslandGenerator(SkyblockPlugin.this));
+                return Arrays.asList(new IslandBlockPopulator(SkyblockPlugin.this));
             }
         }));
         nether.setKeepSpawnInMemory(false);
@@ -100,6 +93,14 @@ public class SkyblockPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ObjectivesListener(this), this);
         getServer().getPluginManager().registerEvents(new SkyblockListener(this), this);
         getServer().getPluginManager().registerEvents(new SpawnListener(this), this);
+
+        try {
+            if (Class.forName("puregero.network.VoteEvent") != null) {
+                getServer().getPluginManager().registerEvents(new VoteListener(this), this);
+            }
+        } catch (ClassNotFoundException e) {
+            getLogger().info("puregero.network.VoteEvent could not be found and was not registered.");
+        }
     }
 
     @Override

@@ -1,5 +1,6 @@
-package just.skyblock;
+package just.skyblock.listeners;
 
+import just.skyblock.*;
 import just.skyblock.objectives.Objectives;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

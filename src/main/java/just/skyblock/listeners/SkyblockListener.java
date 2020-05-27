@@ -1,5 +1,9 @@
-package just.skyblock;
+package just.skyblock.listeners;
 
+import just.skyblock.Crate;
+import just.skyblock.Rank;
+import just.skyblock.Skyblock;
+import just.skyblock.SkyblockPlugin;
 import just.skyblock.objectives.Objectives;
 import net.minecraft.server.v1_15_R1.PacketPlayOutWorldBorder;
 import org.bukkit.*;
@@ -14,28 +18,12 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.player.*;
-import puregero.network.VoteEvent;
 
 public class SkyblockListener implements Listener {
-    SkyblockPlugin skyblock;
+    private SkyblockPlugin plugin;
 
     public SkyblockListener(SkyblockPlugin b) {
-        skyblock = b;
-    }
-
-    @EventHandler
-    public void onVote(VoteEvent e) {
-        e.getPlayer().sendMessage(ChatColor.GREEN + "Thank you for voting for us at " + e.getWebsite() + ".");
-        e.getPlayer().sendMessage(ChatColor.GREEN + "You have earnt a lootbox as a reward!");
-
-        final Skyblock i = Skyblock.load(e.getPlayer().getUniqueId());
-        i.crates += 1;
-        i.votes += 1;
-        Objectives.vote(i);
-
-        Bukkit.getScheduler().runTask(SkyblockPlugin.skyblock, () -> {
-            Crate.newCrate(i); // Run in sync
-        });
+        plugin = b;
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -51,7 +39,7 @@ public class SkyblockListener implements Listener {
     @EventHandler
     public void onPlayerQuit(final PlayerQuitEvent e) {
         // Remove player's skyblock data from memory
-        skyblock.getServer().getScheduler().runTask(skyblock, () -> Skyblock.safeDispose(e.getPlayer().getUniqueId()));
+        plugin.getServer().getScheduler().runTask(plugin, () -> Skyblock.safeDispose(e.getPlayer().getUniqueId()));
     }
 
     @EventHandler
@@ -80,18 +68,18 @@ public class SkyblockListener implements Listener {
 
     @EventHandler
     public void onBlockBreak(final BlockBreakEvent e) {
-        if (e.getBlock().getWorld() == skyblock.world) {
+        if (e.getBlock().getWorld() == plugin.world) {
             if (e.getBlock().getType() == Material.CHEST
                     && Crate.isCrate(e.getBlock())) {
                 e.setCancelled(true);
-                Bukkit.getScheduler().runTaskLater(skyblock, () -> {
+                Bukkit.getScheduler().runTaskLater(plugin, () -> {
                     Skyblock i = Skyblock.get(e.getBlock().getLocation());
                     if (i != null)
                         Crate.removeCrate(i);
                     e.getBlock().setType(Material.AIR); // Just incase doesnt work
                 }, 1);
             } else {
-                Bukkit.getScheduler().runTaskLater(skyblock, () -> {
+                Bukkit.getScheduler().runTaskLater(plugin, () -> {
                     Location loc = e.getBlock().getLocation().add(0.5, 0.5, 0.5);
                     for (Item i : loc.getWorld().getEntitiesByClass(Item.class)) {
                         if (i.getLocation().distanceSquared(loc) < 0.25) { // Squared more efficient
@@ -127,10 +115,10 @@ public class SkyblockListener implements Listener {
         net.minecraft.server.v1_15_R1.WorldBorder worldBorder = new net.minecraft.server.v1_15_R1.WorldBorder();
         worldBorder.world = ((CraftWorld) e.getTo().getWorld()).getHandle();
 
-        if (e.getTo().getWorld() == SkyblockPlugin.skyblock.lobby) {
+        if (e.getTo().getWorld() == plugin.lobby) {
             worldBorder.setSize(6000000);
             worldBorder.setCenter(0, 0);
-        } else if (world == SkyblockPlugin.skyblock.world || world == SkyblockPlugin.skyblock.nether) {
+        } else if (world == plugin.world || world == plugin.nether) {
             int x = ((e.getTo().getBlockX() >> 9) << 9) + 256;
             int z = ((e.getTo().getBlockZ() >> 9) << 9) + 256;
             worldBorder.setSize(512);
@@ -143,7 +131,7 @@ public class SkyblockListener implements Listener {
         player.getHandle().playerConnection.sendPacket(packet);
 
         // Send it again after any world loading
-        Bukkit.getScheduler().runTaskLater(SkyblockPlugin.skyblock, () -> {
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
             player.getHandle().playerConnection.sendPacket(packet);
         }, 1L);
     }
@@ -167,11 +155,11 @@ public class SkyblockListener implements Listener {
     public void onPlayerPortal(PlayerPortalEvent e) {
         Location from = e.getFrom();
         Location to = e.getTo();
-        if (from.getWorld() == skyblock.world && to.getWorld().getEnvironment() == World.Environment.NETHER) {
+        if (from.getWorld() == plugin.world && to.getWorld().getEnvironment() == World.Environment.NETHER) {
             e.setCancelled(true);
             e.getPlayer().teleport(Skyblock.get(from).getNetherSpawnLocation());
             Objectives.enterNether(Skyblock.load(e.getPlayer().getUniqueId())); // Enter Nether Objective
-        } else if (from.getWorld() == skyblock.nether && to.getWorld().getEnvironment() == World.Environment.NORMAL) {
+        } else if (from.getWorld() == plugin.nether && to.getWorld().getEnvironment() == World.Environment.NORMAL) {
             e.setCancelled(true);
             e.getPlayer().teleport(Skyblock.get(from).getSpawnLocation());
         }
@@ -181,10 +169,10 @@ public class SkyblockListener implements Listener {
     public void onEntityPortal(EntityPortalEvent e) {
         Location from = e.getFrom();
         Location to = e.getTo();
-        if (from.getWorld() == skyblock.world && to.getWorld().getEnvironment() == World.Environment.NETHER) {
+        if (from.getWorld() == plugin.world && to.getWorld().getEnvironment() == World.Environment.NETHER) {
             e.setCancelled(true);
             e.getEntity().teleport(Skyblock.get(from).getNetherSpawnLocation());
-        } else if (from.getWorld() == skyblock.nether && to.getWorld().getEnvironment() == World.Environment.NORMAL) {
+        } else if (from.getWorld() == plugin.nether && to.getWorld().getEnvironment() == World.Environment.NORMAL) {
             e.setCancelled(true);
             e.getEntity().teleport(Skyblock.get(from).getSpawnLocation());
         }
