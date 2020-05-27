@@ -1,6 +1,7 @@
 package just.skyblock;
 
 import just.skyblock.commands.*;
+import just.skyblock.generator.IslandGenerator;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -36,7 +37,7 @@ public class SkyblockPlugin extends JavaPlugin {
 
             @Override
             public List<BlockPopulator> getDefaultPopulators(World world) {
-                return Arrays.asList(new Generator(SkyblockPlugin.this));
+                return Arrays.asList(new IslandGenerator(SkyblockPlugin.this));
             }
         }));
         world.setKeepSpawnInMemory(false);
@@ -50,7 +51,7 @@ public class SkyblockPlugin extends JavaPlugin {
 
             @Override
             public List<BlockPopulator> getDefaultPopulators(World world) {
-                return Arrays.asList(new Generator(SkyblockPlugin.this));
+                return Arrays.asList(new IslandGenerator(SkyblockPlugin.this));
             }
         }));
         nether.setKeepSpawnInMemory(false);
