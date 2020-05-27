@@ -1,6 +1,6 @@
 package just.skyblock.commands;
 
-import just.skyblock.Objective;
+import just.skyblock.objectives.Objectives;
 import just.skyblock.Skyblock;
 import just.skyblock.SkyblockPlugin;
 import net.md_5.bungee.api.ChatColor;
@@ -28,7 +28,7 @@ public class RankCommand implements CommandExecutor {
         Skyblock skyblock = Skyblock.load(player.getUniqueId());
 
         player.sendMessage("Your rank is: " + skyblock.getRank().color + skyblock.getRank().prefix);
-        player.sendMessage("You have completed " + Objective.completed(skyblock) + " objectives.");
+        player.sendMessage("You have completed " + Objectives.completed(skyblock) + " objectives.");
         player.sendMessage("See details with " + ChatColor.BOLD + "/objectives");
         return true;
     }

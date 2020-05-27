@@ -1,6 +1,6 @@
 package just.skyblock.commands;
 
-import just.skyblock.Objective;
+import just.skyblock.objectives.Objectives;
 import just.skyblock.Skyblock;
 import just.skyblock.SkyblockPlugin;
 import net.md_5.bungee.api.ChatColor;
@@ -59,7 +59,7 @@ public class PayCommand implements CommandExecutor {
         skyblock.coins -= amount;
 
         if (amount >= 10000) {
-            Objective.pay10000(skyblock);
+            Objectives.pay10000(skyblock);
         }
 
         player.sendMessage(ChatColor.GREEN + "Paid " + receiving.getName() + " " + amount + " coins!");

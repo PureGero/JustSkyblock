@@ -1,6 +1,6 @@
 package just.skyblock.commands;
 
-import just.skyblock.Objective;
+import just.skyblock.objectives.Objectives;
 import just.skyblock.Skyblock;
 import just.skyblock.SkyblockPlugin;
 import net.md_5.bungee.api.ChatColor;
@@ -43,29 +43,29 @@ public class ObjectivesCommand implements CommandExecutor {
 
         if (page == 0) {
             player.sendMessage(ChatColor.DARK_GREEN + "Hover to see objective info!");
-            Objective.sendProgress(player, skyblock);
+            Objectives.sendProgress(player, skyblock);
             player.sendMessage(ChatColor.GREEN + "View all with " + ChatColor.BOLD + "/objectives 1");
 
-        } else if (page < 0 || page > 1 + Objective.length() / 10) {
+        } else if (page < 0 || page > 1 + Objectives.length() / 10) {
             player.sendMessage(ChatColor.RED + "Invalid page");
 
         } else {
             player.sendMessage(ChatColor.DARK_GREEN + "View the next page with /objectives " + (page + 1));
 
-            for (int j = page * 10 - 10; j < page * 10 && j < Objective.length(); j++) {
-                if (Objective.has(skyblock, j)) {
+            for (int j = page * 10 - 10; j < page * 10 && j < Objectives.length(); j++) {
+                if (Objectives.has(skyblock, j)) {
                     player.spigot().sendMessage(
-                            new ComponentBuilder("[\u2713] " + Objective.getName(j))
+                            new ComponentBuilder("[\u2713] " + Objectives.getName(j))
                             .color(ChatColor.GREEN)
                             .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                                    new ComponentBuilder(Objective.getDesc(j)).create()))
+                                    new ComponentBuilder(Objectives.getDesc(j)).create()))
                             .create());
                 } else {
                     player.spigot().sendMessage(
-                            new ComponentBuilder("[\u2715] " + Objective.getName(j))
+                            new ComponentBuilder("[\u2715] " + Objectives.getName(j))
                             .color(ChatColor.RED)
                             .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                                    new ComponentBuilder(Objective.getDesc(j)).create()))
+                                    new ComponentBuilder(Objectives.getDesc(j)).create()))
                             .create());
                 }
             }

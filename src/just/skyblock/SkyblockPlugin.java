@@ -2,12 +2,9 @@ package just.skyblock;
 
 import just.skyblock.commands.*;
 import just.skyblock.generator.IslandGenerator;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
+import just.skyblock.objectives.Objectives;
+import just.skyblock.objectives.ObjectivesListener;
 import org.bukkit.*;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.generator.BlockPopulator;
@@ -57,7 +54,6 @@ public class SkyblockPlugin extends JavaPlugin {
         nether.setKeepSpawnInMemory(false);
         nether.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
         getServer().setSpawnRadius(0);
-        getServer().getPluginManager().registerEvents(new Listener(this), this);
         Crate.islandCrateTicker();
         Shop.load();
         Skyblock.disposeAll(); // If we dont reference the Skyblock class at least once, onDisable will fail if no Islands get loaded
@@ -69,18 +65,19 @@ public class SkyblockPlugin extends JavaPlugin {
             for (Player p : Bukkit.getOnlinePlayers()) {
                 Skyblock i = Skyblock.load(p.getUniqueId());
                 i.ontime += 10;
-                Objective.ontime(i);
+                Objectives.ontime(i);
                 if (i.coins >= 1000000) {
-                    Objective.millionCoins(i);
+                    Objectives.millionCoins(i);
                 }
                 if (i.coins >= 1000000000) {
-                    Objective.billionCoins(i);
+                    Objectives.billionCoins(i);
                 }
             }
         }, 10 * 20, 10 * 20);
 
         registerCommands();
         registerTabCompleters();
+        registerListeners();
     }
 
     private void registerCommands() {
@@ -97,6 +94,12 @@ public class SkyblockPlugin extends JavaPlugin {
 
     private void registerTabCompleters() {
         getCommand("skyblock").setTabCompleter((TabCompleter) getCommand("skyblock").getExecutor());
+    }
+
+    private void registerListeners() {
+        getServer().getPluginManager().registerEvents(new ObjectivesListener(this), this);
+        getServer().getPluginManager().registerEvents(new SkyblockListener(this), this);
+        getServer().getPluginManager().registerEvents(new SpawnListener(this), this);
     }
 
     @Override

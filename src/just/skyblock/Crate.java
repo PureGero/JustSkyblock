@@ -1,5 +1,6 @@
 package just.skyblock;
 
+import just.skyblock.objectives.Objectives;
 import org.bukkit.*;
 import org.bukkit.FireworkEffect.Type;
 import org.bukkit.block.Block;
@@ -158,7 +159,7 @@ public class Crate implements InventoryHolder {
 			island.cratesOpened += 1;
 			//if(isCreate)
 				removeCrate(island);
-			Objective.lootboxes(island);
+			Objectives.lootboxes(island);
 		}
 		HashMap<Integer, ItemStack> h = e.getInventory().addItem(items.toArray(new ItemStack[items.size()]));
 		for(ItemStack i : h.values()){

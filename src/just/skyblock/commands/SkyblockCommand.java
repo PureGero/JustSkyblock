@@ -1,6 +1,6 @@
 package just.skyblock.commands;
 
-import just.skyblock.Objective;
+import just.skyblock.objectives.Objectives;
 import just.skyblock.Skyblock;
 import just.skyblock.SkyblockPlugin;
 import net.md_5.bungee.api.ChatColor;
@@ -51,7 +51,7 @@ public class SkyblockCommand implements CommandExecutor, TabCompleter {
                     final Skyblock i = Skyblock.load(o.getUniqueId());
                     if (i.allowed.contains(p.getUniqueId())) {
                         i.spawn(p);
-                        Objective.visitAnotherPlot(Skyblock.load(p.getUniqueId()));
+                        Objectives.visitAnotherPlot(Skyblock.load(p.getUniqueId()));
                     } else {
                         p.sendMessage(ChatColor.RED + o.getName() + " has not added you to their skyblock!");
                         Skyblock.safeDispose(o.getUniqueId());
@@ -130,7 +130,7 @@ public class SkyblockCommand implements CommandExecutor, TabCompleter {
             if (skyblock.allowed.contains(whoPlayer.getUniqueId())) {
                 player.sendMessage(ChatColor.RED + whoPlayer.getName() + " has already been added to your skyblock!");
             } else {
-                Objective.addToPlot(skyblock);
+                Objectives.addToPlot(skyblock);
                 skyblock.allowed.add(whoPlayer.getUniqueId());
                 player.sendMessage(ChatColor.GREEN + whoPlayer.getName() + " has been added to your skyblock!");
             }

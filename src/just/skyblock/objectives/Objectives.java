@@ -1,5 +1,7 @@
-package just.skyblock;
+package just.skyblock.objectives;
 
+import just.skyblock.Skyblock;
+import just.skyblock.SkyblockPlugin;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -8,7 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
-public class Objective {
+public class Objectives {
     public static String[] fields = new String[]{
 /*  0 */"Join the Club", "Play 1 hour",
         "I bet you can't make it to 5", "Play 2 hours",
@@ -80,6 +82,7 @@ public class Objective {
         "Fugu Chuudoku", "Eat a pufferfish",
         "The Beginning.", "Kill the wither",
     };
+
     public static int length(){
         return fields.length/2;
     }
