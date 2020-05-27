@@ -11,6 +11,9 @@ repositories {
   maven {
     url "https://oss.sonatype.org/content/repositories/snapshots/"
   }
+  maven {
+    url "https://github.com/PureGero/JustSkyblock/raw/dependencies"
+  }
   mavenLocal()
 }
 
@@ -27,6 +30,7 @@ configurations {
 
 dependencies {
   compileOnly "org.spigotmc:spigot:$bukkit_version"
+  compileOnly "puregero:purenetworkapi:1"
 }
 
 jar {
