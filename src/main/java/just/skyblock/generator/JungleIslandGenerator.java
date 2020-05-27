@@ -1,36 +1,40 @@
 package just.skyblock.generator;
 
-import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.TreeType;
 import org.bukkit.block.Biome;
+import org.bukkit.block.Block;
 
 import java.util.Random;
 
-public class JungleIslandGenerator implements IIslandGenerator {
+public class JungleIslandGenerator extends BaseIslandGenerator {
 
     @Override
-    public void generate(Chunk chunk, Random random) {
+    public void generate(Block center, Random random) {
         // Biome
-        for (int i = 0; i < 16; i++) {
-            for (int j = 0; j < 16; j++) {
-                chunk.getWorld().setBiome(i | (chunk.getX() << 4), j | (chunk.getZ() << 4), Biome.JUNGLE);
-            }
-        }
+        setBiome(center, Biome.JUNGLE);
 
         // Skyblock
-        for (int i = 0; i < 3; i++) {
-            for (int k = 0; k < 3; k++) {
-                chunk.getBlock(7 + i, 62, 7 + k).setType(Material.STONE);
-                chunk.getBlock(7 + i, 63, 7 + k).setType(Material.DIRT);
-                chunk.getBlock(7 + i, 64, 7 + k).setType(Material.GRASS_BLOCK);
+        for (int i = -1; i <= 1; i++) {
+            for (int k = -1; k <= 1; k++) {
+                center.getRelative(i, -2, k).setType(Material.STONE);
+                center.getRelative(i, -1, k).setType(Material.DIRT);
+                center.getRelative(i, 0, k).setType(Material.GRASS_BLOCK);
             }
         }
 
-        chunk.getWorld().generateTree(chunk.getBlock(7, 65, 7).getLocation(), TreeType.JUNGLE);
+        int treeX = random.nextInt(2);
+        int treeZ = random.nextInt(2);
 
-        chunk.getBlock(9, 65, 7).setType(Material.MELON);
-        chunk.getBlock(7, 65, 9).setType(Material.BAMBOO_SAPLING);
+        center.getWorld().generateTree(center.getRelative(treeX - 1, 1, treeZ - 1).getLocation(), TreeType.JUNGLE);
+
+        if (random.nextBoolean()) {
+            center.getRelative(((treeX + 2) % 3) - 1, 1, treeZ - 1).setType(Material.MELON);
+        } else {
+            center.getRelative(treeX - 1, 1, ((treeZ + 2) % 3) - 1).setType(Material.MELON);
+        }
+
+        center.getRelative(((treeX + 2) % 3) - 1, 1, ((treeZ + 2) % 3) - 1).setType(Material.BAMBOO_SAPLING);
     }
 
 }

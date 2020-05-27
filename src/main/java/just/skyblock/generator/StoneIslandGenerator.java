@@ -1,35 +1,36 @@
 package just.skyblock.generator;
 
-import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
+import org.bukkit.block.Block;
 
 import java.util.Random;
 
-public class StoneIslandGenerator implements IIslandGenerator {
+public class StoneIslandGenerator extends BaseIslandGenerator {
 
     @Override
-    public void generate(Chunk c, Random random) {
+    public void generate(Block center, Random random) {
         // Biome
-        for (int i = 0; i < 16; i++) {
-            for (int j = 0; j < 16; j++) {
-                c.getWorld().setBiome(i | (c.getX() << 4), j | (c.getZ() << 4), Biome.MOUNTAINS);
-            }
-        }
+        setBiome(center, Biome.MOUNTAINS);
 
         // Skyblock
-        for (int i = 0; i < 3; i++) {
-            for (int k = 0; k < 3; k++) {
-                for (int j = 0; j < 3; j++) {
-                    c.getBlock(7 + i, 62 + j, 7 + k).setType(Material.STONE);
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -2; j <= 0; j++) {
+                for (int k = -1; k <= 1; k++) {
+                    center.getRelative(i, j, k).setType(Material.STONE);
                 }
             }
         }
 
-        c.getBlock(8, 64, 8).setType(Material.LAVA);
-        c.getBlock(9, 65, 9).setType(Material.PUMPKIN);
-        c.getBlock(7, 65, 8).setType(Material.RED_MUSHROOM);
-        c.getBlock(8, 65, 7).setType(Material.BROWN_MUSHROOM);
+        center.getRelative(0, 0, 0).setType(Material.LAVA);
+
+        do {
+            center.getRelative(random.nextInt(3) - 1, 1, random.nextInt(3) - 1).setType(Material.PUMPKIN);
+            center.getRelative(random.nextInt(3) - 1, 1, random.nextInt(3) - 1).setType(Material.RED_MUSHROOM);
+            center.getRelative(random.nextInt(3) - 1, 1, random.nextInt(3) - 1).setType(Material.BROWN_MUSHROOM);
+        } while (random.nextDouble() < 0.5);
+
+        center.getRelative(0, 1, 0).setType(Material.AIR);
     }
 
 }

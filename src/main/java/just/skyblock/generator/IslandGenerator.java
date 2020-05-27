@@ -9,7 +9,7 @@ import org.bukkit.generator.BlockPopulator;
 import java.util.Random;
 
 public class IslandGenerator extends BlockPopulator {
-    private static final IIslandGenerator[] overworldIslandGenerators = {
+    private static final BaseIslandGenerator[] overworldIslandGenerators = {
             new FarmIslandGenerator(),
             new JungleIslandGenerator(),
             new SandIslandGenerator(),
@@ -26,20 +26,13 @@ public class IslandGenerator extends BlockPopulator {
         try {
             if (world == skyblock.world) {
                 if ((chunk.getX() & 31) == 15 && (chunk.getZ() & 31) == 15) {
-                    if (isChunkEmpty(chunk)) {
-                        new MainIslandGenerator().generate(chunk, random);
-                    }
-                } else if (random.nextDouble() < 0.4 && (Math.abs((chunk.getX() & 31) - 15) > 1 || Math.abs((chunk.getZ() & 31) - 15) > 1)){
-                    if (isChunkEmpty(chunk)) {
+                    new MainIslandGenerator().generate(chunk.getBlock(8, 64, 8), random);
+                } else if ((Math.abs((chunk.getX() & 31) - 15) > 1 || Math.abs((chunk.getZ() & 31) - 15) > 1)) {
                         generateRandomIsland(chunk, random);
-                    }
                 }
             } else if (world == skyblock.nether) {
                 if ((chunk.getX() & 0x1F) == 0xF && (chunk.getZ() & 0x1F) == 0xF) {
-                    if (isChunkEmpty(chunk)) {
-                        System.out.println("Generating nether island @ " + chunk);
-                        genNetherIsland(chunk);
-                    }
+                    genNetherIsland(chunk);
                 }
             }
         } catch (Exception e) {
@@ -49,9 +42,11 @@ public class IslandGenerator extends BlockPopulator {
     }
 
     private void generateRandomIsland(Chunk chunk, Random random) {
-        IIslandGenerator islandGenerator = overworldIslandGenerators[random.nextInt(overworldIslandGenerators.length)];
+        if (random.nextDouble() < 0.4) {
+            BaseIslandGenerator islandGenerator = overworldIslandGenerators[random.nextInt(overworldIslandGenerators.length)];
 
-        islandGenerator.generate(chunk, random);
+            islandGenerator.generate(chunk.getBlock(random.nextInt(16), 64, random.nextInt(16)), random);
+        }
     }
 
     private boolean isChunkEmpty(Chunk c) {
