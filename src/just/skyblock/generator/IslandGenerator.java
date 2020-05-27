@@ -29,7 +29,7 @@ public class IslandGenerator extends BlockPopulator {
                     if (isChunkEmpty(chunk)) {
                         new MainIslandGenerator().generate(chunk, random);
                     }
-                } else if ((chunk.getX() & 1) == 1 && (chunk.getZ() & 1) == 1){
+                } else if (random.nextDouble() < 0.4 && (Math.abs((chunk.getX() & 31) - 15) > 1 || Math.abs((chunk.getZ() & 31) - 15) > 1)){
                     if (isChunkEmpty(chunk)) {
                         generateRandomIsland(chunk, random);
                     }
