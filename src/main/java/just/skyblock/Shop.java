@@ -29,7 +29,7 @@ public class Shop implements InventoryHolder{
     private static final String SHOP_URL = "https://docs.google.com/spreadsheets/d/1KyqFLUQYXmjvSzD3TFOn1mz5yL9r-rfq1IfX6ieKzAk/export?format=csv&id=1KyqFLUQYXmjvSzD3TFOn1mz5yL9r-rfq1IfX6ieKzAk&gid=0";
     private static final String CACHE_PATH = "shop_cache.txt";
     private static File cache = null;
-    public static int CHEST_SIZE = 9 * 3;
+    private static int CHEST_SIZE = 9 * 3;
     private static Profession[] profs = new Profession[]{
             Profession.ARMORER,
             Profession.BUTCHER,
@@ -46,17 +46,17 @@ public class Shop implements InventoryHolder{
             Profession.WEAPONSMITH
     };
 
-    public static ArrayList<ItemStack> buyItems = new ArrayList<>();
-    public static ArrayList<Integer> buyPrices = new ArrayList<>();
+    private static ArrayList<ItemStack> buyItems = new ArrayList<>();
+    private static ArrayList<Integer> buyPrices = new ArrayList<>();
 
     public static ArrayList<ItemStack> sellItems = new ArrayList<>();
     public static ArrayList<Integer> sellPrices = new ArrayList<>();
 
     public static ArrayList<ItemStack> lootBoxItems = new ArrayList<>();
     public static ArrayList<Integer> lootBoxValues = new ArrayList<>();
-    public static ArrayList<Double> lootBoxChances = new ArrayList<>();
-    public static ArrayList<Double> lootBoxChancesRare = new ArrayList<>();
-    public static Location shopSpawn = null;
+    private static ArrayList<Double> lootBoxChances = new ArrayList<>();
+    private static ArrayList<Double> lootBoxChancesRare = new ArrayList<>();
+    private static Location shopSpawn = null;
     public static void load(){
         shopSpawn = SkyblockPlugin.plugin.lobby.getSpawnLocation();
         cache = new File(SkyblockPlugin.plugin.getDataFolder(), CACHE_PATH);
