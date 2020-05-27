@@ -90,7 +90,7 @@ public class Objective {
         return fields[(o<<1)|1];
     }
     
-    public static void sendProgress(Player p, Island i){
+    public static void sendProgress(Player p, Skyblock i){
         int[][] a = new int[][]{hours,block,cobble,votes,lootboxes,mobs};
         int[] b = new int[]{0,11,16,22,29,35};
         double[] c = new double[]{i.ontime/3600.0,i.blocksPlaced,i.cobbleSold,i.votes,i.cratesOpened,i.mobKills};
@@ -132,7 +132,7 @@ public class Objective {
         return s;
     }
     
-    public static int completed(Island i){
+    public static int completed(Skyblock i){
         int c = 0;
         for(char a : i.objectives.toCharArray())
             if(a == '1')
@@ -140,12 +140,12 @@ public class Objective {
         return c;
     }
     
-    public static boolean has(Island i, int o){
+    public static boolean has(Skyblock i, int o){
         if(i.objectives.length() <= o)
             return false;
         return i.objectives.charAt(o) == '1';
     }
-    public static void give(final Island i, int o){
+    public static void give(final Skyblock i, int o){
         Player p = Bukkit.getPlayer(i.uuid);
         if(p != null){
             p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
@@ -165,7 +165,7 @@ public class Objective {
             i.objectives += '0';
         }
         i.objectives = i.objectives.substring(0, o) + '1' + i.objectives.substring(o+1);
-        Bukkit.getScheduler().runTaskLater(SkyBlock.skyblock, new Runnable(){
+        Bukkit.getScheduler().runTaskLater(SkyblockPlugin.skyblock, new Runnable(){
             public void run(){
                 i.calcRank();
             }
@@ -175,7 +175,7 @@ public class Objective {
     private static int[] hours = new int[]{
         1,2,5,10,15,20,25,30    
     };
-    public static void ontime(Island i){
+    public static void ontime(Skyblock i){
         long t = i.ontime;
         for(int j=0;j<hours.length;j++){
             if(t >= hours[j]*60*60 && !has(i,j))
@@ -185,7 +185,7 @@ public class Objective {
     private static int[] block = new int[]{
         100, 500, 1000, 2000, 4000    
     };
-    public static void blocks(Island i){
+    public static void blocks(Skyblock i){
         long t = i.blocksPlaced;
         for(int j=0;j<block.length;j++){
             if(t >= block[j] && !has(i,11+j))
@@ -195,7 +195,7 @@ public class Objective {
     private static int[] cobble = new int[]{
         100, 200, 500, 1000    
     };
-    public static void cobblesell(Island i){
+    public static void cobblesell(Skyblock i){
         long t = i.cobbleSold;
         for(int j=0;j<cobble.length;j++){
             if(t >= cobble[j] && !has(i,16+j))
@@ -205,7 +205,7 @@ public class Objective {
     private static int[] votes = new int[]{
         1, 2, 10, 20, 30, 40, 50
     };
-    public static void vote(Island i){
+    public static void vote(Skyblock i){
         long t = i.votes;
         for(int j=0;j<votes.length;j++){
             if(t >= votes[j] && !has(i,22+j))
@@ -215,7 +215,7 @@ public class Objective {
     private static int[] lootboxes = new int[]{
         2, 10, 20, 40, 70, 100
     };
-    public static void lootboxes(Island i){
+    public static void lootboxes(Skyblock i){
         long t = i.cratesOpened;
         for(int j=0;j<lootboxes.length;j++){
             if(t >= lootboxes[j] && !has(i,29+j))
@@ -225,138 +225,138 @@ public class Objective {
     private static int[] mobs = new int[]{
         10, 50, 100, 200, 500
     };
-    public static void mobs(Island i){
+    public static void mobs(Skyblock i){
         long t = i.mobKills;
         for(int j=0;j<mobs.length;j++){
             if(t >= mobs[j] && !has(i,35+j))
                 give(i,35+j);
         }
     }
-    public static void addToPlot(Island i){
+    public static void addToPlot(Skyblock i){
         if(!has(i,8))
             give(i,8);
     }
-    public static void visitAnotherPlot(Island i){
+    public static void visitAnotherPlot(Skyblock i){
         if(!has(i,9))
             give(i,9);
     }
-    public static void placeComparator(Island i){
+    public static void placeComparator(Skyblock i){
         if(!has(i,40))
             give(i,40);
     }
-    public static void breakDiamond(Island i){
+    public static void breakDiamond(Skyblock i){
         if(!has(i,41))
             give(i,41);
     }
-    public static void reachTop(Island i){
+    public static void reachTop(Skyblock i){
         if(!has(i,42))
             give(i,42);
     }
-    public static void placeSaplings(Island i){
+    public static void placeSaplings(Skyblock i){
         if(!has(i,43))
             give(i,43);
     }
-    public static void explodeCreeper(Island i){
+    public static void explodeCreeper(Skyblock i){
         if(!has(i,44))
             give(i,44);
     }
-    public static void placeBoat(Island i){
+    public static void placeBoat(Skyblock i){
         if(!has(i,45))
             give(i,45);
     }
-    public static void lightningStruck(Island i){
+    public static void lightningStruck(Skyblock i){
         if(!has(i,46))
             give(i,46);
     }
-    public static void punchStaff(Island i){
+    public static void punchStaff(Skyblock i){
         if(!has(i,47))
             give(i,47);
     }
-    public static void sellSpawnEgg(Island i){
+    public static void sellSpawnEgg(Skyblock i){
         if(!has(i,48))
             give(i,48);
     }
-    public static void resetSkyblock(Island i){
+    public static void resetSkyblock(Skyblock i){
         if(!has(i,49))
             give(i,49);
     }
-    public static void fillChestCobble(Island i){
+    public static void fillChestCobble(Skyblock i){
         if(!has(i,50))
             give(i,50);
     }
-    public static void fillDoubleChestCobble(Island i){
+    public static void fillDoubleChestCobble(Skyblock i){
         if(!has(i,51))
             give(i,51);
     }
-    public static void musicDisc(Island i){
+    public static void musicDisc(Skyblock i){
         if(!has(i,52))
             give(i,52);
     }
-    public static void enterNether(Island i) {
+    public static void enterNether(Skyblock i) {
         if (!has(i, 53))
             give(i, 53);
     }
-    public static void exp100(Island i) {
+    public static void exp100(Skyblock i) {
         if (!has(i, 54))
             give(i, 54);
     }
-    public static void echantedRod(Island i) {
+    public static void echantedRod(Skyblock i) {
         if (!has(i, 55))
             give(i, 55);
     }
-    public static void sleep(Island i) {
+    public static void sleep(Skyblock i) {
         if (!has(i, 56))
             give(i, 56);
     }
-    public static void enchantingTable(Island i) {
+    public static void enchantingTable(Skyblock i) {
         if (!has(i, 57))
             give(i, 57);
     }
-    public static void tameCat(Island i) {
+    public static void tameCat(Skyblock i) {
         if (!has(i, 58))
             give(i, 58);
     }
-    public static void enchantedDiamondArmour(Island i) {
+    public static void enchantedDiamondArmour(Skyblock i) {
         if (!has(i, 59))
             give(i, 59);
     }
-    public static void fullPowerBeacon(Island i) {
+    public static void fullPowerBeacon(Skyblock i) {
         if (!has(i, 60))
             give(i, 60);
     }
-    public static void kill8MobsAtOnce(Island i) {
+    public static void kill8MobsAtOnce(Skyblock i) {
         if (!has(i, 61))
             give(i, 61);
     }
-    public static void placeDiamondBlock(Island i) {
+    public static void placeDiamondBlock(Skyblock i) {
         if (!has(i, 62))
             give(i, 62);
     }
-    public static void pay10000(Island i) {
+    public static void pay10000(Skyblock i) {
         if (!has(i, 63))
             give(i, 63);
     }
-    public static void millionCoins(Island i) {
+    public static void millionCoins(Skyblock i) {
         if (!has(i, 64))
             give(i, 64);
     }
-    public static void billionCoins(Island i) {
+    public static void billionCoins(Skyblock i) {
         if (!has(i, 65))
             give(i, 65);
     }
-    public static void kill20MobsAtOnce(Island i) {
+    public static void kill20MobsAtOnce(Skyblock i) {
         if (!has(i, 66))
             give(i, 66);
     }
-    public static void eatPufferfish(Island i) {
+    public static void eatPufferfish(Skyblock i) {
         if (!has(i, 67))
             give(i, 67);
     }
-    public static void killWither(Island i) {
+    public static void killWither(Skyblock i) {
         if (!has(i, 68))
             give(i, 68);
     }
-    public static void killShop(Island i, int c){
+    public static void killShop(Skyblock i, int c){
         if(c >= 1)
             if(!has(i,10))
                 give(i,10);

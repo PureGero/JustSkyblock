@@ -1,5 +1,7 @@
-package just.skyblock;
+package just.skyblock.commands;
 
+import just.skyblock.Skyblock;
+import just.skyblock.SkyblockPlugin;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -9,26 +11,26 @@ import org.bukkit.entity.Player;
 
 import java.util.Random;
 
-public class SlimeChunkExecuter implements CommandExecutor {
+public class SlimeChunkCommand implements CommandExecutor {
 
-    private final SkyBlock skyblock;
+    private final SkyblockPlugin plugin;
 
-    public SlimeChunkExecuter(SkyBlock skyblock) {
-        this.skyblock = skyblock;
+    public SlimeChunkCommand(SkyblockPlugin plugin) {
+        this.plugin = plugin;
     }
 
     @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String label, String[] args) {
-        if (!(commandSender instanceof Player)) {
-            commandSender.sendMessage(ChatColor.RED + "You must be a player to execute this command.");
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(ChatColor.RED + "You must be a player to execute this command.");
             return false;
         }
 
-        Player player = (Player) commandSender;
+        Player player = (Player) sender;
 
-        Island island = Island.load(player.getUniqueId());
+        Skyblock skyblock = Skyblock.load(player.getUniqueId());
 
-        Location slimeChunk = getClosestSlimeChunk(island.getSpawnLocation());
+        Location slimeChunk = getClosestSlimeChunk(skyblock.getSpawnLocation());
 
         if (slimeChunk == null) {
             player.sendMessage(ChatColor.RED + "You have no slime chunks in your island, that's very unlucky.");
@@ -69,10 +71,10 @@ public class SlimeChunkExecuter implements CommandExecutor {
     private boolean isSlimeChunk(long seed, int cx, int cz) {
         Random rnd = new Random(
                 seed +
-                        (cx * cx * 0x4c1906) +
-                        (cx * 0x5ac0db) +
-                        (cz * cz) * 0x4307a7L +
-                        (cz * 0x5f24f) ^ 0x3ad8025f
+                (cx * cx * 0x4c1906) +
+                (cx * 0x5ac0db) +
+                (cz * cz) * 0x4307a7L +
+                (cz * 0x5f24f) ^ 0x3ad8025f
         );
         return rnd.nextInt(10) == 0;
     }

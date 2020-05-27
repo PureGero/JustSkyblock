@@ -13,8 +13,8 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Random;
 
 public class Generator extends BlockPopulator {
-    SkyBlock skyblock;
-    public Generator(SkyBlock b){
+    SkyblockPlugin skyblock;
+    public Generator(SkyblockPlugin b){
         skyblock = b;
     }
 
@@ -85,7 +85,7 @@ public class Generator extends BlockPopulator {
             for(int j=0;j<16;j++)
                 c.getWorld().setBiome(i | (c.getX() << 4), j | (c.getZ() << 4), Biome.SNOWY_TAIGA);
         
-        // Island
+        // Skyblock
         for(int i=0;i<3;i++)
             for(int j=0;j<3;j++)
                 for(int k=0;k<3;k++){
@@ -129,7 +129,7 @@ public class Generator extends BlockPopulator {
             for(int j=0;j<16;j++)
                 c.getWorld().setBiome(i | (c.getX() << 4), j | (c.getZ() << 4), Biome.DESERT);
         
-        // Island
+        // Skyblock
         for(int i=0;i<3;i++)
             for(int j=0;j<3;j++)
                 for(int k=0;k<3;k++)
@@ -145,7 +145,7 @@ public class Generator extends BlockPopulator {
             for(int j=0;j<16;j++)
                 c.getWorld().setBiome(i | (c.getX() << 4), j | (c.getZ() << 4), Biome.JUNGLE);
         
-        // Island
+        // Skyblock
         for(int i=0;i<3;i++)
             for(int k=0;k<3;k++){
                 c.getBlock(7+i, 62, 7+k).setType(Material.STONE);
@@ -166,7 +166,7 @@ public class Generator extends BlockPopulator {
             for(int j=0;j<16;j++)
                 c.getWorld().setBiome(i | (c.getX() << 4), j | (c.getZ() << 4), Biome.MOUNTAINS);
         
-        // Island
+        // Skyblock
         for(int i=0;i<3;i++)
             for(int k=0;k<3;k++)
                 for(int j=0;j<3;j++)
@@ -184,7 +184,7 @@ public class Generator extends BlockPopulator {
             for(int j=0;j<16;j++)
                 c.getWorld().setBiome(i | (c.getX() << 4), j | (c.getZ() << 4), Biome.PLAINS);
         
-        // Island
+        // Skyblock
         Random r = new Random(31416);
         Material[] crops = new Material[]{
                 Material.WHEAT, Material.WHEAT, Material.CARROTS, Material.POTATOES, Material.BEETROOTS
@@ -205,7 +205,7 @@ public class Generator extends BlockPopulator {
     }
 
     private void genNetherIsland(Chunk c) {
-        // Island
+        // Skyblock
         for(int i = 0; i < 3; i++)
             for(int k = 0; k < 5; k++)
                 for(int j = 0; j < 3; j++)

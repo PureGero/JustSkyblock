@@ -1,5 +1,5 @@
-name: SkyBlock
-main: just.skyblock.SkyBlock
+name: SkyblockPlugin
+main: just.skyblock.SkyblockPlugin
 version: 0.1.0
 description: Skyblock plugin
 author: PureGero
@@ -8,6 +8,8 @@ commands:
   skyblock:
     description: Skyblock commands
     aliases: [sky,sb,s,is,island]
+  tpa:
+    description: Tpa command
   spawn:
     description: Go to spawn
   money:

@@ -28,9 +28,9 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public class Listener implements org.bukkit.event.Listener {
-    SkyBlock skyblock;
+    SkyblockPlugin skyblock;
 
-    public Listener(SkyBlock b) {
+    public Listener(SkyblockPlugin b) {
         skyblock = b;
     }
 
@@ -39,19 +39,19 @@ public class Listener implements org.bukkit.event.Listener {
         e.getPlayer().sendMessage(ChatColor.GREEN + "Thank you for voting for us at " + e.getWebsite() + ".");
         e.getPlayer().sendMessage(ChatColor.GREEN + "You have earnt a lootbox as a reward!");
 
-        final Island i = Island.load(e.getPlayer().getUniqueId());
+        final Skyblock i = Skyblock.load(e.getPlayer().getUniqueId());
         i.crates += 1;
         i.votes += 1;
         Objective.vote(i);
 
-        Bukkit.getScheduler().runTask(SkyBlock.skyblock, () -> {
+        Bukkit.getScheduler().runTask(SkyblockPlugin.skyblock, () -> {
             Crate.newCrate(i); // Run in sync
         });
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void chat(AsyncPlayerChatEvent e) {
-        Rank c = Island.load(e.getPlayer().getUniqueId()).getRank();
+        Rank c = Skyblock.load(e.getPlayer().getUniqueId()).getRank();
 
         if (c != null && c.color != null) {
             e.setFormat(e.getFormat().replaceAll("\\%1\\$s", c.color + "[" + c.prefix + "] " + "\\%1\\$s" + ChatColor.RESET));
@@ -62,7 +62,7 @@ public class Listener implements org.bukkit.event.Listener {
     @EventHandler
     public void onPlayerQuit(final PlayerQuitEvent e) {
         // Remove player's skyblock data from memory
-        skyblock.getServer().getScheduler().runTask(skyblock, () -> Island.safeDispose(e.getPlayer().getUniqueId()));
+        skyblock.getServer().getScheduler().runTask(skyblock, () -> Skyblock.safeDispose(e.getPlayer().getUniqueId()));
     }
 
     @EventHandler
@@ -108,7 +108,7 @@ public class Listener implements org.bukkit.event.Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onBlockPlaceMonitor(BlockPlaceEvent e) {
         if (e.getBlock().getWorld() == skyblock.world) {
-            Island i = Island.load(e.getPlayer().getUniqueId());
+            Skyblock i = Skyblock.load(e.getPlayer().getUniqueId());
             i.blocksPlaced += 1;
             Objective.blocks(i);
 
@@ -140,7 +140,7 @@ public class Listener implements org.bukkit.event.Listener {
                     && Crate.isCrate(e.getBlock())) {
                 e.setCancelled(true);
                 Bukkit.getScheduler().runTaskLater(skyblock, () -> {
-                    Island i = Island.get(e.getBlock().getLocation());
+                    Skyblock i = Skyblock.get(e.getBlock().getLocation());
                     if (i != null)
                         Crate.removeCrate(i);
                     e.getBlock().setType(Material.AIR); // Just incase doesnt work
@@ -162,15 +162,14 @@ public class Listener implements org.bukkit.event.Listener {
     @EventHandler
     public void onCommand(PlayerCommandPreprocessEvent e) {
         if (e.getMessage().toLowerCase().startsWith("/tpa")) {
-            e.getPlayer().sendMessage(ChatColor.YELLOW + "/tpa is currently not avaliable.");
-            e.getPlayer().sendMessage(ChatColor.YELLOW + "Add someone to your skyblock with /s add <player>");
+
             e.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onTeleport(PlayerTeleportEvent e) {
-        Island i = Island.load(e.getPlayer().getUniqueId());
+        Skyblock i = Skyblock.load(e.getPlayer().getUniqueId());
         if (i.inIsland(e.getFrom()) && !i.inIsland(e.getTo())) {
             i.lx = e.getFrom().getX();
             i.ly = e.getFrom().getY();
@@ -191,10 +190,10 @@ public class Listener implements org.bukkit.event.Listener {
         WorldBorder worldBorder = new WorldBorder();
         worldBorder.world = ((CraftWorld) e.getTo().getWorld()).getHandle();
 
-        if (e.getTo().getWorld() == SkyBlock.skyblock.lobby) {
+        if (e.getTo().getWorld() == SkyblockPlugin.skyblock.lobby) {
             worldBorder.setSize(6000000);
             worldBorder.setCenter(0, 0);
-        } else if (world == SkyBlock.skyblock.world || world == SkyBlock.skyblock.nether) {
+        } else if (world == SkyblockPlugin.skyblock.world || world == SkyblockPlugin.skyblock.nether) {
             int x = ((e.getTo().getBlockX() >> 9) << 9) + 256;
             int z = ((e.getTo().getBlockZ() >> 9) << 9) + 256;
             worldBorder.setSize(512);
@@ -207,7 +206,7 @@ public class Listener implements org.bukkit.event.Listener {
         player.getHandle().playerConnection.sendPacket(packet);
 
         // Send it again after any world loading
-        Bukkit.getScheduler().runTaskLater(SkyBlock.skyblock, () -> {
+        Bukkit.getScheduler().runTaskLater(SkyblockPlugin.skyblock, () -> {
             player.getHandle().playerConnection.sendPacket(packet);
         }, 1L);
     }
@@ -235,18 +234,18 @@ public class Listener implements org.bukkit.event.Listener {
             if (d instanceof EntityDamageByEntityEvent) {
                 EntityDamageByEntityEvent b = (EntityDamageByEntityEvent) d;
                 if (b.getDamager() instanceof Player) {
-                    Island i = Island.load(b.getDamager().getUniqueId());
+                    Skyblock i = Skyblock.load(b.getDamager().getUniqueId());
                     i.mobKills += 1;
                     Objective.mobs(i);
                 }
             }
 
             if (e.getEntityType() == EntityType.CREEPER && d.getCause() == DamageCause.ENTITY_EXPLOSION) {
-                Island i = Island.get(e.getEntity().getLocation());
+                Skyblock i = Skyblock.get(e.getEntity().getLocation());
                 if (i != null) {
                     for (Player p : Bukkit.getOnlinePlayers())
                         if (i.inIsland(p.getLocation())) {
-                            Island j = Island.load(p.getUniqueId());
+                            Skyblock j = Skyblock.load(p.getUniqueId());
                             Objective.explodeCreeper(j);
                         }
                 }
@@ -254,11 +253,11 @@ public class Listener implements org.bukkit.event.Listener {
         }
 
         if (e.getEntityType() == EntityType.WITHER) {
-            Island i = Island.get(e.getEntity().getLocation());
+            Skyblock i = Skyblock.get(e.getEntity().getLocation());
             if (i != null) {
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     if (i.inIsland(p.getLocation())) {
-                        Island j = Island.load(p.getUniqueId());
+                        Skyblock j = Skyblock.load(p.getUniqueId());
                         Objective.killWither(j);
                     }
                 }
@@ -273,7 +272,7 @@ public class Listener implements org.bukkit.event.Listener {
             if (d instanceof EntityDamageByEntityEvent) {
                 EntityDamageByEntityEvent b = (EntityDamageByEntityEvent) d;
                 if (b.getDamager() instanceof Player) {
-                    Island i = Island.load(b.getDamager().getUniqueId());
+                    Skyblock i = Skyblock.load(b.getDamager().getUniqueId());
                     i.mobKills += 1;
                     Objective.mobs(i);
                 }
@@ -281,7 +280,7 @@ public class Listener implements org.bukkit.event.Listener {
         }
 
         if (e.getCause() == DamageCause.LIGHTNING && e.getEntity() instanceof Player) {
-            Objective.lightningStruck(Island.load(e.getEntity().getUniqueId()));
+            Objective.lightningStruck(Skyblock.load(e.getEntity().getUniqueId()));
         }
     }
 
@@ -292,7 +291,7 @@ public class Listener implements org.bukkit.event.Listener {
                 || e.getBrokenItem().getType() == Material.DIAMOND_SWORD
                 || e.getBrokenItem().getType() == Material.DIAMOND_HOE
                 || e.getBrokenItem().getType() == Material.DIAMOND_AXE) {
-            Island i = Island.load(e.getPlayer().getUniqueId());
+            Skyblock i = Skyblock.load(e.getPlayer().getUniqueId());
             Objective.breakDiamond(i);
         }
     }
@@ -300,11 +299,11 @@ public class Listener implements org.bukkit.event.Listener {
     @EventHandler
     public void onVehicleCreate(VehicleCreateEvent e) {
         if (e.getVehicle().getType() == EntityType.BOAT) {
-            Island i = Island.get(e.getVehicle().getLocation());
+            Skyblock i = Skyblock.get(e.getVehicle().getLocation());
             if (i != null) {
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     if (i.inIsland(p.getLocation())) {
-                        Island j = Island.load(p.getUniqueId());
+                        Skyblock j = Skyblock.load(p.getUniqueId());
                         Objective.placeBoat(j);
                     }
                 }
@@ -322,11 +321,11 @@ public class Listener implements org.bukkit.event.Listener {
         }
 
         if (c >= 27 * 64) {
-            Objective.fillChestCobble(Island.load(e.getPlayer().getUniqueId()));
+            Objective.fillChestCobble(Skyblock.load(e.getPlayer().getUniqueId()));
         }
 
         if (c >= 2 * 27 * 64) {
-            Objective.fillDoubleChestCobble(Island.load(e.getPlayer().getUniqueId()));
+            Objective.fillDoubleChestCobble(Skyblock.load(e.getPlayer().getUniqueId()));
         }
     }
 
@@ -336,7 +335,7 @@ public class Listener implements org.bukkit.event.Listener {
                 && e.getClickedBlock().getType() == Material.JUKEBOX
                 && e.getItem() != null
                 && e.getItem().getType().name().contains("MUSIC_DISC")) {
-            Objective.musicDisc(Island.load(e.getPlayer().getUniqueId()));
+            Objective.musicDisc(Skyblock.load(e.getPlayer().getUniqueId()));
         }
     }
 
@@ -346,11 +345,11 @@ public class Listener implements org.bukkit.event.Listener {
         Location to = e.getTo();
         if (from.getWorld() == skyblock.world && to.getWorld().getEnvironment() == World.Environment.NETHER) {
             e.setCancelled(true);
-            e.getPlayer().teleport(Island.get(from).getNetherSpawnLocation());
-            Objective.enterNether(Island.load(e.getPlayer().getUniqueId())); // Enter Nether Objective
+            e.getPlayer().teleport(Skyblock.get(from).getNetherSpawnLocation());
+            Objective.enterNether(Skyblock.load(e.getPlayer().getUniqueId())); // Enter Nether Objective
         } else if (from.getWorld() == skyblock.nether && to.getWorld().getEnvironment() == World.Environment.NORMAL) {
             e.setCancelled(true);
-            e.getPlayer().teleport(Island.get(from).getSpawnLocation());
+            e.getPlayer().teleport(Skyblock.get(from).getSpawnLocation());
         }
     }
 
@@ -360,17 +359,17 @@ public class Listener implements org.bukkit.event.Listener {
         Location to = e.getTo();
         if (from.getWorld() == skyblock.world && to.getWorld().getEnvironment() == World.Environment.NETHER) {
             e.setCancelled(true);
-            e.getEntity().teleport(Island.get(from).getNetherSpawnLocation());
+            e.getEntity().teleport(Skyblock.get(from).getNetherSpawnLocation());
         } else if (from.getWorld() == skyblock.nether && to.getWorld().getEnvironment() == World.Environment.NORMAL) {
             e.setCancelled(true);
-            e.getEntity().teleport(Island.get(from).getSpawnLocation());
+            e.getEntity().teleport(Skyblock.get(from).getSpawnLocation());
         }
     }
 
     @EventHandler
     public void onPlayerExpLevelChange(PlayerExpChangeEvent e) {
         if (e.getPlayer().getLevel() >= 100) {
-            Objective.exp100(Island.load(e.getPlayer().getUniqueId()));
+            Objective.exp100(Skyblock.load(e.getPlayer().getUniqueId()));
         }
     }
 
@@ -390,7 +389,7 @@ public class Listener implements org.bukkit.event.Listener {
                 }
 
                 if (item.getType() == Material.FISHING_ROD && item.getEnchantments().size() > 0 && rod.getEnchantments().size() > 0) {
-                    Objective.echantedRod(Island.load(e.getPlayer().getUniqueId()));
+                    Objective.echantedRod(Skyblock.load(e.getPlayer().getUniqueId()));
                 }
             }
         }
@@ -403,21 +402,21 @@ public class Listener implements org.bukkit.event.Listener {
                 && (e.getClickedBlock().getWorld().isThundering()
                 || (e.getClickedBlock().getWorld().getTime() > 12541
                 && e.getClickedBlock().getWorld().getTime() < 23458))) {
-            Objective.sleep(Island.load(e.getPlayer().getUniqueId()));
+            Objective.sleep(Skyblock.load(e.getPlayer().getUniqueId()));
         }
     }
 
     @EventHandler
     public void onCraftItem(CraftItemEvent e) {
         if (e.getRecipe().getResult().getType() == Material.ENCHANTING_TABLE) {
-            Objective.enchantingTable(Island.load(e.getWhoClicked().getUniqueId()));
+            Objective.enchantingTable(Skyblock.load(e.getWhoClicked().getUniqueId()));
         }
     }
 
     @EventHandler
     public void onEntityTame(EntityTameEvent e) {
         if (e.getEntity().getType() == EntityType.CAT || e.getEntity().getType() == EntityType.OCELOT) {
-            Objective.tameCat(Island.load(e.getOwner().getUniqueId()));
+            Objective.tameCat(Skyblock.load(e.getOwner().getUniqueId()));
         }
     }
 
@@ -428,7 +427,7 @@ public class Listener implements org.bukkit.event.Listener {
                 e.getNewEffect() != null &&
                 (e.getNewEffect().getAmplifier() >= 1 || e.getNewEffect().getType() == PotionEffectType.REGENERATION)
         ) {
-            Objective.fullPowerBeacon(Island.load(e.getEntity().getUniqueId()));
+            Objective.fullPowerBeacon(Skyblock.load(e.getEntity().getUniqueId()));
         }
     }
 
@@ -454,11 +453,11 @@ public class Listener implements org.bukkit.event.Listener {
             massiveSlaughterMap.put(uuid, slaughterCount);
 
             if (slaughterCount >= 8) {
-                Objective.kill8MobsAtOnce(Island.load(uuid));
+                Objective.kill8MobsAtOnce(Skyblock.load(uuid));
             }
 
             if (slaughterCount >= 20) {
-                Objective.kill20MobsAtOnce(Island.load(uuid));
+                Objective.kill20MobsAtOnce(Skyblock.load(uuid));
             }
         }
     }
@@ -472,7 +471,7 @@ public class Listener implements org.bukkit.event.Listener {
                 isEnchantedDiamond(playerInventory.getLeggings()) &&
                 isEnchantedDiamond(playerInventory.getBoots());
         if (hasFullEnchantedDiamondArmour) {
-            Objective.enchantedDiamondArmour(Island.load(playerInventory.getHolder().getUniqueId()));
+            Objective.enchantedDiamondArmour(Skyblock.load(playerInventory.getHolder().getUniqueId()));
         }
     }
 
@@ -485,7 +484,7 @@ public class Listener implements org.bukkit.event.Listener {
     @EventHandler
     public void onPlayerConsumeItem(PlayerItemConsumeEvent e) {
         if (e.getItem().getType() == Material.PUFFERFISH) {
-            Objective.eatPufferfish(Island.load(e.getPlayer().getUniqueId()));
+            Objective.eatPufferfish(Skyblock.load(e.getPlayer().getUniqueId()));
         }
     }
 
@@ -544,7 +543,7 @@ public class Listener implements org.bukkit.event.Listener {
                             c += 1;
                         }
                     }
-                    Objective.killShop(Island.load(p.getUniqueId()), c);
+                    Objective.killShop(Skyblock.load(p.getUniqueId()), c);
                 }
             }
 
@@ -554,7 +553,7 @@ public class Listener implements org.bukkit.event.Listener {
         if (e instanceof EntityDamageByEntityEvent && e.getEntity().hasPermission("skyblock.admin")) {
             Entity d = ((EntityDamageByEntityEvent) e).getDamager();
             if (d instanceof Player) {
-                Objective.punchStaff(Island.load(d.getUniqueId()));
+                Objective.punchStaff(Skyblock.load(d.getUniqueId()));
             }
         }
     }
@@ -565,7 +564,7 @@ public class Listener implements org.bukkit.event.Listener {
                 + ChatColor.BLUE + ", " + e.getPlayer().getName() + "!");
         e.getPlayer().sendMessage(ChatColor.AQUA + "/skyblock" + ChatColor.BLUE + " to start your own skyblock!");
 
-        Rank.giveRank(e.getPlayer(), Island.load(e.getPlayer().getUniqueId()).getRank());
+        Rank.giveRank(e.getPlayer(), Skyblock.load(e.getPlayer().getUniqueId()).getRank());
 
         if (e.getPlayer().getWorld() == skyblock.lobby) {
             e.getPlayer().teleport(skyblock.lobby.getSpawnLocation().add(0.5, 0.5, 0.5));
@@ -615,7 +614,7 @@ public class Listener implements org.bukkit.event.Listener {
         }
 
         if (e.getRightClicked().hasPermission("skyblock.admin") || e.getRightClicked().hasPermission("pure.helper")) {
-            Objective.punchStaff(Island.load(e.getPlayer().getUniqueId()));
+            Objective.punchStaff(Skyblock.load(e.getPlayer().getUniqueId()));
         }
     }
 
@@ -672,14 +671,14 @@ public class Listener implements org.bukkit.event.Listener {
                 if (b.getType() == Material.HOPPER) {
                     ItemStack i = item.getItemStack();
                     if (i.getType().name().contains("SPAWN_EGG") || i.getType() == Material.COW_SPAWN_EGG) { // if SPAWN_EGG changes, this'll detect it
-                        Objective.sellSpawnEgg(Island.load(player.getUniqueId()));
+                        Objective.sellSpawnEgg(Skyblock.load(player.getUniqueId()));
                     } else {
                         for (int k = 0; k < Shop.sellItems.size(); k++) {
                             if (Shop.sellItems.get(k).getType() == i.getType()
                                     && Shop.sellItems.get(k).getDurability() == i.getDurability()) {
 
                                 // Sold
-                                Island is = Island.load(player.getUniqueId());
+                                Skyblock is = Skyblock.load(player.getUniqueId());
                                 int coins = i.getAmount() * Shop.sellPrices.get(k);
                                 is.coins += coins;
                                 player.sendMessage(ChatColor.GOLD + " + " + coins + " coins");

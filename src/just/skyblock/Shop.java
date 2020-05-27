@@ -58,14 +58,14 @@ public class Shop implements InventoryHolder{
     public static ArrayList<Double> lootBoxChancesRare = new ArrayList<>();
     public static Location shopSpawn = null;
     public static void load(){
-        shopSpawn = SkyBlock.skyblock.lobby.getSpawnLocation();
-        cache = new File(SkyBlock.skyblock.getDataFolder(), CACHE_PATH);
+        shopSpawn = SkyblockPlugin.skyblock.lobby.getSpawnLocation();
+        cache = new File(SkyblockPlugin.skyblock.getDataFolder(), CACHE_PATH);
         cache.getParentFile().mkdirs();
-        Bukkit.getScheduler().runTaskAsynchronously(SkyBlock.skyblock, () -> {
+        Bukkit.getScheduler().runTaskAsynchronously(SkyblockPlugin.skyblock, () -> {
                 refreshCache();
                 if(downloadCache())
                     refreshCache();
-                Bukkit.getScheduler().runTaskTimer(SkyBlock.skyblock, Shop::villagerChecker, 0, 2*60*20L);
+                Bukkit.getScheduler().runTaskTimer(SkyblockPlugin.skyblock, Shop::villagerChecker, 0, 2*60*20L);
         });
     }
     private static boolean downloadCache(){
@@ -101,7 +101,7 @@ public class Shop implements InventoryHolder{
                 String[] a = h.split(",");
                 if(a[0].equalsIgnoreCase("shop_spawn") && a.length >= 4){
                     try{
-                        shopSpawn = new Location(SkyBlock.skyblock.lobby,Double.parseDouble(a[1]),
+                        shopSpawn = new Location(SkyblockPlugin.skyblock.lobby,Double.parseDouble(a[1]),
                                 Double.parseDouble(a[2]),Double.parseDouble(a[3]));
                     }catch(Exception e){C.log("Invalid syntax: " + h);}
                 }else if(a.length >= 2){
@@ -198,7 +198,7 @@ public class Shop implements InventoryHolder{
     
     private void prepareItems(){
         inv.clear();
-        Island island = Island.load(uuid);
+        Skyblock island = Skyblock.load(uuid);
         int index = ArrayUtils.indexOf(profs, prof);
         if (index < 0)
             return;
@@ -235,7 +235,7 @@ public class Shop implements InventoryHolder{
                 if(j >= buyItems.size())return;
                 ItemStack i = buyItems.get(j);
                 int c = buyPrices.get(j);
-                Island is = Island.load(e.getWhoClicked().getUniqueId());
+                Skyblock is = Skyblock.load(e.getWhoClicked().getUniqueId());
                 if(e.isShiftClick()){
                     int a = 0;
                     while(a < 64){

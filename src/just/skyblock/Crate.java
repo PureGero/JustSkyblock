@@ -16,10 +16,10 @@ import java.util.Random;
 public class Crate implements InventoryHolder {
 	
 	public static void islandCrateTicker(){
-		Bukkit.getScheduler().runTaskTimer(SkyBlock.skyblock, new Runnable(){
+		Bukkit.getScheduler().runTaskTimer(SkyblockPlugin.skyblock, new Runnable(){
 			public void run(){
 				for(Player p : Bukkit.getOnlinePlayers()){
-					Island i = Island.load(p.getUniqueId());
+					Skyblock i = Skyblock.load(p.getUniqueId());
 					if(i.inIsland(p.getLocation())){
 						if(i.crates > 0 || i.lastFreeCrate < today()){
 							makeCrate(i);
@@ -29,7 +29,7 @@ public class Crate implements InventoryHolder {
 			}
 		}, 5*60*20, 5*60*20);
 	}
-	public static void newCrate(Island i){
+	public static void newCrate(Skyblock i){
 		Player p = Bukkit.getPlayer(i.uuid);
 		if(p == null)return;
 		if(i.inIsland(p.getLocation())){
@@ -40,17 +40,17 @@ public class Crate implements InventoryHolder {
 	}
 	
 	public static boolean isCrate(Block b){
-		if(b.getWorld() == SkyBlock.skyblock.world){
-			Island i = Island.get(b.getLocation());
+		if(b.getWorld() == SkyblockPlugin.skyblock.world){
+			Skyblock i = Skyblock.get(b.getLocation());
 			return i != null && i.crateX == b.getX()
 					&& i.crateY == b.getY() && i.crateZ == b.getZ();
 		}
 		return false;
 	}
 	
-	public static void removeCrate(Island i){
+	public static void removeCrate(Skyblock i){
 		if(i.crateX != 0){ // Crate doesnt exist
-			Block b = SkyBlock.skyblock.world.getBlockAt(i.crateX, i.crateY, i.crateZ);
+			Block b = SkyblockPlugin.skyblock.world.getBlockAt(i.crateX, i.crateY, i.crateZ);
 			if(b.getType() == Material.CHEST)
 				b.setType(Material.AIR);
 			i.crateX = 0;
@@ -59,9 +59,9 @@ public class Crate implements InventoryHolder {
 		}
 	}
 	
-	public static void makeCrate(Island i){
+	public static void makeCrate(Skyblock i){
 		if(i.crateX == 0){ // Crate doesnt exist
-			Location il = new Location(SkyBlock.skyblock.world,i.x*512+256.5-8,65.5,i.z*512+256.5-8);
+			Location il = new Location(SkyblockPlugin.skyblock.world,i.x*512+256.5-8,65.5,i.z*512+256.5-8);
 			while(il.getBlockY() < 256 && il.getBlock().getType() != Material.AIR){
 				il = il.add(0, 1, 0);
 			}
@@ -69,7 +69,7 @@ public class Crate implements InventoryHolder {
 			i.crateY = il.getBlockY();
 			i.crateZ = il.getBlockZ();
 		}
-		Block b = SkyBlock.skyblock.world.getBlockAt(i.crateX, i.crateY, i.crateZ);
+		Block b = SkyblockPlugin.skyblock.world.getBlockAt(i.crateX, i.crateY, i.crateZ);
 		b.setType(Material.CHEST);
 		Firework fw = (Firework) b.getWorld().spawnEntity(b.getLocation(), EntityType.FIREWORK);
         FireworkMeta fwm = fw.getFireworkMeta();
@@ -80,7 +80,7 @@ public class Crate implements InventoryHolder {
         fw.setFireworkMeta(fwm); 
 	}
 	
-	Island island;
+	Skyblock island;
 	Inventory inv = null;
 	ItemStack[] item = new ItemStack[4];
 	Block block;
@@ -90,7 +90,7 @@ public class Crate implements InventoryHolder {
 	static final int[] POS = new int[]{10,12,14,16};
 	public Crate(Player p, Block chest){
 		block = chest;
-		island = Island.load(p.getUniqueId());
+		island = Skyblock.load(p.getUniqueId());
 		if(island.crates > 0 || island.lastFreeCrate < today()){
 			inv = Bukkit.createInventory(this, 27, "Loot Box");
 			Random r = new Random(island.crateSeed);
