@@ -12,7 +12,7 @@ Setup an Eclipse workspace with
 
     $ ./gradlew eclipse
 
-Setup and IntelliJ workspace with
+Setup an IntelliJ workspace with
 
     $ ./graldew idea
 
