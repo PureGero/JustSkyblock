@@ -10,11 +10,12 @@ import java.util.Random;
 public class JungleIslandGenerator extends BaseIslandGenerator {
 
     @Override
-    public void generate(Block center, Random random) {
-        // Biome
-        setBiome(center, Biome.JUNGLE);
+    public Biome getBiome() {
+        return Biome.JUNGLE;
+    }
 
-        // Skyblock
+    @Override
+    public void generate(Block center, Random random) {
         for (int i = -1; i <= 1; i++) {
             for (int k = -1; k <= 1; k++) {
                 center.getRelative(i, -2, k).setType(Material.STONE);

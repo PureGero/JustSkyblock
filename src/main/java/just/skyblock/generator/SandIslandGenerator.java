@@ -9,11 +9,12 @@ import java.util.Random;
 public class SandIslandGenerator extends BaseIslandGenerator {
 
     @Override
-    public void generate(Block center, Random random) {
-        // Biome
-        setBiome(center, Biome.DESERT);
+    public Biome getBiome() {
+        return Biome.DESERT;
+    }
 
-        // Skyblock
+    @Override
+    public void generate(Block center, Random random) {
         for (int i = -1; i <= 1; i++) {
             for (int j = -2; j <= 0; j++) {
                 for (int k = -1; k <= 1; k++) {

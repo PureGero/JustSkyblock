@@ -8,7 +8,7 @@ import org.bukkit.generator.BlockPopulator;
 
 import java.util.Random;
 
-public class IslandGenerator extends BlockPopulator {
+public class IslandBlockPopulator extends BlockPopulator {
     private static final BaseIslandGenerator[] overworldIslandGenerators = {
             new FarmIslandGenerator(),
             new JungleIslandGenerator(),
@@ -17,7 +17,7 @@ public class IslandGenerator extends BlockPopulator {
     };
 
     SkyblockPlugin skyblock;
-    public IslandGenerator(SkyblockPlugin b){
+    public IslandBlockPopulator(SkyblockPlugin b){
         skyblock = b;
     }
 
@@ -25,10 +25,13 @@ public class IslandGenerator extends BlockPopulator {
     public void populate(World world, Random random, Chunk chunk) {
         try {
             if (world == skyblock.world) {
-                if ((chunk.getX() & 31) == 15 && (chunk.getZ() & 31) == 15) {
-                    new MainIslandGenerator().generate(chunk.getBlock(8, 64, 8), random);
-                } else if ((Math.abs((chunk.getX() & 31) - 15) > 1 || Math.abs((chunk.getZ() & 31) - 15) > 1)) {
-                        generateRandomIsland(chunk, random);
+                BaseIslandGenerator islandGenerator = getIslandGenerator(world, chunk.getX(), chunk.getZ());
+                if (islandGenerator == null) {
+                    return;
+                } else if (islandGenerator instanceof MainIslandGenerator) {
+                    islandGenerator.generate(chunk.getBlock(8, 64, 8), random);
+                } else {
+                    islandGenerator.generate(chunk.getBlock(random.nextInt(16), 64, random.nextInt(16)), random);
                 }
             } else if (world == skyblock.nether) {
                 if ((chunk.getX() & 0x1F) == 0xF && (chunk.getZ() & 0x1F) == 0xF) {
@@ -41,12 +44,26 @@ public class IslandGenerator extends BlockPopulator {
         }
     }
 
-    private void generateRandomIsland(Chunk chunk, Random random) {
-        if (random.nextDouble() < 0.4) {
-            BaseIslandGenerator islandGenerator = overworldIslandGenerators[random.nextInt(overworldIslandGenerators.length)];
+    public BaseIslandGenerator getIslandGenerator(World world, int x, int z) {
+        Random random = new Random(hash(world.getSeed(), x, z));
 
-            islandGenerator.generate(chunk.getBlock(random.nextInt(16), 64, random.nextInt(16)), random);
+        if (world == skyblock.world) {
+            if ((x & 31) == 15 && (z & 31) == 15) {
+                return new MainIslandGenerator();
+            } else if ((Math.abs((x & 31) - 15) > 1 || Math.abs((z & 31) - 15) > 1)) {
+                if (random.nextDouble() < 0.4) {
+                    return overworldIslandGenerators[random.nextInt(overworldIslandGenerators.length)];
+                }
+            }
         }
+
+        return null;
+    }
+
+    private int hash(long seed, int x, int y){
+        int h = (int) seed + x*374761393 + y*668265263; //all constants are prime
+        h = (h^(h >> 13))*1274126177;
+        return h^(h >> 16);
     }
 
     private boolean isChunkEmpty(Chunk c) {

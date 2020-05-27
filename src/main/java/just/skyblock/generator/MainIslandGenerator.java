@@ -14,11 +14,12 @@ import java.util.Random;
 public class MainIslandGenerator extends BaseIslandGenerator {
 
     @Override
-    public void generate(Block center, Random random) {
-        // Biome
-        setBiome(center, Biome.SNOWY_TAIGA);
+    public Biome getBiome() {
+        return Biome.SNOWY_TAIGA;
+    }
 
-        // Skyblock
+    @Override
+    public void generate(Block center, Random random) {
         for (int i = -1; i <= 1; i++) {
             for (int j = -2; j <= 0; j++) {
                 for (int k = -1; k <= 1; k++) {
@@ -34,13 +35,13 @@ public class MainIslandGenerator extends BaseIslandGenerator {
         center.getWorld().generateTree(center.getRelative(-1, 1, 4).getLocation(), TreeType.TREE);
 
         // Chest
+        Directional directionalChest = (Directional) Material.CHEST.createBlockData();
+        directionalChest.setFacing(BlockFace.WEST);
+
         Block chest = center.getRelative(4, 1, 0);
-        chest.setType(Material.CHEST);
+        chest.setBlockData(directionalChest);
 
         Chest chestState = (Chest) chest.getState();
-        Directional direction = (Directional) chestState.getBlockData();
-        direction.setFacing(BlockFace.WEST);
-        chestState.setBlockData(direction);
 
         for (Material itemType : new Material[]{
                 Material.LAVA_BUCKET,

@@ -9,11 +9,12 @@ import java.util.Random;
 public class FarmIslandGenerator extends BaseIslandGenerator {
 
     @Override
-    public void generate(Block center, Random random) {
-        // Biome
-        setBiome(center, Biome.PLAINS);
+    public Biome getBiome() {
+        return Biome.PLAINS;
+    }
 
-        // Skyblock
+    @Override
+    public void generate(Block center, Random random) {
         Material[] crops = new Material[]{
                 Material.WHEAT, Material.WHEAT, Material.CARROTS, Material.POTATOES, Material.BEETROOTS
         };
