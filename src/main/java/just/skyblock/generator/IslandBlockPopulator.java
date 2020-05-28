@@ -1,9 +1,11 @@
 package just.skyblock.generator;
 
 import just.skyblock.SkyblockPlugin;
+import just.skyblock.generator.nether.*;
+import just.skyblock.generator.overworld.*;
 import org.bukkit.Chunk;
-import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.generator.BlockPopulator;
 
 import java.util.Random;
@@ -16,6 +18,14 @@ public class IslandBlockPopulator extends BlockPopulator {
             new StoneIslandGenerator()
     };
 
+    private static final BaseIslandGenerator[] netherIslandGenerators = {
+            new NetherrackIslandGenerator(),
+    };
+
+    private static final BaseIslandGenerator[] netherFortressIslandGenerators = {
+            new NetherwartFortressIslandGenerator(),
+    };
+
     SkyblockPlugin skyblock;
     public IslandBlockPopulator(SkyblockPlugin b){
         skyblock = b;
@@ -24,24 +34,30 @@ public class IslandBlockPopulator extends BlockPopulator {
     @Override
     public void populate(World world, Random random, Chunk chunk) {
         try {
-            if (world == skyblock.world) {
+            if (world == skyblock.world || world == skyblock.nether) {
                 BaseIslandGenerator islandGenerator = getIslandGenerator(world, chunk.getX(), chunk.getZ());
                 if (islandGenerator == null) {
                     return;
-                } else if (islandGenerator instanceof MainIslandGenerator) {
+                } else if (islandGenerator instanceof MainIslandGenerator || islandGenerator instanceof NetherPortalIslandGenerator) {
                     islandGenerator.generate(chunk.getBlock(8, 64, 8), random);
                 } else {
-                    islandGenerator.generate(chunk.getBlock(random.nextInt(16), 64, random.nextInt(16)), random);
-                }
-            } else if (world == skyblock.nether) {
-                if ((chunk.getX() & 0x1F) == 0xF && (chunk.getZ() & 0x1F) == 0xF) {
-                    genNetherIsland(chunk);
+                    Block center = getIslandCenterBlock(chunk);
+                    if (FortressBaseIslandGenerator.isInFortressStructure(center)) {
+                        islandGenerator = getFortressIslandGenerator(world, chunk.getX(), chunk.getZ());
+                    }
+                    islandGenerator.generate(center, random);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
         }
+    }
+
+    private Block getIslandCenterBlock(Chunk chunk) {
+        Random random = new Random(hash(chunk.getWorld().getSeed(), chunk.getX(), chunk.getZ()) ^ 569);
+
+        return chunk.getBlock(random.nextInt(16), 64, random.nextInt(16));
     }
 
     public BaseIslandGenerator getIslandGenerator(World world, int x, int z) {
@@ -55,9 +71,25 @@ public class IslandBlockPopulator extends BlockPopulator {
                     return overworldIslandGenerators[random.nextInt(overworldIslandGenerators.length)];
                 }
             }
+        } else if (world == skyblock.nether) {
+            if ((x & 31) == 15 && (z & 31) == 15) {
+                return new NetherPortalIslandGenerator();
+            } else if (FortressBaseIslandGenerator.isMainFortressChunk(world.getSeed(), x, z)) {
+                return new FortressMainIslandGenerator();
+            } else {
+                if (random.nextDouble() < 0.6) {
+                    return netherIslandGenerators[random.nextInt(netherIslandGenerators.length)];
+                }
+            }
         }
 
         return null;
+    }
+
+    public BaseIslandGenerator getFortressIslandGenerator(World world, int x, int z) {
+        Random random = new Random(hash(world.getSeed(), x, z) ^ 85331);
+
+        return netherFortressIslandGenerators[random.nextInt(netherFortressIslandGenerators.length)];
     }
 
     private int hash(long seed, int x, int y){
@@ -77,33 +109,5 @@ public class IslandBlockPopulator extends BlockPopulator {
             }
         }
         return true;
-    }
-
-    private void genNetherIsland(Chunk c) {
-        // Skyblock
-        for(int i = 0; i < 3; i++)
-            for(int k = 0; k < 5; k++)
-                for(int j = 0; j < 3; j++)
-                    c.getBlock(7 + i, 62 + j, 7 + k).setType(Material.NETHERRACK);
-        c.getBlock(8, 62, 8).setType(Material.BEDROCK);
-
-        // Nether brick
-        for (int i = 0; i < 3; i++)
-            c.getBlock(7 + i, 64, 7).setType(Material.NETHER_BRICKS);
-
-        // Portal Frame
-        for(int i = 0; i < 3; i++)
-            for(int k = 0; k < 4; k++)
-                c.getBlock(7 + i, 64 + k, 8).setType(Material.OBSIDIAN);
-
-        // Portal
-        for(int k = 0; k < 2; k++)
-            c.getBlock(8, 65 + k, 8).setType(Material.NETHER_PORTAL);
-
-        c.getBlock(8, 64, 10).setType(Material.LAVA);
-        c.getBlock(9, 64, 11).setType(Material.SOUL_SAND);
-        c.getBlock(9, 65, 11).setType(Material.NETHER_WART);
-        c.getBlock(7, 64, 11).setType(Material.NETHER_QUARTZ_ORE);
-        c.getBlock(7, 67, 7).setType(Material.GLOWSTONE);
     }
 }

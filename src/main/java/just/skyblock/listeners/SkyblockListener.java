@@ -55,7 +55,7 @@ public class SkyblockListener implements Listener {
             }
         }*/
 
-        if (e.getEntityType() == EntityType.PIG_ZOMBIE && e.getLocation().getWorld().getEnvironment() == World.Environment.NETHER) {
+        /*if (e.getEntityType() == EntityType.PIG_ZOMBIE && e.getLocation().getWorld().getEnvironment() == World.Environment.NETHER) {
             if (Math.random() < 0.01) { // Replace pig zombie with a wither skeleton
                 e.setCancelled(true);
                 e.getLocation().getWorld().spawnEntity(e.getLocation(), EntityType.WITHER_SKELETON);
@@ -63,7 +63,7 @@ public class SkyblockListener implements Listener {
                 e.setCancelled(true);
                 e.getLocation().getWorld().spawnEntity(e.getLocation(), EntityType.BLAZE);
             }
-        }
+        }*/
     }
 
     @EventHandler

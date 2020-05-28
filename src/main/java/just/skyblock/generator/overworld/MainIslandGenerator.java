@@ -1,5 +1,6 @@
-package just.skyblock.generator;
+package just.skyblock.generator.overworld;
 
+import just.skyblock.generator.BaseIslandGenerator;
 import org.bukkit.Material;
 import org.bukkit.TreeType;
 import org.bukkit.block.Biome;
