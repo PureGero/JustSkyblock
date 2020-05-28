@@ -1,8 +1,8 @@
 package just.skyblock.listeners;
 
+import just.skyblock.Objective;
 import just.skyblock.Skyblock;
 import just.skyblock.SkyblockPlugin;
-import just.skyblock.Objectives;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -23,10 +23,9 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.HashMap;
-import java.util.UUID;
 
 public class ObjectivesListener implements org.bukkit.event.Listener {
-    SkyblockPlugin skyblock;
+    private SkyblockPlugin skyblock;
 
     public ObjectivesListener(SkyblockPlugin b) {
         skyblock = b;
@@ -51,26 +50,26 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onBlockPlaceMonitor(BlockPlaceEvent e) {
         if (e.getBlock().getWorld() == skyblock.world) {
-            Skyblock i = Skyblock.load(e.getPlayer().getUniqueId());
-            i.blocksPlaced += 1;
-            Objectives.blocks(i);
+            Skyblock skyblock = Skyblock.load(e.getPlayer().getUniqueId());
+            skyblock.blocksPlaced += 1;
+            Objective.blocks(skyblock);
 
             if (e.getBlockPlaced().getType() == Material.COMPARATOR) {
-                Objectives.placeComparator(i);
+                Objective.PLACE_COMPARATOR.give(skyblock);
             }
 
             if (e.getBlockPlaced().getType() == Material.DIAMOND_BLOCK) {
-                Objectives.placeDiamondBlock(i);
+                Objective.PLACE_DIAMOND_BLOCK.give(skyblock);
             }
 
             if (e.getBlockPlaced().getY() == 255) {
-                Objectives.reachTop(i);
+                Objective.REACH_BUILD_HEIGHT_LIMIT.give(skyblock);
             }
 
             if (getSapling(e.getBlockPlaced().getType()) >= 0) {
-                i.saplings |= (1 << getSapling(e.getItemInHand().getType()));
-                if (i.saplings == 63) {
-                    Objectives.placeSaplings(i);
+                skyblock.saplings |= (1 << getSapling(e.getItemInHand().getType()));
+                if (skyblock.saplings == 63) {
+                    Objective.PLACE_EACH_SAPLING.give(skyblock);
                 }
             }
         }
@@ -86,7 +85,7 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
                 if (b.getDamager() instanceof Player) {
                     Skyblock i = Skyblock.load(b.getDamager().getUniqueId());
                     i.mobKills += 1;
-                    Objectives.mobs(i);
+                    Objective.mobs(i);
                 }
             }
 
@@ -94,8 +93,7 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
                 Skyblock skyblock = Skyblock.get(e.getEntity().getLocation());
                 if (skyblock != null) {
                     for (Player player : skyblock.getPlayers()) {
-                        Skyblock skyblockMember = Skyblock.load(player.getUniqueId());
-                        Objectives.explodeCreeper(skyblockMember);
+                        Objective.EXPLODE_CREEPER.give(player);
                     }
                 }
             }
@@ -105,8 +103,7 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
             Skyblock skyblock = Skyblock.get(e.getEntity().getLocation());
             if (skyblock != null) {
                 for (Player player : skyblock.getPlayers()) {
-                    Skyblock skyblockMember = Skyblock.load(player.getUniqueId());
-                    Objectives.killWither(skyblockMember);
+                    Objective.KILL_WITHER.give(player);
                 }
             }
         }
@@ -121,13 +118,13 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
                 if (b.getDamager() instanceof Player) {
                     Skyblock i = Skyblock.load(b.getDamager().getUniqueId());
                     i.mobKills += 1;
-                    Objectives.mobs(i);
+                    Objective.mobs(i);
                 }
             }
         }
 
         if (e.getCause() == DamageCause.LIGHTNING && e.getEntity() instanceof Player) {
-            Objectives.lightningStruck(Skyblock.load(e.getEntity().getUniqueId()));
+            Objective.STRUCK_BY_LIGHTNING.give(e.getEntity());
         }
     }
 
@@ -138,8 +135,7 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
                 || e.getBrokenItem().getType() == Material.DIAMOND_SWORD
                 || e.getBrokenItem().getType() == Material.DIAMOND_HOE
                 || e.getBrokenItem().getType() == Material.DIAMOND_AXE) {
-            Skyblock i = Skyblock.load(e.getPlayer().getUniqueId());
-            Objectives.breakDiamond(i);
+            Objective.BREAK_DIAMOND_TOOL.give(e.getPlayer());
         }
     }
 
@@ -149,8 +145,7 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
             Skyblock skyblock = Skyblock.get(e.getVehicle().getLocation());
             if (skyblock != null) {
                 for (Player player : skyblock.getPlayers()) {
-                    Skyblock skyblockMember = Skyblock.load(player.getUniqueId());
-                    Objectives.placeBoat(skyblockMember);
+                    Objective.PLACE_BOAT.give(player);
                 }
             }
         }
@@ -166,11 +161,11 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
         }
 
         if (c >= 27 * 64) {
-            Objectives.fillChestCobble(Skyblock.load(e.getPlayer().getUniqueId()));
+            Objective.FILL_CHEST_WITH_COBBLE.give(e.getPlayer());
         }
 
         if (c >= 2 * 27 * 64) {
-            Objectives.fillDoubleChestCobble(Skyblock.load(e.getPlayer().getUniqueId()));
+            Objective.FILL_DOUBLE_CHEST_WITH_COBBLE.give(e.getPlayer());
         }
     }
 
@@ -180,14 +175,14 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
                 && e.getClickedBlock().getType() == Material.JUKEBOX
                 && e.getItem() != null
                 && e.getItem().getType().name().contains("MUSIC_DISC")) {
-            Objectives.musicDisc(Skyblock.load(e.getPlayer().getUniqueId()));
+            Objective.PLAY_MUSIC_DISC.give(e.getPlayer());
         }
     }
 
     @EventHandler
     public void onPlayerExpLevelChange(PlayerExpChangeEvent e) {
         if (e.getPlayer().getLevel() >= 100) {
-            Objectives.exp100(Skyblock.load(e.getPlayer().getUniqueId()));
+            Objective.LEVEL_100.give(e.getPlayer());
         }
     }
 
@@ -206,8 +201,8 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
                     }
                 }
 
-                if (item.getType() == Material.FISHING_ROD && item.getEnchantments().size() > 0 && rod.getEnchantments().size() > 0) {
-                    Objectives.echantedRod(Skyblock.load(e.getPlayer().getUniqueId()));
+                if (item.getType() == Material.FISHING_ROD && !item.getEnchantments().isEmpty() && !rod.getEnchantments().isEmpty()) {
+                    Objective.REEL_ENCHANTED_FISHING_ROD_WITH_ENCHANTED_FISHING_ROD.give(e.getPlayer());
                 }
             }
         }
@@ -220,21 +215,21 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
                 && (e.getClickedBlock().getWorld().isThundering()
                 || (e.getClickedBlock().getWorld().getTime() > 12541
                 && e.getClickedBlock().getWorld().getTime() < 23458))) {
-            Objectives.sleep(Skyblock.load(e.getPlayer().getUniqueId()));
+            Objective.SLEEP.give(e.getPlayer());
         }
     }
 
     @EventHandler
     public void onCraftItem(CraftItemEvent e) {
         if (e.getRecipe().getResult().getType() == Material.ENCHANTING_TABLE) {
-            Objectives.enchantingTable(Skyblock.load(e.getWhoClicked().getUniqueId()));
+            Objective.CRAFT_ENCHANTING_TABLE.give(e.getWhoClicked());
         }
     }
 
     @EventHandler
     public void onEntityTame(EntityTameEvent e) {
         if (e.getEntity().getType() == EntityType.CAT || e.getEntity().getType() == EntityType.OCELOT) {
-            Objectives.tameCat(Skyblock.load(e.getOwner().getUniqueId()));
+            Objective.TAME_CAT.give((Player) e.getOwner());
         }
     }
 
@@ -245,11 +240,11 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
                 e.getNewEffect() != null &&
                 (e.getNewEffect().getAmplifier() >= 1 || e.getNewEffect().getType() == PotionEffectType.REGENERATION)
         ) {
-            Objectives.fullPowerBeacon(Skyblock.load(e.getEntity().getUniqueId()));
+            Objective.ACTIVATE_FULL_POWER_BEACON.give(e.getEntity());
         }
     }
 
-    private HashMap<UUID, Integer> massiveSlaughterMap = new HashMap<>();
+    private HashMap<Player, Integer> massiveSlaughterMap = new HashMap<>();
     private long lastMassiveSlaughterClear = 0;
 
     @EventHandler
@@ -259,23 +254,22 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
                 ((EntityDamageByEntityEvent) e.getEntity().getLastDamageCause()).getDamager() instanceof Player) {
 
             Player player = (Player) ((EntityDamageByEntityEvent) e.getEntity().getLastDamageCause()).getDamager();
-            UUID uuid = player.getUniqueId();
 
             if (lastMassiveSlaughterClear < System.currentTimeMillis() - 100) {
                 lastMassiveSlaughterClear = System.currentTimeMillis();
                 massiveSlaughterMap.clear();
             }
 
-            int slaughterCount = massiveSlaughterMap.getOrDefault(uuid, 0) + 1;
+            int slaughterCount = massiveSlaughterMap.getOrDefault(player, 0) + 1;
 
-            massiveSlaughterMap.put(uuid, slaughterCount);
+            massiveSlaughterMap.put(player, slaughterCount);
 
             if (slaughterCount >= 8) {
-                Objectives.kill8MobsAtOnce(Skyblock.load(uuid));
+                Objective.KILL_8_MOBS_AT_ONCE.give(player);
             }
 
             if (slaughterCount >= 20) {
-                Objectives.kill20MobsAtOnce(Skyblock.load(uuid));
+                Objective.KILL_20_MOBS_AT_ONCE.give(player);
             }
         }
     }
@@ -289,7 +283,7 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
                         isEnchantedDiamond(playerInventory.getLeggings()) &&
                         isEnchantedDiamond(playerInventory.getBoots());
         if (hasFullEnchantedDiamondArmour) {
-            Objectives.enchantedDiamondArmour(Skyblock.load(playerInventory.getHolder().getUniqueId()));
+            Objective.FULL_ENCHANTED_DIAMOND_ARMOUR.give(playerInventory.getHolder());
         }
     }
 
@@ -302,7 +296,7 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
     @EventHandler
     public void onPlayerConsumeItem(PlayerItemConsumeEvent e) {
         if (e.getItem().getType() == Material.PUFFERFISH) {
-            Objectives.eatPufferfish(Skyblock.load(e.getPlayer().getUniqueId()));
+            Objective.EAT_PUFFERFISH.give(e.getPlayer());
         }
     }
 }

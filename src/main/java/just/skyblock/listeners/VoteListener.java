@@ -3,7 +3,7 @@ package just.skyblock.listeners;
 import just.skyblock.Crate;
 import just.skyblock.Skyblock;
 import just.skyblock.SkyblockPlugin;
-import just.skyblock.Objectives;
+import just.skyblock.Objective;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
@@ -25,7 +25,7 @@ public class VoteListener implements Listener {
         Skyblock skyblock = Skyblock.load(e.getPlayer().getUniqueId());
         skyblock.crates += 1;
         skyblock.votes += 1;
-        Objectives.vote(skyblock);
+        Objective.vote(skyblock);
 
         Bukkit.getScheduler().runTask(plugin, () -> {
             Crate.newCrate(skyblock); // Run in sync

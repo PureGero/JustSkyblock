@@ -4,7 +4,7 @@ import just.skyblock.Crate;
 import just.skyblock.Rank;
 import just.skyblock.Skyblock;
 import just.skyblock.SkyblockPlugin;
-import just.skyblock.Objectives;
+import just.skyblock.Objective;
 import net.minecraft.server.v1_15_R1.PacketPlayOutWorldBorder;
 import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_15_R1.CraftWorld;
@@ -157,7 +157,7 @@ public class SkyblockListener implements Listener {
         if (from.getWorld() == plugin.world && to.getWorld().getEnvironment() == World.Environment.NETHER) {
             e.setCancelled(true);
             e.getPlayer().teleport(Skyblock.get(from).getNetherSpawnLocation());
-            Objectives.enterNether(Skyblock.load(e.getPlayer().getUniqueId())); // Enter Nether Objective
+            Objective.ENTER_NETHER.give(e.getPlayer()); // Enter Nether Objective
         } else if (from.getWorld() == plugin.nether && to.getWorld().getEnvironment() == World.Environment.NORMAL) {
             e.setCancelled(true);
             e.getPlayer().teleport(Skyblock.get(from).getSpawnLocation());

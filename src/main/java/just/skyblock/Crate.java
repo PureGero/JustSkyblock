@@ -158,7 +158,7 @@ public class Crate implements InventoryHolder {
 			island.cratesOpened += 1;
 			//if(isCreate)
 				removeCrate(island);
-			Objectives.lootboxes(island);
+			Objective.lootboxes(island);
 		}
 		HashMap<Integer, ItemStack> h = e.getInventory().addItem(items.toArray(new ItemStack[items.size()]));
 		for(ItemStack i : h.values()){

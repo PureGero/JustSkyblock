@@ -35,12 +35,12 @@ public class SkyblockPlugin extends JavaPlugin {
             for (Player p : Bukkit.getOnlinePlayers()) {
                 Skyblock i = Skyblock.load(p.getUniqueId());
                 i.ontime += 10;
-                Objectives.ontime(i);
+                Objective.ontime(i);
                 if (i.coins >= 1000000) {
-                    Objectives.millionCoins(i);
+                    Objective.HAVE_BILLION_COINS.give(i);
                 }
                 if (i.coins >= 1000000000) {
-                    Objectives.billionCoins(i);
+                    Objective.HAVE_BILLION_COINS.give(i);
                 }
             }
         }, 10 * 20, 10 * 20);

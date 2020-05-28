@@ -3,6 +3,7 @@ package just.skyblock;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.*;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -79,6 +80,10 @@ public class Skyblock {
             }
         }
         return null;
+    }
+
+    public static Skyblock load(Entity player) {
+        return load(player.getUniqueId());
     }
 
     public static Skyblock load(UUID u) {
@@ -235,11 +240,11 @@ public class Skyblock {
                 .deleteOnExit(); // Delete region file once server has exited
 
         if (resetCount >= 2)
-            Objectives.resetSkyblock(this);
+            Objective.RESET_SKYBLOCK_TWICE.give(this);
     }
 
     public void calcRank() {
-        int rank = (int) (Math.log(Objectives.completed(this) + 0.1 /*Stop 0*/) / Math.log(2));
+        int rank = (int) (Math.log(Objective.completedCount(this) + 0.1 /*Stop 0*/) / Math.log(2));
         if (rank < 0) rank = 0;
         if (rank >= Rank.ordered.length) rank = Rank.ordered.length - 1;
         Rank r = Rank.ordered[rank];

@@ -1,7 +1,7 @@
 package just.skyblock.listeners;
 
 import just.skyblock.*;
-import just.skyblock.Objectives;
+import just.skyblock.Objective;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -76,12 +76,22 @@ public class SpawnListener implements org.bukkit.event.Listener {
 
                 if (p != null) {
                     int c = 0;
+
                     for (Entity a : e.getEntity().getLocation().getChunk().getEntities()) {
                         if (a instanceof Villager && a.getLocation().getY() <= 0) {
                             c += 1;
                         }
                     }
-                    Objectives.killShop(Skyblock.load(p.getUniqueId()), c);
+
+                    if (c >= 1) {
+                        Objective.KILL_1_SHOP.give(p);
+                    }
+                    if (c >= 2) {
+                        Objective.KILL_2_SHOPS.give(p);
+                    }
+                    if (c >= 3) {
+                        Objective.KILL_3_SHOPS.give(p);
+                    }
                 }
             }
 
@@ -91,7 +101,7 @@ public class SpawnListener implements org.bukkit.event.Listener {
         if (e instanceof EntityDamageByEntityEvent && e.getEntity().hasPermission("skyblock.admin")) {
             Entity d = ((EntityDamageByEntityEvent) e).getDamager();
             if (d instanceof Player) {
-                Objectives.punchStaff(Skyblock.load(d.getUniqueId()));
+                Objective.CLICK_STAFF.give(d);
             }
         }
     }
@@ -152,7 +162,7 @@ public class SpawnListener implements org.bukkit.event.Listener {
         }
 
         if (e.getRightClicked().hasPermission("skyblock.admin") || e.getRightClicked().hasPermission("pure.helper")) {
-            Objectives.punchStaff(Skyblock.load(e.getPlayer().getUniqueId()));
+            Objective.CLICK_STAFF.give(e.getPlayer());
         }
     }
 
@@ -209,7 +219,7 @@ public class SpawnListener implements org.bukkit.event.Listener {
                 if (b.getType() == Material.HOPPER) {
                     ItemStack i = item.getItemStack();
                     if (i.getType().name().contains("SPAWN_EGG") || i.getType() == Material.COW_SPAWN_EGG) { // if SPAWN_EGG changes, this'll detect it
-                        Objectives.sellSpawnEgg(Skyblock.load(player.getUniqueId()));
+                        Objective.SELL_SPAWN_EGG.give(player);
                     } else {
                         for (int k = 0; k < Shop.sellItems.size(); k++) {
                             if (Shop.sellItems.get(k).getType() == i.getType()
@@ -222,7 +232,7 @@ public class SpawnListener implements org.bukkit.event.Listener {
                                 player.sendMessage(ChatColor.GOLD + " + " + coins + " coins");
                                 if (i.getType() == Material.COBBLESTONE) {
                                     is.cobbleSold += i.getAmount();
-                                    Objectives.cobblesell(is);
+                                    Objective.cobblesell(is);
                                 }
 
                                 item.remove();

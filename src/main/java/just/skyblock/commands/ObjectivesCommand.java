@@ -1,6 +1,6 @@
 package just.skyblock.commands;
 
-import just.skyblock.Objectives;
+import just.skyblock.Objective;
 import just.skyblock.Skyblock;
 import just.skyblock.SkyblockPlugin;
 import net.md_5.bungee.api.ChatColor;
@@ -43,31 +43,24 @@ public class ObjectivesCommand implements CommandExecutor {
 
         if (page == 0) {
             player.sendMessage(ChatColor.DARK_GREEN + "Hover to see objective info!");
-            Objectives.sendProgress(player, skyblock);
+            Objective.sendProgress(player, skyblock);
             player.sendMessage(ChatColor.GREEN + "View all with " + ChatColor.BOLD + "/objectives 1");
 
-        } else if (page < 0 || page > 1 + Objectives.length() / 10) {
+        } else if (page < 0 || page > 1 + Objective.values().length) {
             player.sendMessage(ChatColor.RED + "Invalid page");
 
         } else {
             player.sendMessage(ChatColor.DARK_GREEN + "View the next page with /objectives " + (page + 1));
 
-            for (int j = page * 10 - 10; j < page * 10 && j < Objectives.length(); j++) {
-                if (Objectives.has(skyblock, j)) {
-                    player.spigot().sendMessage(
-                            new ComponentBuilder("[\u2713] " + Objectives.getName(j))
-                            .color(ChatColor.GREEN)
-                            .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                                    new ComponentBuilder(Objectives.getDesc(j)).create()))
-                            .create());
-                } else {
-                    player.spigot().sendMessage(
-                            new ComponentBuilder("[\u2715] " + Objectives.getName(j))
-                            .color(ChatColor.RED)
-                            .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                                    new ComponentBuilder(Objectives.getDesc(j)).create()))
-                            .create());
-                }
+            for (int j = page * 10 - 10; j < page * 10 && j < Objective.values().length; j++) {
+                Objective objective = Objective.getById(j);
+
+                player.spigot().sendMessage(
+                        new ComponentBuilder("[\u2713] " + objective.getName())
+                        .color(objective.has(skyblock) ? ChatColor.GREEN : ChatColor.RED)
+                        .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                                new ComponentBuilder(objective.getDescription()).create()))
+                        .create());
             }
         }
 
