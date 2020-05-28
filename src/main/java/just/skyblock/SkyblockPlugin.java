@@ -58,7 +58,6 @@ public class SkyblockPlugin extends JavaPlugin {
 
     private void registerWorlds() {
         lobby = getServer().getWorlds().get(0);
-        lobby.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
 
         SkyblockChunkGenerator skyblockChunkGenerator = new SkyblockChunkGenerator(this);
 
@@ -66,7 +65,7 @@ public class SkyblockPlugin extends JavaPlugin {
         nether = getServer().createWorld(new WorldCreator("skyblock_nether").environment(World.Environment.NETHER).generator(skyblockChunkGenerator));
         end = getServer().createWorld(new WorldCreator("skyblock_the_end").environment(World.Environment.THE_END));
 
-        for (World w : new World[] {world, nether, end}) {
+        for (World w : new World[] {lobby, world, nether, end}) {
             w.setKeepSpawnInMemory(false);
             w.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
             w.setDifficulty(Difficulty.NORMAL);
