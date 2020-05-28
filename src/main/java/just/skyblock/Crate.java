@@ -1,6 +1,5 @@
 package just.skyblock;
 
-import just.skyblock.objectives.Objectives;
 import org.bukkit.*;
 import org.bukkit.FireworkEffect.Type;
 import org.bukkit.block.Block;

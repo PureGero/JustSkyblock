@@ -1,6 +1,6 @@
 package just.skyblock.commands;
 
-import just.skyblock.objectives.Objectives;
+import just.skyblock.Objectives;
 import just.skyblock.Skyblock;
 import just.skyblock.SkyblockPlugin;
 import net.md_5.bungee.api.ChatColor;

@@ -1,6 +1,5 @@
 package just.skyblock;
 
-import just.skyblock.objectives.Objectives;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.*;
 import org.bukkit.block.BlockFace;

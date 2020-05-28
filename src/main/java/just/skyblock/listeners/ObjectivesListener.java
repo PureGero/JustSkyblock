@@ -1,8 +1,8 @@
-package just.skyblock.objectives;
+package just.skyblock.listeners;
 
 import just.skyblock.Skyblock;
 import just.skyblock.SkyblockPlugin;
-import org.bukkit.Bukkit;
+import just.skyblock.Objectives;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;

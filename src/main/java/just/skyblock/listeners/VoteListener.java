@@ -3,7 +3,7 @@ package just.skyblock.listeners;
 import just.skyblock.Crate;
 import just.skyblock.Skyblock;
 import just.skyblock.SkyblockPlugin;
-import just.skyblock.objectives.Objectives;
+import just.skyblock.Objectives;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;

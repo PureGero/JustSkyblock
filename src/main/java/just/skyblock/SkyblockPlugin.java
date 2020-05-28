@@ -1,21 +1,15 @@
 package just.skyblock;
 
 import just.skyblock.commands.*;
-import just.skyblock.generator.IslandBlockPopulator;
 import just.skyblock.generator.SkyblockChunkGenerator;
 import just.skyblock.listeners.SkyblockListener;
 import just.skyblock.listeners.SpawnListener;
 import just.skyblock.listeners.VoteListener;
-import just.skyblock.objectives.Objectives;
-import just.skyblock.objectives.ObjectivesListener;
+import just.skyblock.listeners.ObjectivesListener;
 import org.bukkit.*;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
-import org.bukkit.generator.BlockPopulator;
-import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.*;
 
 public class SkyblockPlugin extends JavaPlugin {
     public static SkyblockPlugin plugin = null;
