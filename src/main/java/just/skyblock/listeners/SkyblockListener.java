@@ -1,10 +1,6 @@
 package just.skyblock.listeners;
 
-import just.skyblock.Crate;
-import just.skyblock.Rank;
-import just.skyblock.Skyblock;
-import just.skyblock.SkyblockPlugin;
-import just.skyblock.Objective;
+import just.skyblock.*;
 import net.minecraft.server.v1_15_R1.PacketPlayOutWorldBorder;
 import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_15_R1.CraftWorld;
@@ -14,7 +10,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.player.*;
 
@@ -39,30 +34,6 @@ public class SkyblockListener implements Listener {
     public void onPlayerQuit(final PlayerQuitEvent e) {
         // Remove player's skyblock data from memory
         plugin.getServer().getScheduler().runTask(plugin, () -> Skyblock.safeDispose(e.getPlayer().getUniqueId()));
-    }
-
-    @EventHandler
-    public void onCreatureSpawn(CreatureSpawnEvent e) {
-        /*f(e.getEntity() instanceof Monster){
-            for(Entity y : e.getLocation().getChunk().getEntities()){
-                if(y instanceof Monster){
-                    if(y.getLocation().distanceSquared(e.getEntity().getLocation()) <= 5){
-                        e.setCancelled(true);
-                        break;
-                    }
-                }
-            }
-        }*/
-
-        /*if (e.getEntityType() == EntityType.PIG_ZOMBIE && e.getLocation().getWorld().getEnvironment() == World.Environment.NETHER) {
-            if (Math.random() < 0.01) { // Replace pig zombie with a wither skeleton
-                e.setCancelled(true);
-                e.getLocation().getWorld().spawnEntity(e.getLocation(), EntityType.WITHER_SKELETON);
-            } else if (Math.random() < 0.05) { // Replace pig zombie with a blaze
-                e.setCancelled(true);
-                e.getLocation().getWorld().spawnEntity(e.getLocation(), EntityType.BLAZE);
-            }
-        }*/
     }
 
     @EventHandler

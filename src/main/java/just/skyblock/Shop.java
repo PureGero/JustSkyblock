@@ -25,9 +25,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-public class Shop implements InventoryHolder{
+public class Shop implements InventoryHolder {
     private static final String SHOP_URL = "https://docs.google.com/spreadsheets/d/1KyqFLUQYXmjvSzD3TFOn1mz5yL9r-rfq1IfX6ieKzAk/export?format=csv&id=1KyqFLUQYXmjvSzD3TFOn1mz5yL9r-rfq1IfX6ieKzAk&gid=0";
     private static final String CACHE_PATH = "shop_cache.txt";
+    public static ArrayList<ItemStack> sellItems = new ArrayList<>();
+    public static ArrayList<Integer> sellPrices = new ArrayList<>();
+    public static ArrayList<ItemStack> lootBoxItems = new ArrayList<>();
+    public static ArrayList<Integer> lootBoxValues = new ArrayList<>();
     private static File cache = null;
     private static int CHEST_SIZE = 9 * 3;
     private static Profession[] profs = new Profession[]{
@@ -45,46 +49,55 @@ public class Shop implements InventoryHolder{
             Profession.TOOLSMITH,
             Profession.WEAPONSMITH
     };
-
     private static ArrayList<ItemStack> buyItems = new ArrayList<>();
     private static ArrayList<Integer> buyPrices = new ArrayList<>();
-
-    public static ArrayList<ItemStack> sellItems = new ArrayList<>();
-    public static ArrayList<Integer> sellPrices = new ArrayList<>();
-
-    public static ArrayList<ItemStack> lootBoxItems = new ArrayList<>();
-    public static ArrayList<Integer> lootBoxValues = new ArrayList<>();
     private static ArrayList<Double> lootBoxChances = new ArrayList<>();
     private static ArrayList<Double> lootBoxChancesRare = new ArrayList<>();
     private static Location shopSpawn = null;
-    public static void load(){
+    private Inventory inv;
+    private Profession prof;
+    private UUID uuid;
+
+    public Shop(Player p, Villager v) {
+        uuid = p.getUniqueId();
+        prof = v.getProfession();
+        if (isValid()) {
+            inv = Bukkit.createInventory(this, CHEST_SIZE, v.getCustomName());
+            prepareItems();
+            p.openInventory(inv);
+        }
+    }
+
+    public static void load() {
         shopSpawn = SkyblockPlugin.plugin.lobby.getSpawnLocation();
         cache = new File(SkyblockPlugin.plugin.getDataFolder(), CACHE_PATH);
         cache.getParentFile().mkdirs();
         Bukkit.getScheduler().runTaskAsynchronously(SkyblockPlugin.plugin, () -> {
+            refreshCache();
+            if (downloadCache())
                 refreshCache();
-                if(downloadCache())
-                    refreshCache();
-                Bukkit.getScheduler().runTaskTimer(SkyblockPlugin.plugin, Shop::villagerChecker, 0, 2*60*20L);
+            Bukkit.getScheduler().runTaskTimer(SkyblockPlugin.plugin, Shop::villagerChecker, 0, 2 * 60 * 20L);
         });
     }
-    private static boolean downloadCache(){
-        try{
+
+    private static boolean downloadCache() {
+        try {
             C.log("Downloading shop data...");
             long t = System.currentTimeMillis();
             URL url = new URL(SHOP_URL);
             InputStream in = url.openStream();
             Files.copy(in, cache.toPath(), StandardCopyOption.REPLACE_EXISTING);
             in.close();
-            C.log("Downloaded shop data (" + (System.currentTimeMillis()-t) + "ms)");
-        }catch(Exception e){
+            C.log("Downloaded shop data (" + (System.currentTimeMillis() - t) + "ms)");
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
         return true;
     }
-    private static void refreshCache(){
-        try{
+
+    private static void refreshCache() {
+        try {
             DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(cache)));
             String h = in.readLine();
 
@@ -97,15 +110,17 @@ public class Shop implements InventoryHolder{
             lootBoxChances.clear();
             lootBoxChancesRare.clear();
 
-            while((h = in.readLine()) != null){
+            while ((h = in.readLine()) != null) {
                 String[] a = h.split(",");
-                if(a[0].equalsIgnoreCase("shop_spawn") && a.length >= 4){
-                    try{
-                        shopSpawn = new Location(SkyblockPlugin.plugin.lobby,Double.parseDouble(a[1]),
-                                Double.parseDouble(a[2]),Double.parseDouble(a[3]));
-                    }catch(Exception e){C.log("Invalid syntax: " + h);}
-                }else if(a.length >= 2){
-                    try{
+                if (a[0].equalsIgnoreCase("shop_spawn") && a.length >= 4) {
+                    try {
+                        shopSpawn = new Location(SkyblockPlugin.plugin.lobby, Double.parseDouble(a[1]),
+                                Double.parseDouble(a[2]), Double.parseDouble(a[3]));
+                    } catch (Exception e) {
+                        C.log("Invalid syntax: " + h);
+                    }
+                } else if (a.length >= 2) {
+                    try {
                         String id = a[0];
                         String cost = a[1].trim();
                         int buycoins = cost.length() == 0 ? 0 : Integer.parseInt(cost);
@@ -149,17 +164,19 @@ public class Shop implements InventoryHolder{
                                 lootBoxChancesRare.add(lootBoxChancesRare.get(lootBoxChancesRare.size() - 1) + lootBoxChanceRare);
                             }
                         }
-                    }catch(Exception e){C.log("Invalid syntax: " + h);}
+                    } catch (Exception e) {
+                        C.log("Invalid syntax: " + h);
+                    }
                 }
             }
             in.close();
             C.log("Loaded " + buyItems.size() + " shop items and " + sellItems.size() + " items to sell.");
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
-    private static void spawnVillager(int i){
+
+    private static void spawnVillager(int i) {
         Villager v = shopSpawn.getWorld().spawn(shopSpawn, Villager.class);
         v.setAdult();
         v.setProfession(profs[i]);
@@ -168,47 +185,33 @@ public class Shop implements InventoryHolder{
         v.setCustomName("Shop " + v.getProfession().name().toLowerCase());
         v.setCustomNameVisible(true);
     }
-    
-    public static void villagerChecker(){
-        boolean[] found = new boolean[(buyItems.size()-1)/CHEST_SIZE+1];
-        for(Villager v : shopSpawn.getWorld().getEntitiesByClass(Villager.class)){
+
+    public static void villagerChecker() {
+        boolean[] found = new boolean[(buyItems.size() - 1) / CHEST_SIZE + 1];
+        for (Villager v : shopSpawn.getWorld().getEntitiesByClass(Villager.class)) {
             int i = ArrayUtils.indexOf(profs, v.getProfession());
-            if(i >= 0 && i < found.length)
+            if (i >= 0 && i < found.length)
                 found[i] = true;
         }
-        for(int i=0;i<found.length;i++){
-            if(!found[i])
+        for (int i = 0; i < found.length; i++) {
+            if (!found[i])
                 spawnVillager(i);
         }
     }
 
-    private Inventory inv;
-    private Profession prof;
-    private UUID uuid;
-    
-    public Shop(Player p, Villager v){
-        uuid = p.getUniqueId();
-        prof = v.getProfession();
-        if (isValid()) {
-            inv = Bukkit.createInventory(this, CHEST_SIZE, v.getCustomName());
-            prepareItems();
-            p.openInventory(inv);
-        }
-    }
-    
-    private void prepareItems(){
+    private void prepareItems() {
         inv.clear();
         Skyblock island = Skyblock.load(uuid);
         int index = ArrayUtils.indexOf(profs, prof);
         if (index < 0)
             return;
-        int o = index*CHEST_SIZE;
-        for(int i=0;i<CHEST_SIZE && i+o < buyItems.size();i++){
-            ItemStack s = buyItems.get(i+o).clone();
-            int c = buyPrices.get(i+o);
+        int o = index * CHEST_SIZE;
+        for (int i = 0; i < CHEST_SIZE && i + o < buyItems.size(); i++) {
+            ItemStack s = buyItems.get(i + o).clone();
+            int c = buyPrices.get(i + o);
             ItemMeta m = s.getItemMeta();
             List<String> lore = m.getLore();
-            if(lore == null){
+            if (lore == null) {
                 lore = new ArrayList<String>();
             }
             lore.add("");
@@ -222,51 +225,51 @@ public class Shop implements InventoryHolder{
             inv.setItem(i, s);
         }
     }
-    
-    public void onClose(HumanEntity p){
+
+    public void onClose(HumanEntity p) {
         // Um, what do I need to do here? Who knows!
     }
 
     public void onClick(InventoryClickEvent e) {
-        if(e.getClickedInventory() != null && e.getClickedInventory().equals(inv)){
-            if(e.getCurrentItem() != null){
+        if (e.getClickedInventory() != null && e.getClickedInventory().equals(inv)) {
+            if (e.getCurrentItem() != null) {
                 e.setCancelled(true);
-                int j = e.getRawSlot() + ArrayUtils.indexOf(profs, prof)*CHEST_SIZE;
-                if(j >= buyItems.size())return;
+                int j = e.getRawSlot() + ArrayUtils.indexOf(profs, prof) * CHEST_SIZE;
+                if (j >= buyItems.size()) return;
                 ItemStack i = buyItems.get(j);
                 int c = buyPrices.get(j);
                 Skyblock is = Skyblock.load(e.getWhoClicked().getUniqueId());
-                if(e.isShiftClick()){
+                if (e.isShiftClick()) {
                     int a = 0;
-                    while(a < 64){
-                        if((a + 1)*c <= is.coins){
+                    while (a < 64) {
+                        if ((a + 1) * c <= is.coins) {
                             a += 1;
-                        }else break;
+                        } else break;
                     }
-                    if(a == 0){
+                    if (a == 0) {
                         e.getWhoClicked().sendMessage(ChatColor.RED + "You do not have enough coins!");
-                    }else{
+                    } else {
                         i = i.clone();
                         i.setAmount(a);
-                        HashMap<Integer,ItemStack> h = e.getWhoClicked().getInventory().addItem(i);
-                        if(h.size() > 0)
+                        HashMap<Integer, ItemStack> h = e.getWhoClicked().getInventory().addItem(i);
+                        if (h.size() > 0)
                             a -= h.get(0).getAmount();
-                        if(a == 0){
+                        if (a == 0) {
                             e.getWhoClicked().sendMessage(ChatColor.RED + "Your inventory is full!");
-                        }else{
-                            is.coins -= c*a;
-                            e.getWhoClicked().sendMessage(ChatColor.GOLD + " - " + c*a + " coins");
+                        } else {
+                            is.coins -= c * a;
+                            e.getWhoClicked().sendMessage(ChatColor.GOLD + " - " + c * a + " coins");
                             prepareItems();
                         }
                     }
-                }else if(e.isLeftClick()){
-                    if(c > is.coins){
+                } else if (e.isLeftClick()) {
+                    if (c > is.coins) {
                         e.getWhoClicked().sendMessage(ChatColor.RED + "You do not have enough coins!");
-                    }else{
-                        HashMap<Integer,ItemStack> h = e.getWhoClicked().getInventory().addItem(i.clone());
-                        if(h.size() > 0){
+                    } else {
+                        HashMap<Integer, ItemStack> h = e.getWhoClicked().getInventory().addItem(i.clone());
+                        if (h.size() > 0) {
                             e.getWhoClicked().sendMessage(ChatColor.RED + "Your inventory is full!");
-                        }else{
+                        } else {
                             is.coins -= c;
                             e.getWhoClicked().sendMessage(ChatColor.GOLD + " - " + c + " coins");
                             prepareItems();
@@ -274,11 +277,11 @@ public class Shop implements InventoryHolder{
                     }
                 }
             }
-        }else if(e.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY){
+        } else if (e.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
             e.setCancelled(true);
         }
     }
-    
+
     @Override
     public Inventory getInventory() {
         return inv;
