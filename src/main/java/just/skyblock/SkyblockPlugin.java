@@ -21,32 +21,15 @@ public class SkyblockPlugin extends JavaPlugin {
     public static SkyblockPlugin plugin = null;
     public World world = null;
     public World nether = null;
+    public World end = null;
     public World lobby = null;
 
     @Override
     public void onEnable() {
         plugin = this;
-        lobby = getServer().getWorlds().get(0);
-        lobby.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
-        //world = getServer().createWorld(new WorldCreator("skyblock").type(WorldType.FLAT).generatorSettings("2;0;1;"));
-        world = getServer().createWorld(new WorldCreator("skyblock").generator(new SkyblockChunkGenerator(this)));
-        world.setKeepSpawnInMemory(false);
-        world.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
-        nether = getServer().createWorld(new WorldCreator("skyblock_nether").environment(World.Environment.NETHER).generator(new ChunkGenerator() {
-            @Override
-            public ChunkData generateChunkData(World w, Random r, int x, int z, BiomeGrid biome) {
-                // Do nothing
-                return createChunkData(w);
-            }
 
-            @Override
-            public List<BlockPopulator> getDefaultPopulators(World world) {
-                return Arrays.asList(new IslandBlockPopulator(SkyblockPlugin.this));
-            }
-        }));
-        nether.setKeepSpawnInMemory(false);
-        nether.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
-        getServer().setSpawnRadius(0);
+        registerWorlds();
+
         Crate.islandCrateTicker();
         Shop.load();
         Skyblock.disposeAll(); // If we dont reference the Skyblock class at least once, onDisable will fail if no Islands get loaded
@@ -71,6 +54,25 @@ public class SkyblockPlugin extends JavaPlugin {
         registerCommands();
         registerTabCompleters();
         registerListeners();
+    }
+
+    private void registerWorlds() {
+        lobby = getServer().getWorlds().get(0);
+        lobby.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
+
+        SkyblockChunkGenerator skyblockChunkGenerator = new SkyblockChunkGenerator(this);
+
+        world = getServer().createWorld(new WorldCreator("skyblock").generator(skyblockChunkGenerator));
+        nether = getServer().createWorld(new WorldCreator("skyblock_nether").environment(World.Environment.NETHER).generator(skyblockChunkGenerator));
+        end = getServer().createWorld(new WorldCreator("skyblock_the_end").environment(World.Environment.THE_END));
+
+        for (World w : new World[] {world, nether, end}) {
+            w.setKeepSpawnInMemory(false);
+            w.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
+            w.setDifficulty(Difficulty.NORMAL);
+        }
+
+        getServer().setSpawnRadius(0);
     }
 
     private void registerCommands() {

@@ -21,7 +21,7 @@ public class SkyblockChunkGenerator extends ChunkGenerator {
     public ChunkData generateChunkData(World world, Random random, int x, int z, BiomeGrid biomeGrid) {
         ChunkData chunkData = createChunkData(world);
 
-        Biome biome = Biome.OCEAN;
+        Biome biome = getDefaultBiome(world);
 
         BaseIslandGenerator islandGenerator = islandBlockPopulator.getIslandGenerator(world, x, z);
 
@@ -43,5 +43,17 @@ public class SkyblockChunkGenerator extends ChunkGenerator {
     @Override
     public List<BlockPopulator> getDefaultPopulators(World world) {
         return Arrays.asList(islandBlockPopulator);
+    }
+
+    private Biome getDefaultBiome(World world) {
+        switch (world.getEnvironment()) {
+            case NETHER:
+                return Biome.NETHER;
+            case THE_END:
+                return Biome.THE_END;
+            case NORMAL:
+            default:
+                return Biome.OCEAN;
+        }
     }
 }
