@@ -91,25 +91,22 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
             }
 
             if (e.getEntityType() == EntityType.CREEPER && d.getCause() == DamageCause.ENTITY_EXPLOSION) {
-                Skyblock i = Skyblock.get(e.getEntity().getLocation());
-                if (i != null) {
-                    for (Player p : Bukkit.getOnlinePlayers())
-                        if (i.inIsland(p.getLocation())) {
-                            Skyblock j = Skyblock.load(p.getUniqueId());
-                            Objectives.explodeCreeper(j);
-                        }
+                Skyblock skyblock = Skyblock.get(e.getEntity().getLocation());
+                if (skyblock != null) {
+                    for (Player player : skyblock.getPlayers()) {
+                        Skyblock skyblockMember = Skyblock.load(player.getUniqueId());
+                        Objectives.explodeCreeper(skyblockMember);
+                    }
                 }
             }
         }
 
         if (e.getEntityType() == EntityType.WITHER) {
-            Skyblock i = Skyblock.get(e.getEntity().getLocation());
-            if (i != null) {
-                for (Player p : Bukkit.getOnlinePlayers()) {
-                    if (i.inIsland(p.getLocation())) {
-                        Skyblock j = Skyblock.load(p.getUniqueId());
-                        Objectives.killWither(j);
-                    }
+            Skyblock skyblock = Skyblock.get(e.getEntity().getLocation());
+            if (skyblock != null) {
+                for (Player player : skyblock.getPlayers()) {
+                    Skyblock skyblockMember = Skyblock.load(player.getUniqueId());
+                    Objectives.killWither(skyblockMember);
                 }
             }
         }
@@ -149,13 +146,11 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
     @EventHandler
     public void onVehicleCreate(VehicleCreateEvent e) {
         if (e.getVehicle().getType() == EntityType.BOAT) {
-            Skyblock i = Skyblock.get(e.getVehicle().getLocation());
-            if (i != null) {
-                for (Player p : Bukkit.getOnlinePlayers()) {
-                    if (i.inIsland(p.getLocation())) {
-                        Skyblock j = Skyblock.load(p.getUniqueId());
-                        Objectives.placeBoat(j);
-                    }
+            Skyblock skyblock = Skyblock.get(e.getVehicle().getLocation());
+            if (skyblock != null) {
+                for (Player player : skyblock.getPlayers()) {
+                    Skyblock skyblockMember = Skyblock.load(player.getUniqueId());
+                    Objectives.placeBoat(skyblockMember);
                 }
             }
         }
