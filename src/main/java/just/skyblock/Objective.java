@@ -85,7 +85,9 @@ public enum Objective {
     DUAL_WIELD_SWORDS("Akimbo", "Attack a mob with dual wield enchanted diamond swords"),
     NAME_PARROT("Say hello to my little friend", "Name a Parrot Scarface"),
     FEED_BABY_VILLAGER_POTATO("Junkfood", "Attempt to feed a Baked Potato to a Baby Villager"),
-    KILL_100_PANDAS("Endangered", "Kill 100 Pandas");
+    KILL_100_PANDAS("Endangered", "Kill 100 Pandas"),
+    FALL_256_BLOCKS("88mph", "Fall 256 blocks without dying"),
+    FROST_WALKING("Let it go", "Walk on water with Frost Walker Boots");
 
     private final String name;
     private final String description;

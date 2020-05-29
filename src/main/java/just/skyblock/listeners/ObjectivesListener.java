@@ -7,6 +7,8 @@ import just.skyblock.SkyblockPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
+import org.bukkit.block.BlockFace;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -374,6 +376,40 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
             if(e.getRightClicked().getType() == EntityType.VILLAGER && ((Ageable) e.getRightClicked()).isAdult() != true ) {
                 Objective.FEED_BABY_VILLAGER_POTATO.give(e.getPlayer());
             }           
+        }
+    }
+    
+    private HashMap<Player, Integer> fallingStartYs = new HashMap<>();
+    
+    @EventHandler
+    public void onFall(PlayerMoveEvent event) {
+        Player player = (Player) event.getPlayer();
+        if (event.getPlayer().getVelocity().getY() < -0.1) {
+            
+            if (fallingStartYs.containsKey(player)) {
+            }
+            else {
+                fallingStartYs.put(player, player.getLocation().getBlockY());
+            }
+        }
+
+        else {skyblock.getServer().getScheduler().runTask(skyblock, () -> {
+            if(event.getPlayer().isDead() == true) {
+                fallingStartYs.remove(player);
+            }
+            else if (fallingStartYs.containsKey(player)) {
+                int startY = fallingStartYs.remove(player);
+                int currentY = player.getLocation().getBlockY();
+                if((startY-currentY >= 255)) {
+                    Objective.FALL_256_BLOCKS.give(player);
+                }
+            }
+            }); 
+        }
+        if (event.getPlayer().getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.FROSTED_ICE) {
+            if (event.getPlayer().getInventory().getBoots().getEnchantments().containsKey(Enchantment.FROST_WALKER)) {
+                Objective.FROST_WALKING.give(player);
+            }
         }
     }
 }
