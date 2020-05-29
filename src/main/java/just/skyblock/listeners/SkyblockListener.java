@@ -37,7 +37,7 @@ public class SkyblockListener implements Listener {
     }
 
     @EventHandler
-    public void onBlockBreak(final BlockBreakEvent e) {
+    public void onBlockBreak(BlockBreakEvent e) {
         if (e.getBlock().getWorld() == plugin.world) {
             if (e.getBlock().getType() == Material.CHEST
                     && Crate.isCrate(e.getBlock())) {
@@ -48,18 +48,21 @@ public class SkyblockListener implements Listener {
                         Crate.removeCrate(i);
                     e.getBlock().setType(Material.AIR); // Just incase doesnt work
                 }, 1);
-            } else {
-                Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                    Location loc = e.getBlock().getLocation().add(0.5, 0.5, 0.5);
-                    for (Item i : loc.getWorld().getEntitiesByClass(Item.class)) {
-                        if (i.getLocation().distanceSquared(loc) < 0.25) { // Squared more efficient
-                            i.setPickupDelay(0);
-                            i.teleport(e.getPlayer().getEyeLocation());
-                        }
-                    }
-                }, 1);
             }
         }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void pickupBlockDropsInstantly(BlockBreakEvent e) {
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            Location loc = e.getBlock().getLocation().add(0.5, 0.5, 0.5);
+            for (Item i : loc.getWorld().getEntitiesByClass(Item.class)) {
+                if (i.getLocation().distanceSquared(loc) < 0.25) { // Squared more efficient
+                    i.setPickupDelay(0);
+                    i.teleport(e.getPlayer().getEyeLocation());
+                }
+            }
+        }, 1);
     }
 
     @EventHandler
