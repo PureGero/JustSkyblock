@@ -6,6 +6,7 @@ import just.skyblock.SkyblockPlugin;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
@@ -160,6 +161,22 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
                     }
                 if(player != null){
                     Objective.POISON_WITCH.give(player);
+                }
+            }
+        }
+        if (e.getCause() == DamageCause.ENTITY_ATTACK) {
+            EntityDamageEvent d = e.getEntity().getLastDamageCause();
+            if (d instanceof EntityDamageByEntityEvent) {
+                EntityDamageByEntityEvent b = (EntityDamageByEntityEvent) d;
+                if (b.getDamager() instanceof Player) {
+                    Player player = (Player) b.getDamager();
+                    if (player.getInventory().getItemInMainHand().getType().equals(Material.DIAMOND_SWORD)
+                            && player.getInventory().getItemInMainHand().getEnchantments().isEmpty() == false) {
+                            if (player.getInventory().getItemInOffHand().getType().equals(Material.DIAMOND_SWORD)
+                                    && player.getInventory().getItemInOffHand().getEnchantments().isEmpty() == false) {
+                                Objective.DUAL_WIELD_SWORDS.give(player);
+                            }
+                    } 
                 }
             }
         }
@@ -334,6 +351,22 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
     public void onPlayerConsumeItem(PlayerItemConsumeEvent e) {
         if (e.getItem().getType() == Material.PUFFERFISH) {
             Objective.EAT_PUFFERFISH.give(e.getPlayer());
+        }
+    }
+    
+    @EventHandler
+    public void onClickEntity(PlayerInteractEntityEvent e) {
+        if (e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.NAME_TAG)) { 
+            if(e.getPlayer().getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals("Scarface")) {
+                if (e.getRightClicked().getType() == EntityType.PARROT) {
+                    Objective.NAME_PARROT.give(e.getPlayer());
+                }
+            }   
+        }
+        if (e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.BAKED_POTATO)) {   
+            if(e.getRightClicked().getType() == EntityType.VILLAGER && ((Ageable) e.getRightClicked()).isAdult() != true ) {
+                Objective.POTATO_BABY_VILLAGER.give(e.getPlayer());
+            }           
         }
     }
 }

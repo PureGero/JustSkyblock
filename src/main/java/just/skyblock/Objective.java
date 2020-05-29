@@ -81,7 +81,10 @@ public enum Objective {
     KILL_WITHER("The Beginning.", "Kill the wither"),
 	DROWN_BAT("Why so serious?", "Drown a bat"),
     RIDE_PIG_INTO_VOID("Dr. Strangelove", "Ride a pig into the void"),
-    POISON_WITCH("A taste of her own medicine", "Poison a Witch");
+    POISON_WITCH("A taste of her own medicine", "Poison a Witch"),
+    DUAL_WIELD_SWORDS("Akimbo", "Attack a mob with dual wield enchanted diamond swords"),
+    NAME_PARROT("Say hello to my little friend", "Name a Parrot Scarface"),
+    POTATO_BABY_VILLAGER("Junkfood", "Attempt to feed a baked potato to a baby villager");
 
     private final String name;
     private final String description;
