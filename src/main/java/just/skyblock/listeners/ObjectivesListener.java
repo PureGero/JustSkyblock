@@ -6,6 +6,7 @@ import just.skyblock.SkyblockPlugin;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Statistic;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -124,6 +125,12 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
                 }
 			}
 		}
+	   if(e.getEntityType() == EntityType.PANDA && e.getEntity().getKiller() != null) {
+	       Player player = (Player) e.getEntity().getKiller();
+	       if(player.getStatistic(Statistic.KILL_ENTITY, EntityType.PANDA) >= 100) {
+	           Objective.KILL_100_PANDAS.give(player);
+	       }
+	   }
     }
 
     @EventHandler
