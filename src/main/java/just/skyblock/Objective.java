@@ -79,7 +79,8 @@ public enum Objective {
     KILL_20_MOBS_AT_ONCE("Grim Reaper", "Slay 20 mobs at once with sweeping"),
     EAT_PUFFERFISH("Fugu Chuudoku", "Eat a pufferfish"),
     KILL_WITHER("The Beginning.", "Kill the wither"),
-	DROWN_BAT("Why so serious?", "Drown a bat");
+	DROWN_BAT("Why so serious?", "Drown a bat"),
+    RIDE_PIG_INTO_VOID("Dr. Strangelove", "Ride a pig into the void");
 
     private final String name;
     private final String description;

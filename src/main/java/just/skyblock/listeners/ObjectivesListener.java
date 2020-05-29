@@ -142,6 +142,13 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
         if (e.getCause() == DamageCause.LIGHTNING && e.getEntity() instanceof Player) {
             Objective.STRUCK_BY_LIGHTNING.give(e.getEntity());
         }
+        if(e.getCause() == DamageCause.VOID) {
+            if(e.getEntity().getVehicle() != null && e.getEntity().getVehicle().getType() == EntityType.PIG) {
+                for(Entity passenger : e.getEntity().getVehicle().getPassengers()) {
+                    Objective.RIDE_PIG_INTO_VOID.give(passenger);
+                }
+            }
+        }
     }
 
     @EventHandler
