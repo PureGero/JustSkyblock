@@ -84,7 +84,7 @@ public enum Objective {
     POISON_WITCH("A taste of her own medicine", "Poison a Witch"),
     DUAL_WIELD_SWORDS("Akimbo", "Attack a mob with dual wield enchanted diamond swords"),
     NAME_PARROT("Say hello to my little friend", "Name a Parrot Scarface"),
-    POTATO_BABY_VILLAGER("Junkfood", "Attempt to feed a baked potato to a baby villager");
+    FEED_BABY_VILLAGER_POTATO("Junkfood", "Attempt to feed a Baked Potato to a Baby Villager");
 
     private final String name;
     private final String description;

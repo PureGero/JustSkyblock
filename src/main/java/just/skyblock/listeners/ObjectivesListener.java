@@ -365,7 +365,7 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
         }
         if (e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.BAKED_POTATO)) {   
             if(e.getRightClicked().getType() == EntityType.VILLAGER && ((Ageable) e.getRightClicked()).isAdult() != true ) {
-                Objective.POTATO_BABY_VILLAGER.give(e.getPlayer());
+                Objective.FEED_BABY_VILLAGER_POTATO.give(e.getPlayer());
             }           
         }
     }
