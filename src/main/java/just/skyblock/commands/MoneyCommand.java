@@ -10,10 +10,8 @@ import org.bukkit.entity.Player;
 
 public class MoneyCommand implements CommandExecutor {
 
-    private final SkyblockPlugin plugin;
-
     public MoneyCommand(SkyblockPlugin plugin) {
-        this.plugin = plugin;
+        
     }
 
     @Override

@@ -7,6 +7,9 @@ eclipse
 *.ipr
 *.iws
 .DS_Store
+.metadata
+bin
+*~
 
 build
 .gradle

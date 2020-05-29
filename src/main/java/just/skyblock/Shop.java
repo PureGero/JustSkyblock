@@ -98,8 +98,7 @@ public class Shop implements InventoryHolder {
 
     private static void refreshCache() {
         try {
-            DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(cache)));
-            String h = in.readLine();
+            List<String> lines = Files.readAllLines(cache.toPath());
 
             buyItems.clear();
             buyPrices.clear();
@@ -110,14 +109,14 @@ public class Shop implements InventoryHolder {
             lootBoxChances.clear();
             lootBoxChancesRare.clear();
 
-            while ((h = in.readLine()) != null) {
-                String[] a = h.split(",");
+            for (String line : lines) {
+                String[] a = line.split(",");
                 if (a[0].equalsIgnoreCase("shop_spawn") && a.length >= 4) {
                     try {
                         shopSpawn = new Location(SkyblockPlugin.plugin.lobby, Double.parseDouble(a[1]),
                                 Double.parseDouble(a[2]), Double.parseDouble(a[3]));
                     } catch (Exception e) {
-                        C.log("Invalid syntax: " + h);
+                        C.log("Invalid syntax: " + line);
                     }
                 } else if (a.length >= 2) {
                     try {
@@ -165,12 +164,12 @@ public class Shop implements InventoryHolder {
                             }
                         }
                     } catch (Exception e) {
-                        C.log("Invalid syntax: " + h);
+                        C.log("Invalid syntax: " + line);
                     }
                 }
             }
-            in.close();
-            C.log("Loaded " + buyItems.size() + " shop items and " + sellItems.size() + " items to sell.");
+            
+            SkyblockPlugin.plugin.getLogger().info("Loaded " + buyItems.size() + " shop items and " + sellItems.size() + " items to sell.");
         } catch (Exception e) {
             e.printStackTrace();
         }

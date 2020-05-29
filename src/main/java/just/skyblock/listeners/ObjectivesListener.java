@@ -4,7 +4,6 @@ import just.skyblock.Objective;
 import just.skyblock.Skyblock;
 import just.skyblock.SkyblockPlugin;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
 import org.bukkit.block.BlockFace;

@@ -77,10 +77,10 @@ public class Rank {
             for (String s : m.getPermissions().keySet())
                 m.unsetPermission(s);
         }
-        if (Bukkit.getScoreboardManager().getMainScoreboard().getPlayerTeam(p) != null)
-            Bukkit.getScoreboardManager().getMainScoreboard().getPlayerTeam(p).removePlayer(p);
+        if (Bukkit.getScoreboardManager().getMainScoreboard().getTeam(p.getName()) != null)
+            Bukkit.getScoreboardManager().getMainScoreboard().getTeam(p.getName()).removeEntry(p.getName());
         if (r.team != null)
-            r.team.addPlayer(p);
+            r.team.addEntry(p.getName());
         if (r == MODERATOR || r == ADMIN) {
             for (String s : modPerms)
                 m.setPermission(s, true);

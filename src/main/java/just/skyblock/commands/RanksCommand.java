@@ -9,10 +9,8 @@ import org.bukkit.entity.Player;
 
 public class RanksCommand implements CommandExecutor {
 
-    private final SkyblockPlugin plugin;
-
     public RanksCommand(SkyblockPlugin plugin) {
-        this.plugin = plugin;
+        
     }
 
     @Override

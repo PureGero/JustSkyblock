@@ -5,7 +5,6 @@ import just.skyblock.Skyblock;
 import just.skyblock.SkyblockPlugin;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -14,10 +13,8 @@ import org.bukkit.entity.Player;
 
 public class PayCommand implements CommandExecutor {
 
-    private final SkyblockPlugin plugin;
-
     public PayCommand(SkyblockPlugin plugin) {
-        this.plugin = plugin;
+        
     }
 
     @Override
@@ -35,14 +32,14 @@ public class PayCommand implements CommandExecutor {
             return false;
         }
 
-        OfflinePlayer receiving = Bukkit.getOfflinePlayer(args[0]);
+        Player receiving = Bukkit.getPlayer(args[0]);
 
-        if (receiving.getFirstPlayed() == 0) {
-            player.sendMessage(ChatColor.RED + args[0] + " has never played on this server!");
+        if (receiving == null) {
+            player.sendMessage(ChatColor.RED + args[0] + " is not online!");
             return false;
         }
 
-        if (receiving.getUniqueId().equals(player.getUniqueId())) {
+        if (receiving.equals(player)) {
             player.sendMessage(ChatColor.RED + "You cannot pay yourself!");
             return false;
         }

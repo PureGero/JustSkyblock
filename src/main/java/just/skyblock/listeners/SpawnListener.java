@@ -222,8 +222,7 @@ public class SpawnListener implements org.bukkit.event.Listener {
                         Objective.SELL_SPAWN_EGG.give(player);
                     } else {
                         for (int k = 0; k < Shop.sellItems.size(); k++) {
-                            if (Shop.sellItems.get(k).getType() == i.getType()
-                                    && Shop.sellItems.get(k).getDurability() == i.getDurability()) {
+                            if (Shop.sellItems.get(k).getType() == i.getType()) {
 
                                 // Sold
                                 Skyblock is = Skyblock.load(player.getUniqueId());

@@ -13,10 +13,8 @@ import java.util.Random;
 
 public class SlimeChunkCommand implements CommandExecutor {
 
-    private final SkyblockPlugin plugin;
-
     public SlimeChunkCommand(SkyblockPlugin plugin) {
-        this.plugin = plugin;
+        
     }
 
     @Override

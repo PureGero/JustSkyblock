@@ -1,6 +1,5 @@
 package just.skyblock.generator.nether;
 
-import just.skyblock.SkyblockPlugin;
 import net.minecraft.server.v1_15_R1.*;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;

@@ -98,7 +98,7 @@ public class IslandBlockPopulator extends BlockPopulator {
         return h^(h >> 16);
     }
 
-    private boolean isChunkEmpty(Chunk c) {
+    /*private boolean isChunkEmpty(Chunk c) {
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 for (int y = 60; y < 100; y++) {
@@ -109,5 +109,5 @@ public class IslandBlockPopulator extends BlockPopulator {
             }
         }
         return true;
-    }
+    }*/
 }

@@ -13,10 +13,8 @@ import org.bukkit.entity.Player;
 
 public class ObjectivesCommand implements CommandExecutor {
 
-    private final SkyblockPlugin plugin;
-
     public ObjectivesCommand(SkyblockPlugin plugin) {
-        this.plugin = plugin;
+        
     }
 
     @Override

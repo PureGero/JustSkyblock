@@ -79,6 +79,7 @@ public class Skyblock {
         for (Skyblock i : cache.values()) {
             if (i.x == x && i.z == z) {
                 return i;
+                
             }
         }
         return null;
@@ -335,7 +336,7 @@ public class Skyblock {
 
         JSONObject o = new JSONObject();
         o.put("uuid", uuid.toString());
-
+        
         JSONArray a = new JSONArray();
         for (UUID u : allowed) a.add(u.toString());
         o.put("allowed", a);

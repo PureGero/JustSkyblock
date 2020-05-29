@@ -8,10 +8,8 @@ import org.bukkit.command.CommandSender;
 
 public class TpaCommand implements CommandExecutor {
 
-    private final SkyblockPlugin plugin;
-
     public TpaCommand(SkyblockPlugin plugin) {
-        this.plugin = plugin;
+        
     }
 
     @Override
