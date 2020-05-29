@@ -327,7 +327,8 @@ public class Skyblock {
         cache.remove(uuid);
     }
 
-    public void save() {
+    @SuppressWarnings("unchecked")
+	public void save() {
         String s = uuid.toString().toLowerCase();
         final File f = new File(SkyblockPlugin.plugin.getDataFolder(), "skyblocks/" + s + ".json");
         f.getParentFile().mkdirs();
