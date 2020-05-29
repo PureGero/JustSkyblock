@@ -112,10 +112,10 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
 		if(e.getEntity().getType() == EntityType.BAT) {
 			if(e.getEntity().getLastDamageCause().getCause() == DamageCause.DROWNING) {
                 Player player = null;
-                double h = 100*100;
+                double area = 100*100;
                 for(Player a : e.getEntity().getWorld().getPlayers())
-                    if(a.getLocation().distanceSquared(e.getEntity().getLocation()) < h){
-                        h = a.getLocation().distanceSquared(e.getEntity().getLocation());
+                    if(a.getLocation().distanceSquared(e.getEntity().getLocation()) < area){
+                        area = a.getLocation().distanceSquared(e.getEntity().getLocation());
                         player = a;
                     }
                 if(player != null){
