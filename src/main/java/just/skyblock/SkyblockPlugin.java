@@ -33,7 +33,7 @@ public class SkyblockPlugin extends JavaPlugin {
 
             Rank.giveRank(player, skyblock.getRank());
 
-            if (skyblock.teleportToLastPos) {
+            if (skyblock.teleportToLastPos && skyblock.lworld != null) {
                 player.teleport(new Location(Bukkit.getWorld(skyblock.lworld), skyblock.lx, skyblock.ly, skyblock.lz, skyblock.lyaw, skyblock.lpitch));
 
                 skyblock.teleportToLastPos = false;
@@ -129,6 +129,7 @@ public class SkyblockPlugin extends JavaPlugin {
                 Location location = player.getLocation();
                 player.teleport(lobby.getSpawnLocation().add(0.5, 0.5, 0.5));
 
+                skyblock.lworld = location.getWorld().getName();
                 skyblock.lx = location.getX();
                 skyblock.ly = location.getY();
                 skyblock.lz = location.getZ();
