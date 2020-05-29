@@ -27,9 +27,21 @@ public class SkyblockPlugin extends JavaPlugin {
         Crate.islandCrateTicker();
         Shop.load();
         Skyblock.disposeAll(); // If we dont reference the Skyblock class at least once, onDisable will fail if no Islands get loaded
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            Rank.giveRank(p, Skyblock.load(p.getUniqueId()).getRank());
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            Skyblock skyblock = Skyblock.load(player);
+
+            Rank.giveRank(player, skyblock.getRank());
+
+            if (skyblock.teleportToLastPos) {
+                player.teleport(new Location(Bukkit.getWorld(skyblock.lworld), skyblock.lx, skyblock.ly, skyblock.lz, skyblock.lyaw, skyblock.lpitch));
+
+                skyblock.teleportToLastPos = false;
+                skyblock.lx = 0;
+                skyblock.lz = 0;
+            }
         }
+
         getServer().getScheduler().runTaskTimerAsynchronously(this, Skyblock::saveAll, 10 * 60 * 20L, 10 * 60 * 20L);
         getServer().getScheduler().runTaskTimer(this, () -> {
             for (Player p : Bukkit.getOnlinePlayers()) {
@@ -60,10 +72,15 @@ public class SkyblockPlugin extends JavaPlugin {
         end = getServer().createWorld(new WorldCreator("skyblock_the_end").environment(World.Environment.THE_END));
 
         for (World w : new World[] {lobby, world, nether, end}) {
-            w.setKeepSpawnInMemory(false);
+            if (w != lobby) {
+                w.setKeepSpawnInMemory(false);
+            }
+
             w.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
             w.setDifficulty(Difficulty.NORMAL);
         }
+
+        lobby.setKeepSpawnInMemory(true);
 
         getServer().setSpawnRadius(0);
     }
@@ -100,6 +117,27 @@ public class SkyblockPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        unregisterWorlds();
+
         Skyblock.disposeAll();
+    }
+
+    private void unregisterWorlds() {
+        for (World w : new World[] {world, nether, end}) {
+            for (Player player : w.getPlayers()) {
+                Skyblock skyblock = Skyblock.load(player);
+                Location location = player.getLocation();
+                player.teleport(lobby.getSpawnLocation().add(0.5, 0.5, 0.5));
+
+                skyblock.lx = location.getX();
+                skyblock.ly = location.getY();
+                skyblock.lz = location.getZ();
+                skyblock.lyaw = location.getYaw();
+                skyblock.lpitch = location.getPitch();
+                skyblock.teleportToLastPos = true;
+            }
+
+            Bukkit.unloadWorld(w, true);
+        }
     }
 }

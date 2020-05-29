@@ -67,18 +67,23 @@ public class SkyblockListener implements Listener {
 
     @EventHandler
     public void onTeleport(PlayerTeleportEvent e) {
-        Skyblock i = Skyblock.load(e.getPlayer().getUniqueId());
-        if (i.inIsland(e.getFrom()) && !i.inIsland(e.getTo())) {
-            i.lx = e.getFrom().getX();
-            i.ly = e.getFrom().getY();
-            i.lz = e.getFrom().getZ();
-            i.lyaw = e.getFrom().getYaw();
-            i.lpitch = e.getFrom().getPitch();
-        } else if (!i.inIsland(e.getFrom()) && i.inIsland(e.getTo()) && i.lx != 0 && i.lz != 0) {
-            e.setTo(new Location(e.getTo().getWorld(), i.lx, i.ly, i.lz, i.lyaw, i.lpitch));
+        Skyblock skyblock = Skyblock.load(e.getPlayer());
+
+        if (skyblock.inIsland(e.getFrom()) && !skyblock.inIsland(e.getTo())) {
+            skyblock.lworld = e.getFrom().getWorld().getName();
+            skyblock.lx = e.getFrom().getX();
+            skyblock.ly = e.getFrom().getY();
+            skyblock.lz = e.getFrom().getZ();
+            skyblock.lyaw = e.getFrom().getYaw();
+            skyblock.lpitch = e.getFrom().getPitch();
+
+        } else if (!skyblock.inIsland(e.getFrom()) && skyblock.inIsland(e.getTo()) && skyblock.lx != 0 && skyblock.lz != 0) {
+            e.setTo(new Location(Bukkit.getWorld(skyblock.lworld), skyblock.lx, skyblock.ly, skyblock.lz, skyblock.lyaw, skyblock.lpitch));
             e.getPlayer().sendMessage(ChatColor.GOLD + "Teleporting to previous location...");
-            i.lx = 0;
-            i.lz = 0;
+
+            skyblock.lx = 0;
+            skyblock.lz = 0;
+            skyblock.teleportToLastPos = false;
         }
     }
 
@@ -89,7 +94,7 @@ public class SkyblockListener implements Listener {
         worldBorder.world = ((CraftWorld) e.getTo().getWorld()).getHandle();
 
         if (e.getTo().getWorld() == plugin.lobby) {
-            worldBorder.setSize(6000000);
+            worldBorder.setSize(world.getWorldBorder().getSize());
             worldBorder.setCenter(0, 0);
         } else if (world == plugin.world || world == plugin.nether) {
             int x = ((e.getTo().getBlockX() >> 9) << 9) + 256;

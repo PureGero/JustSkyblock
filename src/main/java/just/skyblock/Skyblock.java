@@ -34,11 +34,13 @@ public class Skyblock {
     public int oldx = Integer.MAX_VALUE;
     public int oldz = Integer.MAX_VALUE;
 
+    public String lworld = null;
     public double lx = 0;
     public double ly = 0;
     public double lz = 0;
     public float lyaw = 0;
     public float lpitch = 0;
+    public boolean teleportToLastPos = false;
 
     public int update = 0;
     public long ontime = 0; // In seconds
@@ -104,6 +106,7 @@ public class Skyblock {
                     if (o.containsKey(d.getName()))
                         try {
                             //if(d.getAnnotation(Data.class) != null){
+                            if (d.getType() == boolean.class) d.setBoolean(c, (boolean) o.get(d.getName()));
                             if (d.getType() == int.class) d.setInt(c, (int) (long) o.get(d.getName()));
                             if (d.getType() == long.class) d.setLong(c, (long) o.get(d.getName()));
                             if (d.getType() == double.class) d.setDouble(c, (double) o.get(d.getName()));
@@ -173,7 +176,7 @@ public class Skyblock {
     }
 
     private boolean isSkyblockWorld(World world) {
-        return world == getWorld() || world == getNether() || world == getEnd();
+        return world == getWorld() || world == getNether() /*|| world == getEnd()*/;
     }
 
     public World getWorld() {
@@ -340,6 +343,7 @@ public class Skyblock {
             try {
                 //System.out.println(d.getName() + " @" + d.getAnnotation(Data.class));
                 //if(d.getAnnotation(Data.class) != null){
+                if (d.getType() == boolean.class) o.put(d.getName(), d.getBoolean(this));
                 if (d.getType() == int.class) o.put(d.getName(), d.getInt(this));
                 if (d.getType() == long.class) o.put(d.getName(), d.getLong(this));
                 if (d.getType() == float.class) o.put(d.getName(), d.getFloat(this));
@@ -350,22 +354,25 @@ public class Skyblock {
                 e.printStackTrace();
             }
         }
+
         final byte[] b = o.toString().getBytes();
-        if (SkyblockPlugin.plugin.isEnabled() && Bukkit.isPrimaryThread()) // Run async
-            Bukkit.getScheduler().runTaskAsynchronously(SkyblockPlugin.plugin, new Runnable() {
-                public void run() {
-                    try {
-                        Files.write(f.toPath(), b);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+
+        if (SkyblockPlugin.plugin.isEnabled() && Bukkit.isPrimaryThread()) { // Run async
+            Bukkit.getScheduler().runTaskAsynchronously(SkyblockPlugin.plugin, () -> {
+                try {
+                    System.out.println("Async Write");
+                    Files.write(f.toPath(), b);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             });
-        else
+        } else {
             try {
+                System.out.println("Sync Write");
                 Files.write(f.toPath(), b);
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
     }
 }
