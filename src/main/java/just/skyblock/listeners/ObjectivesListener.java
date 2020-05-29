@@ -149,6 +149,20 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
                 }
             }
         }
+        if (e.getCause() == DamageCause.POISON) {
+            if (e.getEntity().getType() == EntityType.WITCH) {
+                Player player = null;
+                double area = 100*100;
+                for(Player a : e.getEntity().getWorld().getPlayers())
+                    if(a.getLocation().distanceSquared(e.getEntity().getLocation()) < area){
+                        area = a.getLocation().distanceSquared(e.getEntity().getLocation());
+                        player = a;
+                    }
+                if(player != null){
+                    Objective.POISON_WITCH.give(player);
+                }
+            }
+        }
     }
 
     @EventHandler

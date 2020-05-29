@@ -80,7 +80,8 @@ public enum Objective {
     EAT_PUFFERFISH("Fugu Chuudoku", "Eat a pufferfish"),
     KILL_WITHER("The Beginning.", "Kill the wither"),
 	DROWN_BAT("Why so serious?", "Drown a bat"),
-    RIDE_PIG_INTO_VOID("Dr. Strangelove", "Ride a pig into the void");
+    RIDE_PIG_INTO_VOID("Dr. Strangelove", "Ride a pig into the void"),
+    POISON_WITCH("A taste of her own medicine", "Poison a Witch");
 
     private final String name;
     private final String description;
