@@ -3,6 +3,8 @@ package just.skyblock.listeners;
 import just.skyblock.Objective;
 import just.skyblock.Skyblock;
 import just.skyblock.SkyblockPlugin;
+
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -107,6 +109,20 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
                 }
             }
         }
+		if(e.getEntity().getType() == EntityType.BAT) {
+			if(e.getEntity().getLastDamageCause().getCause() == DamageCause.DROWNING) {
+                Player player = null;
+                double area = 100*100;
+                for(Player a : e.getEntity().getWorld().getPlayers())
+                    if(a.getLocation().distanceSquared(e.getEntity().getLocation()) < area){
+                        area = a.getLocation().distanceSquared(e.getEntity().getLocation());
+                        player = a;
+                    }
+                if(player != null){
+                	Objective.DROWN_BAT.give(player);
+                }
+			}
+		}
     }
 
     @EventHandler

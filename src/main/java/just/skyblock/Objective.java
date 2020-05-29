@@ -78,7 +78,8 @@ public enum Objective {
     HAVE_BILLION_COINS("Billionaire", "Have 1,000,000,000 coins"),
     KILL_20_MOBS_AT_ONCE("Grim Reaper", "Slay 20 mobs at once with sweeping"),
     EAT_PUFFERFISH("Fugu Chuudoku", "Eat a pufferfish"),
-    KILL_WITHER("The Beginning.", "Kill the wither");
+    KILL_WITHER("The Beginning.", "Kill the wither"),
+	DROWN_BAT("Why so serious?", "Drown a bat");
 
     private final String name;
     private final String description;
