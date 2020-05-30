@@ -64,15 +64,15 @@ public class IslandBlockPopulator extends BlockPopulator {
         Random random = new Random(hash(world.getSeed(), x, z));
 
         if (world == skyblock.world) {
-            if ((x & 31) == 15 && (z & 31) == 15) {
+            if (Math.floorMod(x, 96) == 47 && Math.floorMod(z, 96) == 47) {
                 return new MainIslandGenerator();
-            } else if ((Math.abs((x & 31) - 15) > 1 || Math.abs((z & 31) - 15) > 1)) {
+            } else if ((Math.abs(Math.floorMod(x, 96) - 47) > 1 || Math.abs(Math.floorMod(z, 96) - 47) > 1)) {
                 if (random.nextDouble() < 0.4) {
                     return overworldIslandGenerators[random.nextInt(overworldIslandGenerators.length)];
                 }
             }
         } else if (world == skyblock.nether) {
-            if ((x & 31) == 15 && (z & 31) == 15) {
+            if (Math.floorMod(x, 96) == 47 && Math.floorMod(z, 96) == 47) {
                 return new NetherPortalIslandGenerator();
             } else if (FortressBaseIslandGenerator.isMainFortressChunk(world.getSeed(), x, z)) {
                 return new FortressMainIslandGenerator();

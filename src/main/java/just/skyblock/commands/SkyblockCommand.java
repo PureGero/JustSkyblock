@@ -171,7 +171,6 @@ public class SkyblockCommand implements CommandExecutor, TabCompleter {
         if (whoUUID != null) {
             Skyblock skyblock = Skyblock.load(whoUUID);
             skyblock.spawn(player);
-            Skyblock.safeDispose(whoUUID);
         } else {
             player.sendMessage(ChatColor.RED + who + " has never played on this server!");
         }

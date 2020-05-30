@@ -112,7 +112,7 @@ public class Shop implements InventoryHolder {
             while (iterator.hasNext()) {
                 String line = iterator.next();
                 String[] a = line.split(",");
-                
+
                 if (a[0].equalsIgnoreCase("shop_spawn") && a.length >= 4) {
                     try {
                         shopSpawn = new Location(SkyblockPlugin.plugin.lobby, Double.parseDouble(a[1]),

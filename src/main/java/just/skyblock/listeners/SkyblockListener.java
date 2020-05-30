@@ -93,13 +93,20 @@ public class SkyblockListener implements Listener {
         net.minecraft.server.v1_15_R1.WorldBorder worldBorder = new net.minecraft.server.v1_15_R1.WorldBorder();
         worldBorder.world = ((CraftWorld) e.getTo().getWorld()).getHandle();
 
-        if (e.getTo().getWorld() == plugin.lobby) {
+        Skyblock skyblock = Skyblock.get(e.getTo());
+
+        if (skyblock == null) {
             worldBorder.setSize(world.getWorldBorder().getSize());
             worldBorder.setCenter(0, 0);
-        } else if (world == plugin.world || world == plugin.nether) {
-            int x = ((e.getTo().getBlockX() >> 9) << 9) + 256;
-            int z = ((e.getTo().getBlockZ() >> 9) << 9) + 256;
+        } else if (skyblock.size == 0) {
+            int x = ((e.getTo().getBlockX() >> 9) << 9) | 256;
+            int z = ((e.getTo().getBlockZ() >> 9) << 9) | 256;
             worldBorder.setSize(512);
+            worldBorder.setCenter(x, z);
+        } else if (skyblock.size == 1) {
+            int x = skyblock.x * 1536 + 768;
+            int z = skyblock.z * 1536 + 768;
+            worldBorder.setSize(1536);
             worldBorder.setCenter(x, z);
         }
 
@@ -116,13 +123,24 @@ public class SkyblockListener implements Listener {
 
     @EventHandler
     public void preventPlayerMovingBetweenIslands(PlayerMoveEvent e) {
-        int fromrx = e.getFrom().getBlockX() >> 4 >> 5;
-        int fromrz = e.getFrom().getBlockZ() >> 4 >> 5;
-        int torx = e.getTo().getBlockX() >> 4 >> 5;
-        int torz = e.getTo().getBlockZ() >> 4 >> 5;
+        Skyblock skyblock = Skyblock.get(e.getFrom());
+
+        if (skyblock == null) {
+            return;
+        }
+
+        int x, z;
+
+        if (skyblock.size == 0) {
+            x = e.getTo().getBlockX() >> 4 >> 5;
+            z = e.getTo().getBlockZ() >> 4 >> 5;
+        } else {
+            x = (int) Math.floor(e.getTo().getBlockX() / 1536.0);
+            z = (int) Math.floor(e.getTo().getBlockZ() / 1536.0);
+        }
 
         if (e.getFrom().getWorld() == e.getTo().getWorld()
-                && (fromrx != torx || fromrz != torz)
+                && (x != skyblock.x || z != skyblock.z)
                 && e.getTo().distanceSquared(e.getFrom()) < 64) {
             e.getPlayer().sendMessage(ChatColor.RED + "You have reached the limit of your skyblock world");
             e.setCancelled(true);

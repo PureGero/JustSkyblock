@@ -2,6 +2,7 @@ package just.skyblock;
 
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -30,6 +31,7 @@ public class Skyblock {
     public int z = 0;
     public int oldx = Integer.MAX_VALUE;
     public int oldz = Integer.MAX_VALUE;
+    public int size = 0; // 0 = 512x512, 1 = 1536x1536
 
     public String lworld = null;
     public double lx = 0;
@@ -79,8 +81,11 @@ public class Skyblock {
         if (l.getWorld() != SkyblockPlugin.plugin.world && l.getWorld() != SkyblockPlugin.plugin.nether) return null;
         int x = (int) Math.floor(l.getBlockX() / 512.0);
         int z = (int) Math.floor(l.getBlockZ() / 512.0);
+        int x2 = (int) Math.floor(l.getBlockX() / 1536.0);
+        int z2 = (int) Math.floor(l.getBlockZ() / 1536.0);
         for (Skyblock i : cache.values()) {
-            if (i.x == x && i.z == z) {
+            if ((i.x == x && i.z == z && i.size == 0) ||
+                    (i.x == x2 && i.z == z2 && i.size == 1)) {
                 return i;
                 
             }
@@ -202,22 +207,38 @@ public class Skyblock {
         return SkyblockPlugin.plugin.end;
     }
 
-    public Location getSpawnLocation() {
-        Location il = new Location(getWorld(), x * 512 + 256.5 - 8, 65.5, z * 512 + 256.5 - 8);
-        while (il.getBlockY() < 256 && (il.getBlock().getType() != Material.AIR
-                || il.getBlock().getRelative(BlockFace.UP).getType() != Material.AIR)) {
-            il = il.add(0, 1, 0);
+    private Location getCenterLocation(World world) {
+        if (size == 0) {
+            return new Location(world, x * 512 + 256.5 - 8, 65.5, z * 512 + 256.5 - 8);
+        } else {
+            return new Location(world, x * 1536 + 768.5 - 8, 65.5, z * 1536 + 768.5 - 8);
         }
-        return il;
+    }
+
+    public Location getSpawnLocation() {
+        Location spawnLocation = getCenterLocation(getWorld());
+
+        while (spawnLocation.getBlockY() < 256 && (!spawnLocation.getBlock().isEmpty()
+                || !spawnLocation.getBlock().getRelative(BlockFace.UP).isEmpty())) {
+            spawnLocation = spawnLocation.add(0, 1, 0);
+        }
+
+        return spawnLocation;
     }
 
     public Location getNetherSpawnLocation() {
-        Location il = new Location(getNether(), x * 512 + 256.5 - 8, 65.5, z * 512 + 256.5 - 8);
-        while (il.getBlockY() < 256 && (il.getBlock().getType() != Material.AIR
-                || il.getBlock().getRelative(BlockFace.UP).getType() != Material.AIR)) {
-            il = il.add(0, 1, 0);
+        Location spawnLocation = getCenterLocation(getNether());
+
+        while (spawnLocation.getBlockY() < 256 && (!isSuitableNetherSpawnBlock(spawnLocation.getBlock())
+                || !isSuitableNetherSpawnBlock(spawnLocation.getBlock().getRelative(BlockFace.UP)))) {
+            spawnLocation = spawnLocation.add(0, 1, 0);
         }
-        return il;
+
+        return spawnLocation;
+    }
+
+    private boolean isSuitableNetherSpawnBlock(Block block) {
+        return block.isEmpty() || block.getType() == Material.NETHER_PORTAL;
     }
 
     public void spawn(Player p) {
@@ -249,9 +270,9 @@ public class Skyblock {
         checkUpdates();
         save();
 
-        new File(SkyblockPlugin.plugin.world.getWorldFolder(),
-                "region/r." + oldx + "." + oldz + ".mca")
-                .deleteOnExit(); // Delete region file once server has exited
+        //new File(SkyblockPlugin.plugin.world.getWorldFolder(),
+        //        "region/r." + oldx + "." + oldz + ".mca")
+        //        .deleteOnExit(); // Delete region file once server has exited
 
         if (resetCount >= 2)
             Objective.RESET_SKYBLOCK_TWICE.give(this);
@@ -324,12 +345,18 @@ public class Skyblock {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            update = 2;
+
+            size = 1;
+            update = 3;
         }
         if (update == 1) {
             SkyblockPlugin.plugin.world.getBlockAt(x * 512 + 256 - 9, 64, z * 512 + 256 - 39).setType(Material.GRASS_BLOCK);
             SkyblockPlugin.plugin.world.getBlockAt(x * 512 + 256 - 9, 65, z * 512 + 256 - 39).setType(Material.BAMBOO_SAPLING);
             update = 2;
+        }
+        if (update == 2) {
+            // TODO Fill empty chunks with new islands
+            update = 3;
         }
     }
 
