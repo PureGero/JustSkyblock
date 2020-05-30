@@ -20,6 +20,7 @@ import org.bukkit.entity.WanderingTrader;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -462,5 +463,32 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
         }
     }
     
+    private static final Material[] DOORS = new Material[] {
+            Material.IRON_DOOR,
+            Material.OAK_DOOR,
+            Material.SPRUCE_DOOR,
+            Material.BIRCH_DOOR,
+            Material.JUNGLE_DOOR,
+            Material.ACACIA_DOOR,
+            Material.DARK_OAK_DOOR
+    };
+    
+    private static int getDoor(Material m) {
+        for (int i = 0; i < DOORS.length; i++)
+            if (m.equals(DOORS[i]))
+                return i;
+        return -1;
+    }
+    
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent e){
+        Skyblock skyblock = Skyblock.load(e.getPlayer().getUniqueId());
+        if(e.getBlock().getType() != null && getDoor(e.getBlock().getType()) >= 0) {
+                skyblock.doorsBroken |= (1 << getDoor(e.getBlock().getType()));
+                if(skyblock.doorsBroken == 127){
+                    Objective.BREAK_ALL_DOORS.give(e.getPlayer());
+                }
+        }
+    }
 
 }
