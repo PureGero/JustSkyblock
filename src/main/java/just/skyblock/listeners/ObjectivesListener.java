@@ -4,9 +4,11 @@ import just.skyblock.Objective;
 import just.skyblock.Skyblock;
 import just.skyblock.SkyblockPlugin;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.type.Cake;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
@@ -238,6 +240,11 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
                 && e.getItem() != null
                 && e.getItem().getType().name().contains("MUSIC_DISC")) {
             Objective.PLAY_MUSIC_DISC.give(e.getPlayer());
+        }
+        if (e.getClickedBlock() != null 
+                && e.getClickedBlock().getType() == Material.CAKE 
+                && ((Cake) e.getClickedBlock().getBlockData()).getBites() == 6) {
+            Objective.EAT_CAKE.give(e.getPlayer());
         }
     }
 

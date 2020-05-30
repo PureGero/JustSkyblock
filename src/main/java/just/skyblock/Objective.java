@@ -87,7 +87,8 @@ public enum Objective {
     FEED_BABY_VILLAGER_POTATO("Junkfood", "Attempt to feed a Baked Potato to a Baby Villager"),
     KILL_100_PANDAS("Endangered", "Kill 100 Pandas"),
     FALL_256_BLOCKS("88mph", "Fall 256 blocks without dying"),
-    FROST_WALKING("Let it go", "Walk on water with Frost Walker Boots");
+    FROST_WALKING("Let it go", "Walk on water with Frost Walker Boots"),
+    EAT_CAKE("Piece of Cake", "Eat a Cake");
 
     private final String name;
     private final String description;
