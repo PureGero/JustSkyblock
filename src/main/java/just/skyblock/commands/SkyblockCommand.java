@@ -3,9 +3,9 @@ package just.skyblock.commands;
 import just.skyblock.Objective;
 import just.skyblock.Skyblock;
 import just.skyblock.SkyblockPlugin;
+import just.skyblock.UsernameCache;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.GameMode;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -42,19 +42,19 @@ public class SkyblockCommand implements CommandExecutor, TabCompleter {
             } else if (a[0].equalsIgnoreCase("reset")) {
                 reset(p, l);
             }/*else if(a[0].equalsIgnoreCase("old")){
-                    p.sendMessage(ChatColor.RED + "WARNING: This skyblock will be deleted soon!");
-                    p.sendMessage(ChatColor.RED + "Please remove all the stuff you want to keep from this skyblock.");
-                    Skyblock.load(p.getUniqueId()).spawnOld(p);
-                }*/ else {
-                OfflinePlayer o = plugin.getServer().getOfflinePlayer(a[0]);
-                if (o.getFirstPlayed() > 0) {
-                    Skyblock i = Skyblock.load(o.getUniqueId());
+                p.sendMessage(ChatColor.RED + "WARNING: This skyblock will be deleted soon!");
+                p.sendMessage(ChatColor.RED + "Please remove all the stuff you want to keep from this skyblock.");
+                Skyblock.load(p.getUniqueId()).spawnOld(p);
+            }*/ else {
+                UUID uuid = UsernameCache.getUUID(a[0]);
+                if (uuid != null) {
+                    Skyblock i = Skyblock.load(uuid);
                     if (i.allowed.contains(p.getUniqueId())) {
                         i.spawn(p);
                         Objective.VISIT_ANOTHER_SKYBLOCK.give(p);
                     } else {
-                        p.sendMessage(ChatColor.RED + o.getName() + " has not added you to their skyblock!");
-                        Skyblock.safeDispose(o.getUniqueId());
+                        p.sendMessage(ChatColor.RED + UsernameCache.getUsername(uuid) + " has not added you to their skyblock!");
+                        Skyblock.safeDispose(uuid);
                     }
                 } else {
                     help(p, l);
@@ -84,17 +84,17 @@ public class SkyblockCommand implements CommandExecutor, TabCompleter {
 
     private void giveLoot(Player p, String who, String countStr) {
         int count = Integer.parseInt(countStr);
-        OfflinePlayer whoPlayer = plugin.getServer().getOfflinePlayer(who);
-        if (whoPlayer.getFirstPlayed() > 0) {
-            Skyblock skyblock = Skyblock.load(whoPlayer.getUniqueId());
+        UUID whoUUID = UsernameCache.getUUID(who);
+        if (whoUUID != null) {
+            Skyblock skyblock = Skyblock.load(whoUUID);
             skyblock.crates += count;
-            Skyblock.safeDispose(whoPlayer.getUniqueId());
-            p.sendMessage(ChatColor.GREEN + "Given " + whoPlayer.getName() + " " + count + " loot boxes");
-            Player givenPlayer = plugin.getServer().getPlayer(whoPlayer.getUniqueId());
+            Skyblock.safeDispose(whoUUID);
+            p.sendMessage(ChatColor.GREEN + "Given " + UsernameCache.getUsername(whoUUID) + " " + count + " loot boxes");
+            Player givenPlayer = plugin.getServer().getPlayer(whoUUID);
             if (givenPlayer != null)
                 givenPlayer.sendMessage(ChatColor.YELLOW + "You have been given " + count + " loot boxes to open!");
         } else {
-            p.sendMessage(ChatColor.RED + whoPlayer.getName() + " has never played on this server!");
+            p.sendMessage(ChatColor.RED + who + " has never played on this server!");
         }
     }
 
@@ -124,53 +124,60 @@ public class SkyblockCommand implements CommandExecutor, TabCompleter {
     }
 
     private void add(Player player, String who) {
-        OfflinePlayer whoPlayer = plugin.getServer().getOfflinePlayer(who);
-        if (whoPlayer.getFirstPlayed() > 0) {
+        UUID whoUUID = UsernameCache.getUUID(who);
+        if (whoUUID != null) {
             Skyblock skyblock = Skyblock.load(player.getUniqueId());
-            if (skyblock.allowed.contains(whoPlayer.getUniqueId())) {
-                player.sendMessage(ChatColor.RED + whoPlayer.getName() + " has already been added to your skyblock!");
+            if (skyblock.allowed.contains(whoUUID)) {
+                player.sendMessage(ChatColor.RED + UsernameCache.getUsername(whoUUID) + " has already been added to your skyblock!");
             } else {
                 Objective.ADD_TO_SKYBLOCK.give(skyblock);
-                skyblock.allowed.add(whoPlayer.getUniqueId());
-                player.sendMessage(ChatColor.GREEN + whoPlayer.getName() + " has been added to your skyblock!");
+
+                skyblock.allowed.add(whoUUID);
+
+                Skyblock.load(whoUUID).allowedMe.add(player.getUniqueId());
+                Skyblock.safeDispose(whoUUID);
+
+                player.sendMessage(ChatColor.GREEN + UsernameCache.getUsername(whoUUID) + " has been added to your skyblock!");
             }
         } else {
-            player.sendMessage(ChatColor.RED + whoPlayer.getName() + " has never played on this server!");
+            player.sendMessage(ChatColor.RED + who + " has never played on this server!");
         }
     }
 
     private void remove(Player player, String who) {
-        OfflinePlayer whoPlayer = plugin.getServer().getOfflinePlayer(who);
-        if (whoPlayer.getFirstPlayed() > 0) {
+        UUID whoUUID = UsernameCache.getUUID(who);
+        if (whoUUID != null) {
             Skyblock skyblock = Skyblock.load(player.getUniqueId());
-            if (skyblock.allowed.contains(whoPlayer.getUniqueId())) {
-                skyblock.allowed.remove(whoPlayer.getUniqueId());
-                Player removedPlayer = plugin.getServer().getPlayer(whoPlayer.getUniqueId());
+            if (skyblock.allowed.remove(whoUUID)) {
+                Skyblock.load(whoUUID).allowedMe.remove(player.getUniqueId());
+                Skyblock.safeDispose(whoUUID);
+
+                Player removedPlayer = plugin.getServer().getPlayer(whoUUID);
                 if (removedPlayer != null && skyblock.inIsland(removedPlayer.getLocation())) {
                     removedPlayer.sendMessage(ChatColor.RED + "You have been removed from this skyblock.");
                     removedPlayer.teleport(plugin.lobby.getSpawnLocation().add(0.5, 0.5, 0.5));
                 }
-                player.sendMessage(ChatColor.GREEN + whoPlayer.getName() + " has been removed from your skyblock!");
+                player.sendMessage(ChatColor.GREEN + UsernameCache.getUsername(whoUUID) + " has been removed from your skyblock!");
             } else {
-                player.sendMessage(ChatColor.RED + whoPlayer.getName() + " has been not been added to your skyblock!");
+                player.sendMessage(ChatColor.RED + UsernameCache.getUsername(whoUUID)  + " has been not been added to your skyblock!");
             }
         } else {
-            player.sendMessage(ChatColor.RED + whoPlayer.getName() + " has never played on this server!");
+            player.sendMessage(ChatColor.RED + who + " has never played on this server!");
         }
     }
 
     private void op(Player player, String who) {
-        OfflinePlayer whoPlayer = plugin.getServer().getOfflinePlayer(who);
-        if (whoPlayer.getFirstPlayed() > 0) {
-            Skyblock skyblock = Skyblock.load(whoPlayer.getUniqueId());
+        UUID whoUUID = UsernameCache.getUUID(who);
+        if (whoUUID != null) {
+            Skyblock skyblock = Skyblock.load(whoUUID);
             skyblock.spawn(player);
-            Skyblock.safeDispose(whoPlayer.getUniqueId());
+            Skyblock.safeDispose(whoUUID);
         } else {
-            player.sendMessage(ChatColor.RED + whoPlayer.getName() + " has never played on this server!");
+            player.sendMessage(ChatColor.RED + who + " has never played on this server!");
         }
     }
 
-    public void help(CommandSender sender, String label) {
+    private void help(CommandSender sender, String label) {
         sender.sendMessage(ChatColor.DARK_GREEN + " --- " + ChatColor.GREEN + "Help: SkyblockPlugin" + ChatColor.DARK_GREEN + " --- ");
         sender.sendMessage(ChatColor.GREEN + "/" + label + ChatColor.DARK_GREEN + ": Go to your skyblock");
         sender.sendMessage(ChatColor.GREEN + "/" + label + " <player>" + ChatColor.DARK_GREEN + ": Go to player's skyblock");
@@ -191,29 +198,42 @@ public class SkyblockCommand implements CommandExecutor, TabCompleter {
         if (args.length == 1) {
             for (String s : new String[]{
                     "add", "remove", "reset"
-            })
-                if (s.startsWith(args[0].toLowerCase()))
+            }) {
+                if (s.startsWith(args[0].toLowerCase())) {
                     ret.add(s);
-            for (Player p : plugin.getServer().getOnlinePlayers()) {
-                if (p.getName().toLowerCase().startsWith(args[0].toLowerCase())) {
-                    Skyblock i = Skyblock.load(p.getUniqueId());
-                    if (i.allowed.contains(((Player) sender).getUniqueId()))
-                        ret.add(p.getName());
+                }
+            }
+
+            Skyblock skyblock = Skyblock.load(((Player) sender).getUniqueId());
+            for (UUID uuid : skyblock.allowedMe) {
+                String name = UsernameCache.getUsername(uuid);
+                if (name == null) {
+                    name = uuid.toString();
+                }
+
+                if (name.toLowerCase().startsWith(args[0].toLowerCase())) {
+                    ret.add(name);
                 }
             }
         } else if (args.length == 2) {
             if (args[0].equalsIgnoreCase("add") || args[0].equalsIgnoreCase("trust")) {
-                Skyblock i = Skyblock.load(((Player) sender).getUniqueId());
-                for (Player p : plugin.getServer().getOnlinePlayers()) {
-                    if (p.getName().toLowerCase().startsWith(args[1].toLowerCase())
-                            && !i.allowed.contains(p.getUniqueId()))
-                        ret.add(p.getName());
+                Skyblock skyblock = Skyblock.load(((Player) sender).getUniqueId());
+                for (Player player : plugin.getServer().getOnlinePlayers()) {
+                    if (player.getName().toLowerCase().startsWith(args[1].toLowerCase())
+                            && !skyblock.allowed.contains(player.getUniqueId())) {
+                        ret.add(player.getName());
+                    }
                 }
             } else if (args[0].equalsIgnoreCase("remove") || args[0].equalsIgnoreCase("untrust")) {
                 for (UUID uuid : Skyblock.load(((Player) sender).getUniqueId()).allowed) {
-                    OfflinePlayer p = plugin.getServer().getOfflinePlayer(uuid);
-                    if (p.getName().toLowerCase().startsWith(args[1].toLowerCase()))
-                        ret.add(p.getName());
+                    String name = UsernameCache.getUsername(uuid);
+                    if (name == null) {
+                        name = uuid.toString();
+                    }
+
+                    if (name.toLowerCase().startsWith(args[1].toLowerCase())) {
+                        ret.add(name);
+                    }
                 }
             }
         }

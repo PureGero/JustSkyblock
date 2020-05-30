@@ -16,13 +16,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.UUID;
+import java.util.*;
 
 public class Skyblock {
-    private static HashMap<UUID, Skyblock> cache = new HashMap<UUID, Skyblock>();
+    private static HashMap<UUID, Skyblock> cache = new HashMap<>();
 
     public UUID uuid;
     public Temp temp;
@@ -67,7 +64,13 @@ public class Skyblock {
     public int cobbleSold = 0;
     public int saplings = 0;
 
+    /** I have allowed these players access to my skyblock */
     public HashSet<UUID> allowed = new HashSet<>();
+
+    /** These players have allowed me to access their skyblock. Do not use this
+     *  set for a definite answer that I have access to their skyblock, use
+     *  their {@code allowed} instead. */
+    public HashSet<UUID> allowedMe = new HashSet<>();
 
     private Skyblock() {
     }
@@ -122,6 +125,13 @@ public class Skyblock {
                 try {
                     for (Object a : (JSONArray) o.get("allowed"))
                         c.allowed.add(UUID.fromString((String) a));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                try {
+                    for (Object a : (JSONArray) o.get("allowedMe"))
+                        c.allowedMe.add(UUID.fromString((String) a));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -334,12 +344,21 @@ public class Skyblock {
         final File f = new File(SkyblockPlugin.plugin.getDataFolder(), "skyblocks/" + s + ".json");
         f.getParentFile().mkdirs();
 
+        if (!f.isFile() && Bukkit.getOfflinePlayer(uuid).getFirstPlayed() == 0) {
+            SkyblockPlugin.plugin.getLogger().warning("Not saving Skyblock for " + uuid + "{name: " + Bukkit.getOfflinePlayer(uuid).getName() + "} as they have never played on this server.");
+            return;
+        }
+
         JSONObject o = new JSONObject();
         o.put("uuid", uuid.toString());
         
         JSONArray a = new JSONArray();
         for (UUID u : allowed) a.add(u.toString());
         o.put("allowed", a);
+
+        a = new JSONArray();
+        for (UUID u : allowedMe) a.add(u.toString());
+        o.put("allowedMe", a);
 
         for (Field d : getClass().getFields()) {
             try {
@@ -362,7 +381,6 @@ public class Skyblock {
         if (SkyblockPlugin.plugin.isEnabled() && Bukkit.isPrimaryThread()) { // Run async
             Bukkit.getScheduler().runTaskAsynchronously(SkyblockPlugin.plugin, () -> {
                 try {
-                    System.out.println("Async Write");
                     Files.write(f.toPath(), b);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -370,7 +388,6 @@ public class Skyblock {
             });
         } else {
             try {
-                System.out.println("Sync Write");
                 Files.write(f.toPath(), b);
             } catch (Exception e) {
                 e.printStackTrace();
