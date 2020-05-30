@@ -90,7 +90,8 @@ public enum Objective {
     FROST_WALKING("Let it go", "Walk on water with Frost Walker Boots"),
     EAT_CAKE("Piece of Cake", "Eat a Cake"),
     KILL_TURTLE_WITH_TRIDENT("Poseidon","Kill a Turtle with a Trident"),
-    SWIM_100_BLOCKS("Just keep swimming", "Swim 100 blocks away");
+    SWIM_100_BLOCKS("Just keep swimming", "Swim 100 blocks away"),
+    CRAFT_MAP("I solemnly swear that I am up to no good","Craft a Map");
 
     private final String name;
     private final String description;

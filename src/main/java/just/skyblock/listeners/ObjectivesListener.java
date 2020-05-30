@@ -294,6 +294,9 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
         if (e.getRecipe().getResult().getType() == Material.ENCHANTING_TABLE) {
             Objective.CRAFT_ENCHANTING_TABLE.give(e.getWhoClicked());
         }
+        if(e.getCurrentItem().getType() == Material.MAP) {
+            Objective.CRAFT_MAP.give(e.getWhoClicked());   
+        }
     }
 
     @EventHandler
@@ -434,7 +437,6 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
         
         else if (swimmingStartZ.containsKey(player)) {
             Location startZ = swimmingStartZ.remove(player);
-            Bukkit.broadcastMessage("Swimming" +player.getLocation().distance(startZ));
             if((player.getLocation().distance(startZ) >= 100)) {
                 Objective.SWIM_100_BLOCKS.give(player);
             }
