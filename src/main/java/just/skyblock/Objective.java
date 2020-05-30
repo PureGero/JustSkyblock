@@ -88,7 +88,8 @@ public enum Objective {
     KILL_100_PANDAS("Endangered", "Kill 100 Pandas"),
     FALL_256_BLOCKS("88mph", "Fall 256 blocks without dying"),
     FROST_WALKING("Let it go", "Walk on water with Frost Walker Boots"),
-    EAT_CAKE("Piece of Cake", "Eat a Cake");
+    EAT_CAKE("Piece of Cake", "Eat a Cake"),
+    KILL_TURTLE_WITH_TRIDENT("Poseidon","Kill a Turtle with a Trident");
 
     private final String name;
     private final String description;

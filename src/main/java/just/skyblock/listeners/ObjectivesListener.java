@@ -341,6 +341,11 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
                 Objective.KILL_20_MOBS_AT_ONCE.give(player);
             }
         }
+        if(e.getEntityType() == EntityType.TURTLE 
+                && e.getEntity().getKiller() != null 
+                && e.getEntity().getKiller().getInventory().getItemInMainHand().getType().equals(Material.TRIDENT)) {
+            Objective.KILL_TURTLE_WITH_TRIDENT.give(e.getEntity().getKiller());
+        }
     }
 
     @EventHandler
