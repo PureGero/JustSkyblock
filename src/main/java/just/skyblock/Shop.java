@@ -20,10 +20,7 @@ import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class Shop implements InventoryHolder {
     private static final String SHOP_URL = "https://docs.google.com/spreadsheets/d/1KyqFLUQYXmjvSzD3TFOn1mz5yL9r-rfq1IfX6ieKzAk/export?format=csv&id=1KyqFLUQYXmjvSzD3TFOn1mz5yL9r-rfq1IfX6ieKzAk&gid=0";
@@ -109,8 +106,13 @@ public class Shop implements InventoryHolder {
             lootBoxChances.clear();
             lootBoxChancesRare.clear();
 
-            for (String line : lines) {
+            Iterator<String> iterator = lines.iterator();
+            iterator.next(); // Header line
+
+            while (iterator.hasNext()) {
+                String line = iterator.next();
                 String[] a = line.split(",");
+                
                 if (a[0].equalsIgnoreCase("shop_spawn") && a.length >= 4) {
                     try {
                         shopSpawn = new Location(SkyblockPlugin.plugin.lobby, Double.parseDouble(a[1]),
