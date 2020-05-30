@@ -16,6 +16,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.WanderingTrader;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
@@ -23,6 +24,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleCreateEvent;
@@ -443,7 +445,14 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
         }
     }
     
-
+    @EventHandler
+    public void onClickInventory(InventoryClickEvent e) {
+        if (e.getInventory().getHolder() instanceof WanderingTrader && e.getWhoClicked() instanceof Player) {
+            if(e.getSlot() == 2 && e.getCurrentItem().getType() != Material.AIR) {
+                Objective.TRADE_WITH_TRADER.give(e.getWhoClicked());
+            }
+        }
+    }
     
 
 }

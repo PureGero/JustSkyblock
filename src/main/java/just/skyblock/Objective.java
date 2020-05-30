@@ -91,7 +91,8 @@ public enum Objective {
     EAT_CAKE("Piece of Cake", "Eat a Cake"),
     KILL_TURTLE_WITH_TRIDENT("Poseidon","Kill a Turtle with a Trident"),
     SWIM_100_BLOCKS("Just keep swimming", "Swim 100 blocks away"),
-    CRAFT_MAP("I solemnly swear that I am up to no good","Craft a Map");
+    CRAFT_MAP("I solemnly swear that I am up to no good","Craft a Map"),
+    TRADE_WITH_TRADER("Jack of all trades", "Trade with a Wandering Trader");
 
     private final String name;
     private final String description;
