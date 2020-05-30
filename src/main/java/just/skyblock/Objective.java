@@ -89,7 +89,8 @@ public enum Objective {
     FALL_256_BLOCKS("88mph", "Fall 256 blocks without dying"),
     FROST_WALKING("Let it go", "Walk on water with Frost Walker Boots"),
     EAT_CAKE("Piece of Cake", "Eat a Cake"),
-    KILL_TURTLE_WITH_TRIDENT("Poseidon","Kill a Turtle with a Trident");
+    KILL_TURTLE_WITH_TRIDENT("Poseidon","Kill a Turtle with a Trident"),
+    SWIM_100_BLOCKS("Just keep swimming", "Swim 100 blocks away");
 
     private final String name;
     private final String description;

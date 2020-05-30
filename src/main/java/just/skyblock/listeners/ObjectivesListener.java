@@ -5,6 +5,7 @@ import just.skyblock.Skyblock;
 import just.skyblock.SkyblockPlugin;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
 import org.bukkit.block.BlockFace;
@@ -391,6 +392,7 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
     }
     
     private HashMap<Player, Integer> fallingStartYs = new HashMap<>();
+    private HashMap<Player, Location> swimmingStartZ = new HashMap<>();
     
     @EventHandler
     public void onFall(PlayerMoveEvent event) {
@@ -422,5 +424,24 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
                 Objective.FROST_WALKING.give(player);
             }
         }
+        if(player.isSwimming() == true) {
+            if (swimmingStartZ.containsKey(player)) {
+            }
+            else {
+                swimmingStartZ.put(player, player.getLocation());
+                }
+        }
+        
+        else if (swimmingStartZ.containsKey(player)) {
+            Location startZ = swimmingStartZ.remove(player);
+            Bukkit.broadcastMessage("Swimming" +player.getLocation().distance(startZ));
+            if((player.getLocation().distance(startZ) >= 100)) {
+                Objective.SWIM_100_BLOCKS.give(player);
+            }
+        }
     }
+    
+
+    
+
 }
