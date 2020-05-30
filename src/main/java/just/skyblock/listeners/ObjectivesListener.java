@@ -83,6 +83,14 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
                 }
             }
         }
+        if(e.getBlockPlaced().getType() == Material.TORCH) {
+            skyblock.getServer().getScheduler().runTask(skyblock, () -> {
+                Player player = (Player) e.getPlayer();
+                if(player.getStatistic(Statistic.USE_ITEM, Material.TORCH) >= 1000) {
+                    Objective.PLACE_1000_TORCHES.give(player);
+                }
+            });
+        }
     }
 
     @EventHandler
