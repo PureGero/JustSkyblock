@@ -15,7 +15,8 @@ public class IslandBlockPopulator extends BlockPopulator {
             new FarmIslandGenerator(),
             new JungleIslandGenerator(),
             new SandIslandGenerator(),
-            new StoneIslandGenerator()
+            new StoneIslandGenerator(),
+            new SpruceIslandGenerator()
     };
 
     private static final BaseIslandGenerator[] netherIslandGenerators = {
