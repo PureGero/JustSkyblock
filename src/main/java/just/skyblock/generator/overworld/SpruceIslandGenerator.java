@@ -17,25 +17,27 @@ public class SpruceIslandGenerator extends BaseIslandGenerator {
 
     @Override
     public void generate(Block center, Random random) {
-        for (int i = -1; i <= 1; i++) {
-            for (int k = -1; k <= 1; k++) {
-                center.getRelative(i, -2, k).setType(Material.STONE);
-                center.getRelative(i, -1, k).setType(Material.DIRT);
-                center.getRelative(i, 0, k).setType(Material.GRASS_BLOCK);
-                center.getRelative(i, 1, k).setType(Material.SNOW);
+        for (int x = -1; x <= 1; x++) {
+            for (int z = -1; z <= 1; z++) {
+                center.getRelative(x, -2, z).setType(Material.STONE);
+                center.getRelative(x, -1, z).setType(Material.DIRT);
+                center.getRelative(x, 0, z).setType(Material.GRASS_BLOCK);
+                center.getRelative(x, 1, z).setType(Material.SNOW);
             }
         }
 
-        int treeX = random.nextInt(3);
-        int treeZ = random.nextInt(3);
+        int treeX = random.nextInt(3) - 1;
+        int treeZ = random.nextInt(3) - 1;
 
-        center.getRelative(treeX-1, 1, treeZ-1).setType(Material.AIR);
-        center.getWorld().generateTree(center.getRelative(treeX - 1, 1, treeZ - 1).getLocation(), TreeType.REDWOOD);
+        center.getRelative(treeX, 1, treeZ).setType(Material.AIR);
+        center.getWorld().generateTree(center.getRelative(treeX, 1, treeZ).getLocation(), TreeType.REDWOOD);
 
-        if (random.nextBoolean()) {
-            center.getRelative(((treeX + 2) % 3) - 1, 1, treeZ - 1).setType(Material.SWEET_BERRY_BUSH);
-        } else {
-            center.getRelative(treeX - 1, 1, ((treeZ + 2) % 3) - 1).setType(Material.SWEET_BERRY_BUSH);
-        }
+        Block berrybush;
+
+        do { // Find free location for berry bush
+            berrybush = center.getRelative(random.nextInt(3) - 1, 1, random.nextInt(3) - 1);
+        } while (berrybush.getType() != Material.SNOW);
+
+        berrybush.setType(Material.SWEET_BERRY_BUSH);
     }
 }
