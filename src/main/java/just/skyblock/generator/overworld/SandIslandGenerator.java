@@ -26,10 +26,15 @@ public class SandIslandGenerator extends BaseIslandGenerator {
 
         center.getRelative(0, 0, 0).setType(Material.WATER);
 
+        Material[] sandBlocks = new Material[] {
+                Material.CACTUS,
+                Material.SUGAR_CANE,
+                Material.DEAD_BUSH
+        };
+
         do {
-            center.getRelative(random.nextInt(3) - 1, 1, random.nextInt(3) - 1).setType(Material.CACTUS);
-            center.getRelative(random.nextInt(3) - 1, 1, random.nextInt(3) - 1).setType(Material.SUGAR_CANE);
-        } while (random.nextDouble() < 0.5);
+            center.getRelative(random.nextInt(3) - 1, 1, random.nextInt(3) - 1).setType(sandBlocks[random.nextInt(sandBlocks.length)]);
+        } while (random.nextDouble() < 0.75);
 
         center.getRelative(0, 1, 0).setType(Material.AIR);
     }
