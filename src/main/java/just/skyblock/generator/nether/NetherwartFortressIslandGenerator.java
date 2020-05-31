@@ -15,12 +15,12 @@ public class NetherwartFortressIslandGenerator extends FortressBaseIslandGenerat
 
     @Override
     public void generate(Block center, Random random) {
-        for (int i = -1; i <= 1; i++) {
-            for (int k = -1; k <= 1; k++) {
-                center.getRelative(i, -2, k).setType(Material.NETHER_BRICKS);
-                center.getRelative(i, -1, k).setType(Material.NETHER_BRICKS);
-                center.getRelative(i, 0, k).setType(Material.SOUL_SAND);
-                center.getRelative(i, 1, k).setType(Material.NETHER_WART);
+        for (int x = -1; x <= 1; x++) {
+            for (int z = -1; z <= 1; z++) {
+                center.getRelative(x, -2, z).setType(Material.NETHER_BRICKS);
+                center.getRelative(x, -1, z).setType(Material.NETHER_BRICKS);
+                center.getRelative(x, 0, z).setType(Material.SOUL_SAND);
+                center.getRelative(x, 1, z).setType(Material.NETHER_WART);
             }
         }
 

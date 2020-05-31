@@ -16,10 +16,10 @@ public class NetherrackIslandGenerator extends BaseIslandGenerator {
 
     @Override
     public void generate(Block center, Random random) {
-        for (int i = -1; i <= 1; i++) {
-            for (int j = -2; j <= 0; j++) {
-                for (int k = -1; k <= 1; k++) {
-                    center.getRelative(i, j, k).setType(Material.NETHERRACK);
+        for (int x = -1; x <= 1; x++) {
+            for (int y = -2; y <= 0; y++) {
+                for (int z = -1; z <= 1; z++) {
+                    center.getRelative(x, y, z).setType(Material.NETHERRACK);
                 }
             }
         }

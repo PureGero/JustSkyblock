@@ -20,18 +20,18 @@ public class FarmIslandGenerator extends BaseIslandGenerator {
                 Material.WHEAT, Material.WHEAT, Material.CARROTS, Material.POTATOES, Material.BEETROOTS
         };
 
-        for (int i = -1; i <= 1; i++) {
-            for (int k = -1; k <= 1; k++) {
-                for (int j = -2; j <= 0; j++) {
-                    center.getRelative(i, j, k).setType(j == 0 ? Material.FARMLAND : Material.DIRT);
+        for (int x = -1; x <= 1; x++) {
+            for (int z = -1; z <= 1; z++) {
+                for (int y = -2; y <= 0; y++) {
+                    center.getRelative(x, y, z).setType(y == 0 ? Material.FARMLAND : Material.DIRT);
                 }
 
-                if (i == 0 && k == 0) {
-                    center.getRelative(i, 0, k).setType(Material.WATER);
-                    center.getRelative(i, 1, k).setType(Material.OAK_FENCE);
-                    center.getRelative(i, 2, k).setType(Material.TORCH);
+                if (x == 0 && z == 0) {
+                    center.getRelative(x, 0, z).setType(Material.WATER);
+                    center.getRelative(x, 1, z).setType(Material.OAK_FENCE);
+                    center.getRelative(x, 2, z).setType(Material.TORCH);
                 } else {
-                    center.getRelative(i, 1, k).setType(crops[random.nextInt(crops.length)]);
+                    center.getRelative(x, 1, z).setType(crops[random.nextInt(crops.length)]);
                 }
             }
         }

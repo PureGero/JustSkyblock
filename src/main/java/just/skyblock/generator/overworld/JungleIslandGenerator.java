@@ -17,11 +17,11 @@ public class JungleIslandGenerator extends BaseIslandGenerator {
 
     @Override
     public void generate(Block center, Random random) {
-        for (int i = -1; i <= 1; i++) {
-            for (int k = -1; k <= 1; k++) {
-                center.getRelative(i, -2, k).setType(Material.STONE);
-                center.getRelative(i, -1, k).setType(Material.DIRT);
-                center.getRelative(i, 0, k).setType(Material.GRASS_BLOCK);
+        for (int x = -1; x <= 1; x++) {
+            for (int z = -1; z <= 1; z++) {
+                center.getRelative(x, -2, z).setType(Material.STONE);
+                center.getRelative(x, -1, z).setType(Material.DIRT);
+                center.getRelative(x, 0, z).setType(Material.GRASS_BLOCK);
             }
         }
 

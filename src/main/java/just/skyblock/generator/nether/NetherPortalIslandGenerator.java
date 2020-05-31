@@ -16,10 +16,10 @@ public class NetherPortalIslandGenerator extends BaseIslandGenerator {
 
     @Override
     public void generate(Block center, Random random) {
-        for (int i = -1; i <= 1; i++) {
-            for (int j = -2; j <= 0; j++) {
-                for (int k = -1; k <= 1; k++) {
-                    center.getRelative(i, j, k).setType(Material.NETHERRACK);
+        for (int x = -1; x <= 1; x++) {
+            for (int y = -2; y <= 0; y++) {
+                for (int z = -1; z <= 1; z++) {
+                    center.getRelative(x, y, z).setType(Material.NETHERRACK);
                 }
             }
         }
@@ -27,15 +27,15 @@ public class NetherPortalIslandGenerator extends BaseIslandGenerator {
         center.getRelative(0, -2, 0).setType(Material.BEDROCK);
 
         // Portal Frame
-        for(int i = -1; i <= 1; i++) {
-            for (int k = 0; k < 4; k++) {
-                center.getRelative(i, k, 0).setType(Material.OBSIDIAN);
+        for(int x = -1; x <= 1; x++) {
+            for (int y = 0; y < 4; y++) {
+                center.getRelative(x, y, 0).setType(Material.OBSIDIAN);
             }
         }
 
         // Portal
-        for(int k = 0; k < 2; k++) {
-            center.getRelative(0, 1 + k, 0).setType(Material.NETHER_PORTAL);
+        for(int y = 0; y < 2; y++) {
+            center.getRelative(0, 1 + y, 0).setType(Material.NETHER_PORTAL);
         }
     }
 }

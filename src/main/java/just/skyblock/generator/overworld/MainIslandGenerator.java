@@ -21,12 +21,12 @@ public class MainIslandGenerator extends BaseIslandGenerator {
 
     @Override
     public void generate(Block center, Random random) {
-        for (int i = -1; i <= 1; i++) {
-            for (int j = -2; j <= 0; j++) {
-                for (int k = -1; k <= 1; k++) {
-                    center.getRelative(i, j, k).setType(j == 0 ? Material.GRASS_BLOCK : Material.DIRT);
-                    center.getRelative(i + 3, j, k).setType(j == 0 ? Material.GRASS_BLOCK : Material.DIRT);
-                    center.getRelative(i, j, k + 3).setType(j == 0 ? Material.GRASS_BLOCK : Material.DIRT);
+        for (int x = -1; x <= 1; x++) {
+            for (int y = -2; y <= 0; y++) {
+                for (int z = -1; z <= 1; z++) {
+                    center.getRelative(x, y, z).setType(y == 0 ? Material.GRASS_BLOCK : Material.DIRT);
+                    center.getRelative(x + 3, y, z).setType(y == 0 ? Material.GRASS_BLOCK : Material.DIRT);
+                    center.getRelative(x, y, z + 3).setType(y == 0 ? Material.GRASS_BLOCK : Material.DIRT);
                 }
             }
         }
