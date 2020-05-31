@@ -79,13 +79,13 @@ public class Shop implements InventoryHolder {
 
     private static boolean downloadCache() {
         try {
-            C.log("Downloading shop data...");
+            SkyblockPlugin.plugin.getLogger().info("Downloading shop data...");
             long t = System.currentTimeMillis();
             URL url = new URL(SHOP_URL);
             InputStream in = url.openStream();
             Files.copy(in, cache.toPath(), StandardCopyOption.REPLACE_EXISTING);
             in.close();
-            C.log("Downloaded shop data (" + (System.currentTimeMillis() - t) + "ms)");
+            SkyblockPlugin.plugin.getLogger().info("Downloaded shop data (" + (System.currentTimeMillis() - t) + "ms)");
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -118,7 +118,7 @@ public class Shop implements InventoryHolder {
                         shopSpawn = new Location(SkyblockPlugin.plugin.lobby, Double.parseDouble(a[1]),
                                 Double.parseDouble(a[2]), Double.parseDouble(a[3]));
                     } catch (Exception e) {
-                        C.log("Invalid syntax: " + line);
+                        SkyblockPlugin.plugin.getLogger().info("Invalid shop syntax: " + line);
                     }
                 } else if (a.length >= 2) {
                     try {
@@ -166,7 +166,7 @@ public class Shop implements InventoryHolder {
                             }
                         }
                     } catch (Exception e) {
-                        C.log("Invalid syntax: " + line);
+                        SkyblockPlugin.plugin.getLogger().info("Invalid syntax: " + line);
                     }
                 }
             }
