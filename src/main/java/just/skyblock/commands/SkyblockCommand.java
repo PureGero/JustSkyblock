@@ -5,6 +5,7 @@ import just.skyblock.Skyblock;
 import just.skyblock.SkyblockPlugin;
 import just.skyblock.UsernameCache;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -232,6 +233,12 @@ public class SkyblockCommand implements CommandExecutor, TabCompleter {
 
                     if (name.toLowerCase().startsWith(args[1].toLowerCase())) {
                         ret.add(name);
+                    }
+                }
+            } else if (args[0].equalsIgnoreCase("op") && sender.hasPermission("skyblock.admin")) {
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    if (player.getName().toLowerCase().startsWith(args[1].toLowerCase())) {
+                        ret.add(player.getName());
                     }
                 }
             }
