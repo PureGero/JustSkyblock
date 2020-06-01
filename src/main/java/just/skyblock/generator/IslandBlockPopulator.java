@@ -19,7 +19,9 @@ public class IslandBlockPopulator extends BlockPopulator {
             new SpruceIslandGenerator(),
             new SandWellIslandGenerator(),
             new RedSandIsland(),
-            new MesaIslandGenerator()
+            new MesaIslandGenerator(),
+            new FlowerIslandGenerator(),
+            new IceSpikeIslandGenerator()
     };
 
     private static final BaseIslandGenerator[] netherIslandGenerators = {
