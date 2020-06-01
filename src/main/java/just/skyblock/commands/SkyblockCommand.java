@@ -109,8 +109,9 @@ public class SkyblockCommand implements CommandExecutor, TabCompleter {
             skyblock.reset();
             for (Player r : ps) {
                 skyblock.spawn(r);
-                if (r != player)
+                if (r != player) {
                     r.sendMessage(ChatColor.YELLOW + "The owner has reset this skyblock.");
+                }
             }
             // skyblock.spawn(p);
             player.sendMessage(ChatColor.GREEN + "Your skyblock has been reset.");

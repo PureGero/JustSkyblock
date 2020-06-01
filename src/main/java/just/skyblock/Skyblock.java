@@ -187,9 +187,17 @@ public class Skyblock {
     }
 
     public boolean inIsland(Location location) {
-        return isSkyblockWorld(location.getWorld()) &&
-                Math.floor(location.getBlockX() / 512.0) == x &&
-                Math.floor(location.getBlockZ() / 512.0) == z;
+        if (size == 0) {
+            return isSkyblockWorld(location.getWorld()) &&
+                    Math.floor(location.getBlockX() / 512.0) == x &&
+                    Math.floor(location.getBlockZ() / 512.0) == z;
+        } else if (size == 1) {
+            return isSkyblockWorld(location.getWorld()) &&
+                    Math.floor(location.getBlockX() / 1536.0) == x &&
+                    Math.floor(location.getBlockZ() / 1536.0) == z;
+        } else {
+            throw new IllegalStateException(uuid + "'s Skyblock.size == " + size + " (expected 0 or 1)");
+        }
     }
 
     private boolean isSkyblockWorld(World world) {
