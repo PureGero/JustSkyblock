@@ -38,8 +38,8 @@ public class SandWellIslandGenerator extends BaseIslandGenerator {
         
         int arr[]={-2,-1,1,2};
         for (int x:arr) {
-            for (int y:arr) {
-                center.getRelative(x, 1, y).setType(Material.SANDSTONE);
+            for (int z:arr) {
+                center.getRelative(x, 1, z).setType(Material.SANDSTONE);
             }
         }
         
@@ -48,13 +48,13 @@ public class SandWellIslandGenerator extends BaseIslandGenerator {
         slab.setType(Slab.Type.TOP);
         
         for(int x = -1; x <= 1; x++) {
-            for(int y = -1; y <= 1; y++) {
-                if(Math.abs(x) == Math.abs(y)) {
+            for(int z = -1; z <= 1; z++) {
+                if(Math.abs(x) == Math.abs(z)) {
                     continue;
                 }
-                center.getRelative(x, 3, y).setBlockData(slab);
-                center.getRelative(x, 0, y).setType(Material.RED_SAND);
-                center.getRelative(x, -1, y).setType(Material.RED_SAND);
+                center.getRelative(x, 3, z).setBlockData(slab);
+                center.getRelative(x, 0, z).setType(Material.RED_SAND);
+                center.getRelative(x, -1, z).setType(Material.RED_SAND);
             }
         }
         
