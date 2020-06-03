@@ -63,4 +63,9 @@ public class FlowerIslandGenerator extends BaseIslandGenerator {
             center.getWorld().generateTree(center.getRelative(x, 1, z).getLocation(), TreeType.BIRCH);
         }
     }
+
+    @Override
+    public double getWeight() {
+        return 2;
+    }
 }

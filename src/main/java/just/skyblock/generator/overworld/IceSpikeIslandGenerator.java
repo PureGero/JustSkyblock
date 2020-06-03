@@ -66,4 +66,9 @@ public class IceSpikeIslandGenerator extends BaseIslandGenerator {
         center.getRelative(0, 16 + rnd, 0).setType(Material.PACKED_ICE);
 
     }
+
+    @Override
+    public double getWeight() {
+        return 0.5;
+    }
 }

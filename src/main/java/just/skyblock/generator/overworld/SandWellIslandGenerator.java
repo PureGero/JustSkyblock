@@ -75,4 +75,9 @@ public class SandWellIslandGenerator extends BaseIslandGenerator {
         inv.addItem(dirt);
         
     }
+
+    @Override
+    public double getWeight() {
+        return 0.2;
+    }
 }
