@@ -69,6 +69,6 @@ public class IceSpikeIslandGenerator extends BaseIslandGenerator {
 
     @Override
     public double getWeight() {
-        return 0.5;
+        return 0.1;
     }
 }

@@ -74,7 +74,22 @@ public class IslandBlockPopulator extends BlockPopulator {
                 return new MainIslandGenerator();
             } else if ((Math.abs(Math.floorMod(x, 96) - 47) > 1 || Math.abs(Math.floorMod(z, 96) - 47) > 1)) {
                 if (random.nextDouble() < 0.4) {
-                    return overworldIslandGenerators[random.nextInt(overworldIslandGenerators.length)];
+                    
+                    double total = 0.0;
+                    for (int i = 0; i < overworldIslandGenerators.length; i++) {
+                        total += overworldIslandGenerators[i].getWeight();
+                    }
+                    Double rnd = random.nextDouble()*total;
+                    int islandIndex = -1;
+                    for (int i = 0; i < overworldIslandGenerators.length; i++) {
+                        total -= overworldIslandGenerators[i].getWeight();
+                        if (total <= rnd) {
+                            islandIndex = i;
+                            break;
+                        }
+                    }
+                    return overworldIslandGenerators[islandIndex];
+                    
                 }
             }
         } else if (world == skyblock.nether) {
