@@ -53,4 +53,9 @@ public class MesaIslandGenerator extends BaseIslandGenerator {
             }  
         }
     }
+    
+    @Override
+    public double getWeight() {
+        return 0.2;
+    }
 }
