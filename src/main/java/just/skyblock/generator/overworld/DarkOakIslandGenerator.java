@@ -61,7 +61,7 @@ public class  DarkOakIslandGenerator extends BaseIslandGenerator {
             int x = random.nextInt(3)-1;
             int z = random.nextInt(3)-1;
             if (center.getRelative(x, 1, z).getType() == Material.AIR) {
-                center.getRelative(x, 1, z).setType(flowers[random.nextInt((flowers.length))]);;
+                center.getRelative(x, 1, z).setType(flowers[random.nextInt((flowers.length))]);
             }
         } 
     }
