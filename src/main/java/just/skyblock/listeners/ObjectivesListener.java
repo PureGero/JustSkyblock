@@ -491,7 +491,7 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
         }
         Player player = (Player) e.getPlayer();
         skyblock.getServer().getScheduler().runTask(skyblock, () -> {
-            if(player.getStatistic(Statistic.MINE_BLOCK, Material.DIAMOND_ORE) >= 11) {
+            if(player.getStatistic(Statistic.MINE_BLOCK, Material.DIAMOND_ORE) >= 1) {
                 Objective.MINE_DIAMOND_ORE.give(player);
             }
         });    
