@@ -94,7 +94,8 @@ public enum Objective {
     CRAFT_MAP("I solemnly swear that I am up to no good","Craft a Map"),
     TRADE_WITH_TRADER("Jack of all trades", "Trade with a Wandering Trader"),
     PLACE_1000_TORCHES("Gondor calls for aid", "Place 1000 Torches"),
-    BREAK_ALL_DOORS("Here's Johnny!","Break all 7 Minecraft Doors");
+    BREAK_ALL_DOORS("Here's Johnny!","Break all 7 Minecraft Doors"),
+    MINE_DIAMOND_ORE("Just like the simulation","Mine Diamond Ore");
 
     private final String name;
     private final String description;

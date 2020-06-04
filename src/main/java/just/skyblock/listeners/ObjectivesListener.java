@@ -482,13 +482,19 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
     
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e){
-        Skyblock skyblock = Skyblock.load(e.getPlayer().getUniqueId());
+        Skyblock skyblockdata = Skyblock.load(e.getPlayer().getUniqueId());
         if(e.getBlock().getType() != null && getDoor(e.getBlock().getType()) >= 0) {
-                skyblock.doorsBroken |= (1 << getDoor(e.getBlock().getType()));
-                if(skyblock.doorsBroken == 127){
+                skyblockdata.doorsBroken |= (1 << getDoor(e.getBlock().getType()));
+                if(skyblockdata.doorsBroken == 127){
                     Objective.BREAK_ALL_DOORS.give(e.getPlayer());
                 }
         }
+        Player player = (Player) e.getPlayer();
+        skyblock.getServer().getScheduler().runTask(skyblock, () -> {
+            if(player.getStatistic(Statistic.MINE_BLOCK, Material.DIAMOND_ORE) >= 11) {
+                Objective.MINE_DIAMOND_ORE.give(player);
+            }
+        });    
     }
 
 }
