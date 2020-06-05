@@ -34,9 +34,9 @@ public class IceSpikeIslandGenerator extends BaseIslandGenerator {
         }
         
         for (int y = 1; y <= 7 + rnd; y++) {
-            for (int i = 0; i <=3; i++) {
+            for (int i = 0; i <= 3; i++) {
                 
-                int arr[]={-1,1};
+                int arr[] = {-1, 1};
                 center.getRelative(arr[random.nextInt(arr.length)], y, arr[random.nextInt(arr.length)]).setType(Material.AIR);
             }
         }
@@ -65,7 +65,7 @@ public class IceSpikeIslandGenerator extends BaseIslandGenerator {
         center.getRelative(0, 15 + rnd, 0).setType(Material.PACKED_ICE);
         center.getRelative(0, 16 + rnd, 0).setType(Material.PACKED_ICE);
         
-        Material[] Ore = new Material[] {Material.COAL_ORE,
+        Material[] ores = new Material[] {Material.COAL_ORE,
                 Material.IRON_ORE,
                 Material.LAPIS_ORE,
                 Material.GOLD_ORE,
@@ -76,10 +76,8 @@ public class IceSpikeIslandGenerator extends BaseIslandGenerator {
             for (int z = -1; z <= 1; z++) {
                 for (int y = 10 + rnd; y <= 11 + rnd; y++) {
                     int rnd2 = random.nextInt(3);
-                    if (rnd2 <= 0) {
-                        center.getRelative(x, y, z).setType(Ore[random.nextInt((Ore.length))]);
-                    }   
-                    else { 
+                    if (rnd2 == 0) {
+                        center.getRelative(x, y, z).setType(ores[random.nextInt((ores.length))]);
                     }
                 }
             }
