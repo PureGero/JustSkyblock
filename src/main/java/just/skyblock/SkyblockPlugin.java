@@ -103,6 +103,7 @@ public class SkyblockPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new SkyblockListener(this), this);
         getServer().getPluginManager().registerEvents(new SpawnListener(this), this);
         getServer().getPluginManager().registerEvents(new UsernameCacheListener(this), this);
+        getServer().getPluginManager().registerEvents(new EnderSignalListener(), this);
 
         try {
             if (Class.forName("puregero.network.VoteEvent") != null) {
