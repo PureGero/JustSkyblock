@@ -77,7 +77,8 @@ public class SkyblockListener implements Listener {
             skyblock.lyaw = e.getFrom().getYaw();
             skyblock.lpitch = e.getFrom().getPitch();
 
-        } else if (!skyblock.inIsland(e.getFrom()) && skyblock.inIsland(e.getTo()) && skyblock.lx != 0 && skyblock.lz != 0) {
+        } else if (!skyblock.inIsland(e.getFrom()) && skyblock.inIsland(e.getTo()) && skyblock.lx != 0 && skyblock.lz != 0
+                && e.getFrom().getWorld().getEnvironment() != World.Environment.THE_END) {
             e.setTo(new Location(Bukkit.getWorld(skyblock.lworld), skyblock.lx, skyblock.ly, skyblock.lz, skyblock.lyaw, skyblock.lpitch));
             e.getPlayer().sendMessage(ChatColor.GOLD + "Teleporting to previous location...");
 

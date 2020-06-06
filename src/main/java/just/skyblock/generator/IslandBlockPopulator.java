@@ -50,6 +50,8 @@ public class IslandBlockPopulator extends BlockPopulator {
                     return;
                 } else if (islandGenerator instanceof MainIslandGenerator || islandGenerator instanceof NetherPortalIslandGenerator) {
                     islandGenerator.generate(chunk.getBlock(8, 64, 8), random);
+                } else if (islandGenerator instanceof EndIslandGenerator) {
+                    islandGenerator.generate(EndIslandGenerator.getNearestEndIslandLocation(chunk.getBlock(8, 64, 8).getLocation()).getBlock(), random);
                 } else {
                     Block center = getIslandCenterBlock(chunk);
                     if (FortressBaseIslandGenerator.isInFortressStructure(center)) {
@@ -76,6 +78,8 @@ public class IslandBlockPopulator extends BlockPopulator {
         if (world == skyblock.world) {
             if (Math.floorMod(x, 96) == 47 && Math.floorMod(z, 96) == 47) {
                 return new MainIslandGenerator();
+            } else if (EndIslandGenerator.isEndIslandChunk(world, x, z)) {
+                return new EndIslandGenerator();
             } else if ((Math.abs(Math.floorMod(x, 96) - 47) > 1 || Math.abs(Math.floorMod(z, 96) - 47) > 1)) {
                 if (random.nextDouble() < 0.4) {
                     
