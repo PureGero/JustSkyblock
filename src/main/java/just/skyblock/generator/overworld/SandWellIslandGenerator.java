@@ -1,17 +1,16 @@
 package just.skyblock.generator.overworld;
 
-import java.util.Random;
-
-import just.skyblock.generator.LootGenerator;
+import just.skyblock.generator.BaseIslandGenerator;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.block.data.type.Slab;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.loot.LootTables;
 
-import just.skyblock.generator.BaseIslandGenerator;
+import java.util.Random;
 
 public class SandWellIslandGenerator extends BaseIslandGenerator {
 
@@ -70,7 +69,10 @@ public class SandWellIslandGenerator extends BaseIslandGenerator {
         center.getRelative(0, 0, 0).setType(Material.WATER);
 
         center.getRelative(0, -1, 0).setType(Material.CHEST);
-        LootGenerator.generateLoot(center.getRelative(0, -1, 0), random.nextLong(), LootGenerator.DESERT_PYRAMID);
+
+        Chest chest = (Chest) center.getRelative(0, -1, 0).getState();
+        chest.setLootTable(LootTables.DESERT_PYRAMID.getLootTable());
+        chest.update();
         
     }
 
