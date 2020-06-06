@@ -1,6 +1,7 @@
 package just.skyblock.generator.overworld;
 
 import just.skyblock.generator.BaseIslandGenerator;
+import just.skyblock.generator.GeneratorUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -68,7 +69,7 @@ public class SandWellIslandGenerator extends BaseIslandGenerator {
         
         center.getRelative(0, 0, 0).setType(Material.WATER);
 
-        center.getRelative(0, -1, 0).setType(Material.CHEST);
+        center.getRelative(0, -1, 0).setBlockData(GeneratorUtils.randomChestFacing(random));
 
         Chest chest = (Chest) center.getRelative(0, -1, 0).getState();
         chest.setLootTable(LootTables.DESERT_PYRAMID.getLootTable());
@@ -78,6 +79,6 @@ public class SandWellIslandGenerator extends BaseIslandGenerator {
 
     @Override
     public double getWeight() {
-        return 0.2;
+        return 0.1;
     }
 }

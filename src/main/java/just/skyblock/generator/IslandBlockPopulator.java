@@ -23,7 +23,8 @@ public class IslandBlockPopulator extends BlockPopulator {
             new FlowerIslandGenerator(),
             new IceSpikeIslandGenerator(),
             new DarkOakIslandGenerator(),
-            new MushroomFieldIslandGenerator()
+            new MushroomFieldIslandGenerator(),
+            new DungeonIslandGenerator()
     };
 
     private static final BaseIslandGenerator[] netherIslandGenerators = {
@@ -34,7 +35,8 @@ public class IslandBlockPopulator extends BlockPopulator {
             new NetherwartFortressIslandGenerator(),
     };
 
-    SkyblockPlugin skyblock;
+    private SkyblockPlugin skyblock;
+
     public IslandBlockPopulator(SkyblockPlugin b){
         skyblock = b;
     }
