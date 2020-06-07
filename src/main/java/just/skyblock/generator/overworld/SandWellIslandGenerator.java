@@ -1,17 +1,16 @@
 package just.skyblock.generator.overworld;
 
-import just.skyblock.generator.BaseIslandGenerator;
-import just.skyblock.generator.GeneratorUtils;
-import org.bukkit.Bukkit;
+import java.util.Random;
+
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.block.data.type.Slab;
 import org.bukkit.loot.LootTables;
 
-import java.util.Random;
+import just.skyblock.generator.BaseIslandGenerator;
+import just.skyblock.generator.GeneratorUtils;
 
 public class SandWellIslandGenerator extends BaseIslandGenerator {
 

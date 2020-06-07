@@ -24,7 +24,8 @@ public class IslandBlockPopulator extends BlockPopulator {
             new IceSpikeIslandGenerator(),
             new DarkOakIslandGenerator(),
             new MushroomFieldIslandGenerator(),
-            new DungeonIslandGenerator()
+            new DungeonIslandGenerator(),
+            new SwampIslandGenerator()
     };
 
     private static final BaseIslandGenerator[] netherIslandGenerators = {
