@@ -5,7 +5,9 @@ import java.util.Random;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
+import org.bukkit.block.data.Directional;
 import org.bukkit.loot.LootTables;
 
 import just.skyblock.generator.BaseIslandGenerator;
@@ -113,9 +115,9 @@ public class SwampIslandGenerator extends BaseIslandGenerator {
         } 
         
         center.getRelative(-1, 4, -1).setBlockData(GeneratorUtils.randomChestFacing(random));
-
+        
         Chest chest = (Chest) center.getRelative(-1, 4, -1).getState();
-        chest.setLootTable(LootTables.ABANDONED_MINESHAFT.getLootTable());
+        chest.setLootTable(LootTables.WOODLAND_MANSION.getLootTable());
         chest.update();
         
     }
