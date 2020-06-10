@@ -1,6 +1,7 @@
 package just.skyblock;
 
 import just.skyblock.commands.*;
+import just.skyblock.dragonfight.DragonHijacker;
 import just.skyblock.generator.SkyblockChunkGenerator;
 import just.skyblock.listeners.*;
 import org.bukkit.*;
@@ -57,7 +58,9 @@ public class SkyblockPlugin extends JavaPlugin {
         registerCommands();
         registerTabCompleters();
         registerListeners();
+        registerExtras();
     }
+
 
     private void registerWorlds() {
         lobby = getServer().getWorlds().get(0);
@@ -112,6 +115,9 @@ public class SkyblockPlugin extends JavaPlugin {
         } catch (ClassNotFoundException e) {
             getLogger().info("puregero.network.VoteEvent could not be found and was not registered.");
         }
+    }
+    private void registerExtras() {
+        new DragonHijacker(this);
     }
 
     @Override
