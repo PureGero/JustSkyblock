@@ -1,13 +1,14 @@
 package just.skyblock.generator.nether;
 
-import just.skyblock.generator.BaseIslandGenerator;
+import just.skyblock.generator.CenteredLocationBasedIslandGenerator;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 
 import java.util.Random;
 
-public class NetherPortalIslandGenerator extends BaseIslandGenerator {
+public class NetherPortalIslandGenerator extends CenteredLocationBasedIslandGenerator {
 
     @Override
     public Biome getBiome() {
@@ -37,5 +38,10 @@ public class NetherPortalIslandGenerator extends BaseIslandGenerator {
         for(int y = 0; y < 2; y++) {
             center.getRelative(0, 1 + y, 0).setType(Material.NETHER_PORTAL);
         }
+    }
+
+    @Override
+    public boolean isIslandChunk(World world, int cx, int cz) {
+        return Math.floorMod(cx, 96) == 47 && Math.floorMod(cz, 96) == 47;
     }
 }

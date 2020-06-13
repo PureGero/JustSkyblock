@@ -1,8 +1,9 @@
 package just.skyblock.generator.overworld;
 
-import just.skyblock.generator.BaseIslandGenerator;
+import just.skyblock.generator.CenteredLocationBasedIslandGenerator;
 import org.bukkit.Material;
 import org.bukkit.TreeType;
+import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -12,7 +13,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Random;
 
-public class MainIslandGenerator extends BaseIslandGenerator {
+public class MainIslandGenerator extends CenteredLocationBasedIslandGenerator {
 
     @Override
     public Biome getBiome() {
@@ -52,4 +53,8 @@ public class MainIslandGenerator extends BaseIslandGenerator {
         }
     }
 
+    @Override
+    public boolean isIslandChunk(World world, int cx, int cz) {
+        return Math.floorMod(cx, 96) == 47 && Math.floorMod(cz, 96) == 47;
+    }
 }

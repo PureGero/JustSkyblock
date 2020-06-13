@@ -1,5 +1,6 @@
 package just.skyblock.generator.nether;
 
+import just.skyblock.generator.LocationBasedIslandGenerator;
 import net.minecraft.server.v1_15_R1.*;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
@@ -8,7 +9,7 @@ import org.bukkit.craftbukkit.v1_15_R1.CraftWorld;
 
 import java.util.Random;
 
-public class FortressMainIslandGenerator extends FortressBaseIslandGenerator {
+public class FortressMainIslandGenerator extends LocationBasedIslandGenerator {
 
     @Override
     public Biome getBiome() {
@@ -54,5 +55,30 @@ public class FortressMainIslandGenerator extends FortressBaseIslandGenerator {
                 world.getChunkAt(i, j, ChunkStatus.EMPTY, false).a("Fortress", ChunkCoordIntPair.pair(x >> 4, z >> 4));
             }
         }
+    }
+
+    @Override
+    public boolean isIslandChunk(org.bukkit.World world, int cx, int cz) {
+        int bx = cx >> 4;
+        int bz = cz >> 4;
+
+        Random random = new Random((bx ^ bz << 4) ^ world.getSeed());
+        random.nextInt();
+
+        if (random.nextInt(3) != 0) {
+            return false;
+        }
+
+        int h = (bx << 4) + 4 + random.nextInt(8);
+        if (cx != h) {
+            return false;
+        }
+
+        int i = (bz << 4) + 4 + random.nextInt(8);
+        if (cz != i) {
+            return false;
+        }
+
+        return true;
     }
 }

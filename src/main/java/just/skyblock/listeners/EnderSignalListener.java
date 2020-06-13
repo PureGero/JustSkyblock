@@ -1,7 +1,7 @@
 package just.skyblock.listeners;
 
 import just.skyblock.generator.SkyblockChunkGenerator;
-import just.skyblock.generator.overworld.EndIslandGenerator;
+import just.skyblock.generator.overworld.EndPortalIslandGenerator;
 import org.bukkit.World;
 import org.bukkit.entity.EnderSignal;
 import org.bukkit.event.EventHandler;
@@ -20,7 +20,7 @@ public class EnderSignalListener implements Listener {
                 e.getLocation().getWorld().getGenerator() instanceof SkyblockChunkGenerator &&
                 e.getLocation().getWorld().getEnvironment() == World.Environment.NORMAL) {
 
-            ((EnderSignal) e.getEntity()).setTargetLocation(EndIslandGenerator.getNearestEndIslandLocation(e.getLocation()));
+            ((EnderSignal) e.getEntity()).setTargetLocation(EndPortalIslandGenerator.getNearestEndIslandLocation(e.getLocation()));
 
         }
     }

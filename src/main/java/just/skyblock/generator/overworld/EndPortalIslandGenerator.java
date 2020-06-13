@@ -1,6 +1,7 @@
 package just.skyblock.generator.overworld;
 
-import just.skyblock.generator.BaseIslandGenerator;
+import just.skyblock.generator.LocationBasedIslandGenerator;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -12,7 +13,7 @@ import org.bukkit.block.data.type.EndPortalFrame;
 
 import java.util.Random;
 
-public class EndIslandGenerator extends BaseIslandGenerator {
+public class EndPortalIslandGenerator extends LocationBasedIslandGenerator {
 
     private static final Material[] strongholdBlocks = {
             Material.STONE_BRICKS, Material.MOSSY_STONE_BRICKS, Material.CRACKED_STONE_BRICKS
@@ -79,7 +80,13 @@ public class EndIslandGenerator extends BaseIslandGenerator {
         return endPortalFrame;
     }
 
-    public static boolean isEndIslandChunk(World world, int cx, int cz) {
+    @Override
+    public Block getCenterBlockLocation(Chunk chunk) {
+        return getNearestEndIslandLocation(chunk.getBlock(8, 64, 8).getLocation()).getBlock();
+    }
+
+    @Override
+    public boolean isIslandChunk(World world, int cx, int cz) {
         Location location = getNearestEndIslandLocation(new Location(world, cx << 4, 64, cz << 4));
 
         return location.getBlockX() >> 4 == cx && location.getBlockZ() >> 4 == cz;
@@ -102,5 +109,4 @@ public class EndIslandGenerator extends BaseIslandGenerator {
 
         return new Location(location.getWorld(), x + 0.5, 64, z + 0.5);
     }
-
 }

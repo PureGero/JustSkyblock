@@ -1,6 +1,8 @@
 package just.skyblock.generator;
 
 import just.skyblock.SkyblockPlugin;
+import just.skyblock.generator.end.*;
+import just.skyblock.generator.overworld.EndPortalIslandGenerator;
 import just.skyblock.generator.nether.*;
 import just.skyblock.generator.overworld.*;
 import org.bukkit.Chunk;
@@ -12,6 +14,12 @@ import java.util.Random;
 
 public class IslandBlockPopulator extends BlockPopulator {
     private static final BaseIslandGenerator[] overworldIslandGenerators = {
+
+            // Location based
+            new MainIslandGenerator(),
+            new EndPortalIslandGenerator(),
+
+            // Normal
             new FarmIslandGenerator(),
             new JungleIslandGenerator(),
             new SandIslandGenerator(),
@@ -25,17 +33,34 @@ public class IslandBlockPopulator extends BlockPopulator {
             new DarkOakIslandGenerator(),
             new MushroomFieldIslandGenerator(),
             new DungeonIslandGenerator(),
-            new SwampIslandGenerator(),
-            new EndMainIslandGenerator(),
-            new EndCrystalIslandGenerator()
+            new SwampIslandGenerator()
     };
 
     private static final BaseIslandGenerator[] netherIslandGenerators = {
+
+            // Location based
+            new NetherPortalIslandGenerator(),
+            new FortressMainIslandGenerator(),
+
+            // Normal
             new NetherrackIslandGenerator(),
     };
 
     private static final BaseIslandGenerator[] netherFortressIslandGenerators = {
             new NetherwartFortressIslandGenerator(),
+    };
+
+    private static final BaseIslandGenerator[] endIslandGenerators = {
+
+            // Location based
+            new EndMainIslandGenerator(),
+            new ExitPortalIslandGenerator(),
+            new EndCrystalIslandGenerator(),
+            new ElytraIslandGenerator(),
+
+            // Normal
+            new EndBlankIslandGenerator(),
+            new EndChorusIslandGenerator(),
     };
 
     private SkyblockPlugin skyblock;
@@ -47,21 +72,17 @@ public class IslandBlockPopulator extends BlockPopulator {
     @Override
     public void populate(World world, Random random, Chunk chunk) {
         try {
-            if (world == skyblock.world || world == skyblock.nether) {
-                BaseIslandGenerator islandGenerator = getIslandGenerator(world, chunk.getX(), chunk.getZ());
-                if (islandGenerator == null) {
-                    return;
-                } else if (islandGenerator instanceof MainIslandGenerator || islandGenerator instanceof NetherPortalIslandGenerator) {
-                    islandGenerator.generate(chunk.getBlock(8, 64, 8), random);
-                } else if (islandGenerator instanceof EndIslandGenerator) {
-                    islandGenerator.generate(EndIslandGenerator.getNearestEndIslandLocation(chunk.getBlock(8, 64, 8).getLocation()).getBlock(), random);
-                } else {
-                    Block center = getIslandCenterBlock(chunk);
-                    if (FortressBaseIslandGenerator.isInFortressStructure(center)) {
-                        islandGenerator = getFortressIslandGenerator(world, chunk.getX(), chunk.getZ());
-                    }
-                    islandGenerator.generate(center, random);
+            BaseIslandGenerator islandGenerator = getIslandGenerator(world, chunk.getX(), chunk.getZ());
+
+            if (islandGenerator != null) {
+                Block center = islandGenerator.getCenterBlockLocation(chunk);
+
+                if (!(islandGenerator instanceof LocationBasedIslandGenerator) && FortressBaseIslandGenerator.isInFortressStructure(center)) {
+                    islandGenerator = getIslandGeneratorFromList(world, chunk.getX(), chunk.getZ(), netherFortressIslandGenerators,
+                            new Random(GeneratorUtils.hash(world.getSeed(), chunk.getX(), chunk.getZ())));
                 }
+
+                islandGenerator.generate(center, random);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -69,65 +90,58 @@ public class IslandBlockPopulator extends BlockPopulator {
         }
     }
 
-    private Block getIslandCenterBlock(Chunk chunk) {
-        Random random = new Random(hash(chunk.getWorld().getSeed(), chunk.getX(), chunk.getZ()) ^ 569);
+    private BaseIslandGenerator getIslandGeneratorFromList(World world, int cx, int cz, BaseIslandGenerator[] generators, Random random) {
+        double total = 0.0;
+        for (BaseIslandGenerator generator : generators) {
+            total += generator.getWeight();
 
-        return chunk.getBlock(random.nextInt(16), 64, random.nextInt(16));
+            if (generator instanceof LocationBasedIslandGenerator && ((LocationBasedIslandGenerator) generator).isIslandChunk(world, cx, cz)) {
+                return generator;
+            }
+        }
+
+        double rnd = random.nextDouble()*total;
+        int islandIndex = -1;
+        for (int i = 0; i < generators.length; i++) {
+            total -= generators[i].getWeight();
+            if (total <= rnd) {
+                islandIndex = i;
+                break;
+            }
+        }
+
+        return generators[islandIndex];
     }
 
     public BaseIslandGenerator getIslandGenerator(World world, int x, int z) {
-        Random random = new Random(hash(world.getSeed(), x, z));
+        Random random = new Random(GeneratorUtils.hash(world.getSeed(), x, z));
 
         if (world == skyblock.world) {
-            if (Math.floorMod(x, 96) == 47 && Math.floorMod(z, 96) == 47) {
-                return new MainIslandGenerator();
-            } else if (EndIslandGenerator.isEndIslandChunk(world, x, z)) {
-                return new EndIslandGenerator();
-            } else if ((Math.abs(Math.floorMod(x, 96) - 47) > 1 || Math.abs(Math.floorMod(z, 96) - 47) > 1)) {
-                if (random.nextDouble() < 0.4) {
-                    
-                    double total = 0.0;
-                    for (int i = 0; i < overworldIslandGenerators.length; i++) {
-                        total += overworldIslandGenerators[i].getWeight();
-                    }
-                    Double rnd = random.nextDouble()*total;
-                    int islandIndex = -1;
-                    for (int i = 0; i < overworldIslandGenerators.length; i++) {
-                        total -= overworldIslandGenerators[i].getWeight();
-                        if (total <= rnd) {
-                            islandIndex = i;
-                            break;
-                        }
-                    }
-                    return overworldIslandGenerators[islandIndex];
-                    
-                }
+            BaseIslandGenerator generator = getIslandGeneratorFromList(world, x, z, overworldIslandGenerators, random);
+
+            if (generator instanceof LocationBasedIslandGenerator ||
+                    ((Math.abs(Math.floorMod(x, 96) - 47) > 1 || Math.abs(Math.floorMod(z, 96) - 47) > 1) && random.nextDouble() < 0.4)) {
+                return generator;
             }
+
         } else if (world == skyblock.nether) {
-            if (Math.floorMod(x, 96) == 47 && Math.floorMod(z, 96) == 47) {
-                return new NetherPortalIslandGenerator();
-            } else if (FortressBaseIslandGenerator.isMainFortressChunk(world.getSeed(), x, z)) {
-                return new FortressMainIslandGenerator();
-            } else {
-                if (random.nextDouble() < 0.6) {
-                    return netherIslandGenerators[random.nextInt(netherIslandGenerators.length)];
-                }
+            BaseIslandGenerator generator = getIslandGeneratorFromList(world, x, z, netherIslandGenerators, random);
+
+            if (generator instanceof LocationBasedIslandGenerator || random.nextDouble() < 0.6) {
+                return generator;
+            }
+
+        } else if (world == skyblock.end) {
+            BaseIslandGenerator generator = getIslandGeneratorFromList(world, x, z, endIslandGenerators, random);
+
+            if (generator instanceof EnderDragonIslandGenerator ||
+                    ((Math.abs(x) > 32 || Math.abs(z) > 32) &&
+                            (generator instanceof LocationBasedIslandGenerator || random.nextDouble() < 0.05))) {
+                return generator;
             }
         }
 
         return null;
-    }
-
-    public BaseIslandGenerator getFortressIslandGenerator(World world, int x, int z) {
-        Random random = new Random(hash(world.getSeed(), x, z) ^ 85331);
-
-        return netherFortressIslandGenerators[random.nextInt(netherFortressIslandGenerators.length)];
-    }
-
-    private int hash(long seed, int x, int y){
-        int h = (int) seed + x*374761393 + y*668265263; //all constants are prime
-        h = (h^(h >> 13))*1274126177;
-        return h^(h >> 16);
     }
 
     /*private boolean isChunkEmpty(Chunk c) {

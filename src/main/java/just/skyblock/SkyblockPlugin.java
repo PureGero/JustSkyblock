@@ -66,7 +66,7 @@ public class SkyblockPlugin extends JavaPlugin {
 
         world = getServer().createWorld(new WorldCreator("skyblock").generator(skyblockChunkGenerator));
         nether = getServer().createWorld(new WorldCreator("skyblock_nether").environment(World.Environment.NETHER).generator(skyblockChunkGenerator));
-        end = getServer().createWorld(new WorldCreator("skyblock_the_end").environment(World.Environment.THE_END));
+        end = getServer().createWorld(new WorldCreator("skyblock_the_end").environment(World.Environment.THE_END).generator(skyblockChunkGenerator));
 
         for (World w : new World[] {lobby, world, nether, end}) {
             if (w != lobby) {

@@ -1,15 +1,15 @@
-package just.skyblock.generator.overworld;
+package just.skyblock.generator.end;
 
-import java.util.Random;
-
+import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.TreeType;
+import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 
-import just.skyblock.generator.BaseIslandGenerator;
+import java.util.Random;
 
-public class EndMainIslandGenerator extends BaseIslandGenerator {
+public class EndMainIslandGenerator extends EnderDragonIslandGenerator {
 
     @Override
     public Biome getBiome() {
@@ -34,4 +34,13 @@ public class EndMainIslandGenerator extends BaseIslandGenerator {
 
     }
 
+    @Override
+    public boolean isIslandChunk(World world, int cx, int cz) {
+        return 100 >> 4 == cx && 0 == cz;
+    }
+
+    @Override
+    public Block getCenterBlockLocation(Chunk chunk) {
+        return chunk.getBlock(100 & 0xF, 47, 0);
+    }
 }

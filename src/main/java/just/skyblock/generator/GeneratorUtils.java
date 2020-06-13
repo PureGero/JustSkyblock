@@ -24,4 +24,10 @@ public class GeneratorUtils {
         return chest;
     }
 
+    public static int hash(long seed, int x, int y){
+        int h = (int) seed + x * 374761393 + y * 668265263; // all constants are prime
+        h = (h ^ (h >> 13)) * 1274126177;
+        return h ^ (h >> 16);
+    }
+
 }
