@@ -157,7 +157,7 @@ public class SkyblockListener implements Listener {
             e.getPlayer().teleport(Skyblock.get(from).getNetherSpawnLocation());
             Objective.ENTER_NETHER.give(e.getPlayer()); // Enter Nether Objective
         } else if (from.getWorld() == plugin.world && to.getWorld().getEnvironment() == World.Environment.THE_END) {
-            e.setTo(new Location(plugin.end, 100, 49, 0));
+            e.setTo(new Location(plugin.enderDragonFight, 100, 49, 0));
         } else if (from.getWorld() == plugin.nether && to.getWorld().getEnvironment() == World.Environment.NORMAL) {
             e.setCancelled(true);
             e.getPlayer().teleport(Skyblock.get(from).getSpawnLocation());
@@ -172,7 +172,7 @@ public class SkyblockListener implements Listener {
             e.setCancelled(true);
             e.getEntity().teleport(Skyblock.get(from).getNetherSpawnLocation());
         } else if (from.getWorld() == plugin.world && to.getWorld().getEnvironment() == World.Environment.THE_END) {
-            e.setTo(new Location(plugin.end, 100, 49, 0));
+            e.setTo(new Location(plugin.enderDragonFight, 100, 49, 0));
         } else if (from.getWorld() == plugin.nether && to.getWorld().getEnvironment() == World.Environment.NORMAL) {
             e.setCancelled(true);
             e.getEntity().teleport(Skyblock.get(from).getSpawnLocation());

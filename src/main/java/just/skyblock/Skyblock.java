@@ -80,7 +80,7 @@ public class Skyblock {
     }
 
     public static Skyblock get(Location l) {
-        if (l.getWorld() != SkyblockPlugin.plugin.world && l.getWorld() != SkyblockPlugin.plugin.nether) return null;
+        if (l.getWorld() != SkyblockPlugin.plugin.world && l.getWorld() != SkyblockPlugin.plugin.nether && l.getWorld() != SkyblockPlugin.plugin.end) return null;
         int x = (int) Math.floor(l.getBlockX() / 512.0);
         int z = (int) Math.floor(l.getBlockZ() / 512.0);
         int x2 = (int) Math.floor(l.getBlockX() / 1536.0);
@@ -202,7 +202,7 @@ public class Skyblock {
     }
 
     private boolean isSkyblockWorld(World world) {
-        return world == getWorld() || world == getNether() /*|| world == getEnd()*/;
+        return world == getWorld() || world == getNether() || world == getEnd();
     }
 
     public World getWorld() {

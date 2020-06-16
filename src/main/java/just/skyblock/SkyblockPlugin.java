@@ -17,6 +17,7 @@ public class SkyblockPlugin extends JavaPlugin {
     public World world = null;
     public World nether = null;
     public World end = null;
+    public World enderDragonFight = null;
     public World lobby = null;
 
     @Override
@@ -71,8 +72,9 @@ public class SkyblockPlugin extends JavaPlugin {
         world = getServer().createWorld(new WorldCreator("skyblock").generator(skyblockChunkGenerator));
         nether = getServer().createWorld(new WorldCreator("skyblock_nether").environment(World.Environment.NETHER).generator(skyblockChunkGenerator));
         end = getServer().createWorld(new WorldCreator("skyblock_the_end").environment(World.Environment.THE_END).generator(skyblockChunkGenerator));
+        enderDragonFight = getServer().createWorld(new WorldCreator("skyblock_enderDragonFight").environment(World.Environment.THE_END).generator(skyblockChunkGenerator));
 
-        for (World w : new World[] {lobby, world, nether, end}) {
+        for (World w : new World[] {lobby, world, nether, end, enderDragonFight}) {
             if (w != lobby) {
                 w.setKeepSpawnInMemory(false);
             }
@@ -108,6 +110,7 @@ public class SkyblockPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new SpawnListener(this), this);
         getServer().getPluginManager().registerEvents(new UsernameCacheListener(this), this);
         getServer().getPluginManager().registerEvents(new EnderSignalListener(), this);
+        getServer().getPluginManager().registerEvents(new EnderDragonResetListener(this), this);
 
         try {
             if (Class.forName("puregero.network.VoteEvent") != null) {
@@ -116,24 +119,6 @@ public class SkyblockPlugin extends JavaPlugin {
         } catch (ClassNotFoundException e) {
             getLogger().info("puregero.network.VoteEvent could not be found and was not registered.");
         }
-    }
-
-    public boolean isInEnderDragonFight(Entity entity) {
-        Location location = entity.getLocation();
-
-        return Math.abs(location.getBlockX()) < 512 && Math.abs(location.getBlockZ()) < 512;
-    }
-
-    public List<Player> getEnderDragonFightPlayers() {
-        List<Player> players = new ArrayList<>();
-
-        for (Player player : end.getPlayers()) {
-            if (isInEnderDragonFight(player)) {
-                players.add(player);
-            }
-        }
-
-        return players;
     }
 
     @Override

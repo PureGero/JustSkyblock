@@ -127,7 +127,7 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
         }
 
         if (e.getEntityType() == EntityType.ENDER_DRAGON) {
-            for (Player player : plugin.getEnderDragonFightPlayers()) {
+            for (Player player : plugin.enderDragonFight.getPlayers()) {
                 Skyblock.load(player).enderDragonsKilled++;
                 Objective.KILL_ENDER_DRAGON.give(player);
             }

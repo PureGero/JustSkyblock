@@ -54,13 +54,21 @@ public class IslandBlockPopulator extends BlockPopulator {
 
             // Location based
             new EndMainIslandGenerator(),
-            new ExitPortalIslandGenerator(),
-            new EndCrystalIslandGenerator(),
             new ElytraIslandGenerator(),
 
             // Normal
             new EndBlankIslandGenerator(),
             new EndChorusIslandGenerator(),
+    };
+
+    private static final BaseIslandGenerator[] enderDragonFightIslandGenerators = {
+
+            // Location based
+            new ExitPortalIslandGenerator(),
+            new EndCrystalIslandGenerator(),
+
+            // Normal
+            new EndBlankIslandGenerator(),
     };
 
     private SkyblockPlugin skyblock;
@@ -134,9 +142,14 @@ public class IslandBlockPopulator extends BlockPopulator {
         } else if (world == skyblock.end) {
             BaseIslandGenerator generator = getIslandGeneratorFromList(world, x, z, endIslandGenerators, random);
 
-            if (generator instanceof EnderDragonIslandGenerator ||
-                    ((Math.abs(x) > 32 || Math.abs(z) > 32) &&
-                            (generator instanceof LocationBasedIslandGenerator || random.nextDouble() < 0.05))) {
+            if (generator instanceof LocationBasedIslandGenerator || random.nextDouble() < 0.05) {
+                return generator;
+            }
+
+        } else if (world == skyblock.enderDragonFight) {
+            BaseIslandGenerator generator = getIslandGeneratorFromList(world, x, z, enderDragonFightIslandGenerators, random);
+
+            if (generator instanceof LocationBasedIslandGenerator || random.nextDouble() < 0.1) {
                 return generator;
             }
         }
