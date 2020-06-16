@@ -66,6 +66,7 @@ public class IslandBlockPopulator extends BlockPopulator {
             // Location based
             new ExitPortalIslandGenerator(),
             new EndCrystalIslandGenerator(),
+            new EndGatewayPortalGenerator(),
 
             // Normal
             new EndBlankIslandGenerator(),
