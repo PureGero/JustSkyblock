@@ -66,6 +66,7 @@ public class Skyblock {
     public int cobbleSold = 0;
     public int saplings = 0;
     public int doorsBroken = 0;
+    public int enderDragonsKilled = 0;
 
     /** I have allowed these players access to my skyblock */
     public HashSet<UUID> allowed = new HashSet<>();

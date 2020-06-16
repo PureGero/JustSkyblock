@@ -95,7 +95,8 @@ public enum Objective {
     TRADE_WITH_TRADER("Jack of all trades", "Trade with a Wandering Trader"),
     PLACE_1000_TORCHES("Gondor calls for aid", "Place 1000 Torches"),
     BREAK_ALL_DOORS("Here's Johnny!","Break all 7 Minecraft Doors"),
-    MINE_DIAMOND_ORE("Just like the simulation","Mine Diamond Ore");
+    MINE_DIAMOND_ORE("Just like the simulation","Mine Diamond Ore"),
+    KILL_ENDER_DRAGON("The End", "Kill the Ender Dragon");
 
     private final String name;
     private final String description;

@@ -5,8 +5,12 @@ import just.skyblock.generator.SkyblockChunkGenerator;
 import just.skyblock.listeners.*;
 import org.bukkit.*;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SkyblockPlugin extends JavaPlugin {
     public static SkyblockPlugin plugin = null;
@@ -112,6 +116,24 @@ public class SkyblockPlugin extends JavaPlugin {
         } catch (ClassNotFoundException e) {
             getLogger().info("puregero.network.VoteEvent could not be found and was not registered.");
         }
+    }
+
+    public boolean isInEnderDragonFight(Entity entity) {
+        Location location = entity.getLocation();
+
+        return Math.abs(location.getBlockX()) < 512 && Math.abs(location.getBlockZ()) < 512;
+    }
+
+    public List<Player> getEnderDragonFightPlayers() {
+        List<Player> players = new ArrayList<>();
+
+        for (Player player : end.getPlayers()) {
+            if (isInEnderDragonFight(player)) {
+                players.add(player);
+            }
+        }
+
+        return players;
     }
 
     @Override

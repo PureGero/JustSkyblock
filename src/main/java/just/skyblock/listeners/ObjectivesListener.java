@@ -4,7 +4,6 @@ import just.skyblock.Objective;
 import just.skyblock.Skyblock;
 import just.skyblock.SkyblockPlugin;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
@@ -36,10 +35,10 @@ import org.bukkit.potion.PotionEffectType;
 import java.util.HashMap;
 
 public class ObjectivesListener implements org.bukkit.event.Listener {
-    private SkyblockPlugin skyblock;
+    private SkyblockPlugin plugin;
 
-    public ObjectivesListener(SkyblockPlugin b) {
-        skyblock = b;
+    public ObjectivesListener(SkyblockPlugin plugin) {
+        this.plugin = plugin;
     }
 
     private static final Material[] SAPLINGS = new Material[]{
@@ -60,7 +59,7 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onBlockPlaceMonitor(BlockPlaceEvent e) {
-        if (e.getBlock().getWorld() == skyblock.world) {
+        if (e.getBlock().getWorld() == plugin.world) {
             Skyblock skyblock = Skyblock.load(e.getPlayer().getUniqueId());
             skyblock.blocksPlaced += 1;
             Objective.blocks(skyblock);
@@ -85,7 +84,7 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
             }
         }
         if(e.getBlockPlaced().getType() == Material.TORCH) {
-            skyblock.getServer().getScheduler().runTask(skyblock, () -> {
+            plugin.getServer().getScheduler().runTask(plugin, () -> {
                 Player player = (Player) e.getPlayer();
                 if(player.getStatistic(Statistic.USE_ITEM, Material.TORCH) >= 1000) {
                     Objective.PLACE_1000_TORCHES.give(player);
@@ -126,6 +125,14 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
                 }
             }
         }
+
+        if (e.getEntityType() == EntityType.ENDER_DRAGON) {
+            for (Player player : plugin.getEnderDragonFightPlayers()) {
+                Skyblock.load(player).enderDragonsKilled++;
+                Objective.KILL_ENDER_DRAGON.give(player);
+            }
+        }
+
 		if(e.getEntity().getType() == EntityType.BAT) {
 			if(e.getEntity().getLastDamageCause().getCause() == DamageCause.DROWNING) {
                 Player player = null;
@@ -420,7 +427,8 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
             }
         }
 
-        else {skyblock.getServer().getScheduler().runTask(skyblock, () -> {
+        else {
+            plugin.getServer().getScheduler().runTask(plugin, () -> {
             if(event.getPlayer().isDead() == true) {
                 fallingStartYs.remove(player);
             }
@@ -490,7 +498,7 @@ public class ObjectivesListener implements org.bukkit.event.Listener {
                 }
         }
         Player player = (Player) e.getPlayer();
-        skyblock.getServer().getScheduler().runTask(skyblock, () -> {
+        plugin.getServer().getScheduler().runTask(plugin, () -> {
             if(player.getStatistic(Statistic.MINE_BLOCK, Material.DIAMOND_ORE) >= 1) {
                 Objective.MINE_DIAMOND_ORE.give(player);
             }
