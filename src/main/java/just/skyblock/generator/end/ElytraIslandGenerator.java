@@ -1,14 +1,16 @@
 package just.skyblock.generator.end;
 
-import just.skyblock.generator.GeneratorUtils;
 import just.skyblock.generator.LocationBasedIslandGenerator;
-import org.bukkit.*;
+import net.minecraft.server.v1_15_R1.*;
+import org.bukkit.Chunk;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
-import org.bukkit.block.Chest;
-import org.bukkit.entity.EntityType;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.craftbukkit.v1_15_R1.CraftWorld;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class ElytraIslandGenerator extends LocationBasedIslandGenerator {
@@ -20,39 +22,20 @@ public class ElytraIslandGenerator extends LocationBasedIslandGenerator {
 
     @Override
     public void generate(Block center, Random random) {
-        for (int x = -1; x <= 1; x++) {
-            for (int y = -2; y <= 0; y++) {
-                for (int z = -1; z <= 1; z++) {
-                    center.getRelative(x, y, z).setType(Material.END_STONE);
-                }
-            }
+        DefinedStructureManager definedStructureManager = ((CraftWorld) center.getWorld()).getHandle().r();
+
+        List<StructurePiece> pieces = new ArrayList<>();
+
+        WorldGenEndCityPieces.a(definedStructureManager, new BlockPosition(center.getX(), center.getY() + 1, center.getZ()), EnumBlockRotation.a(random), pieces, random);
+
+        for (StructurePiece piece : pieces) {
+            piece.a(((CraftWorld) center.getWorld()).getHandle(), null, random, new StructureBoundingBox(center.getX() - 256, center.getZ() - 256, center.getX() + 256, center.getZ() + 256), null);
         }
-
-        // Chorus
-        center.getWorld().generateTree(center.getRelative(random.nextInt(3) - 1, 1, random.nextInt(3) - 1).getLocation(), TreeType.CHORUS_PLANT);
-
-        // Chest
-        Block chestBlock = center.getRelative(0, 1, 0);
-
-        chestBlock.setBlockData(GeneratorUtils.randomChestFacing(random));
-
-        Chest chest = (Chest) chestBlock.getState();
-        chest.getInventory().setItem(13, new ItemStack(Material.ELYTRA));
-
-        // Shulker
-        do {
-            Block shulker = center.getRelative(random.nextInt(3) - 1, 1, random.nextInt(3) - 1);
-
-            if (shulker.isEmpty()) {
-                center.getWorld().spawnEntity(shulker.getLocation(), EntityType.SHULKER);
-                break;
-            }
-        } while (true);
     }
 
     @Override
     public Block getCenterBlockLocation(Chunk chunk) {
-        return getNearestElytraIslandLocation(chunk.getBlock(8, 64, 8).getLocation()).getBlock();
+        return chunk.getBlock(7, 64, 7);
     }
 
     @Override
