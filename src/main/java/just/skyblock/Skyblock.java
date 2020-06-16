@@ -251,6 +251,17 @@ public class Skyblock {
         return block.isEmpty() || block.getType() == Material.NETHER_PORTAL;
     }
 
+    public Location getEndSpawnLocation() {
+        Location spawnLocation = getCenterLocation(getEnd());
+
+        while (spawnLocation.getBlockY() < 256 && (!spawnLocation.getBlock().isEmpty()
+                || !spawnLocation.getBlock().getRelative(BlockFace.UP).isEmpty())) {
+            spawnLocation = spawnLocation.add(0, 1, 0);
+        }
+
+        return spawnLocation;
+    }
+
     public void spawn(Player p) {
         p.teleport(getSpawnLocation());
         p.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 20 * 10, 100));
