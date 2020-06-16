@@ -20,6 +20,8 @@ public class SkyblockPlugin extends JavaPlugin {
     public World enderDragonFight = null;
     public World lobby = null;
 
+    public SkyblockChunkGenerator skyblockChunkGenerator = new SkyblockChunkGenerator(this);
+
     @Override
     public void onEnable() {
         plugin = this;
@@ -67,25 +69,26 @@ public class SkyblockPlugin extends JavaPlugin {
     private void registerWorlds() {
         lobby = getServer().getWorlds().get(0);
 
-        SkyblockChunkGenerator skyblockChunkGenerator = new SkyblockChunkGenerator(this);
-
         world = getServer().createWorld(new WorldCreator("skyblock").generator(skyblockChunkGenerator));
         nether = getServer().createWorld(new WorldCreator("skyblock_nether").environment(World.Environment.NETHER).generator(skyblockChunkGenerator));
         end = getServer().createWorld(new WorldCreator("skyblock_the_end").environment(World.Environment.THE_END).generator(skyblockChunkGenerator));
-        enderDragonFight = getServer().createWorld(new WorldCreator("skyblock_enderDragonFight").environment(World.Environment.THE_END).generator(skyblockChunkGenerator));
 
-        for (World w : new World[] {lobby, world, nether, end, enderDragonFight}) {
-            if (w != lobby) {
-                w.setKeepSpawnInMemory(false);
-            }
-
-            w.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
-            w.setDifficulty(Difficulty.NORMAL);
+        for (World w : new World[] {lobby, world, nether, end}) {
+            setWorldSettings(w);
         }
 
         lobby.setKeepSpawnInMemory(true);
 
         getServer().setSpawnRadius(0);
+    }
+
+    public void setWorldSettings(World world) {
+        if (world != lobby) {
+            world.setKeepSpawnInMemory(false);
+        }
+
+        world.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
+        world.setDifficulty(Difficulty.NORMAL);
     }
 
     private void registerCommands() {

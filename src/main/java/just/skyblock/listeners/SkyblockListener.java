@@ -86,6 +86,20 @@ public class SkyblockListener implements Listener {
             skyblock.lz = 0;
             skyblock.teleportToLastPos = false;
         }
+
+        if (e.getCause() == PlayerTeleportEvent.TeleportCause.END_GATEWAY) {
+            e.setCancelled(true);
+
+            if (skyblock.enderDragonsKilled == 0) {
+                e.getPlayer().sendMessage(ChatColor.RED + "You must kill the ender dragon before using the end gateway.");
+                e.getPlayer().playSound(e.getFrom(), Sound.BLOCK_ANVIL_LAND, 1f, 1f);
+                return;
+            }
+
+            plugin.getServer().getScheduler().runTask(plugin, () -> {
+                e.getPlayer().teleport(skyblock.getEndSpawnLocation());
+            });
+        }
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
@@ -161,19 +175,6 @@ public class SkyblockListener implements Listener {
         } else if (from.getWorld() == plugin.nether && to.getWorld().getEnvironment() == World.Environment.NORMAL) {
             e.setCancelled(true);
             e.getPlayer().teleport(Skyblock.get(from).getSpawnLocation());
-        }
-
-        if (e.getCause() == PlayerTeleportEvent.TeleportCause.END_GATEWAY) {
-            Skyblock skyblock = Skyblock.load(e.getPlayer());
-            e.setCancelled(true);
-
-            if (skyblock.enderDragonsKilled == 0) {
-                e.getPlayer().sendMessage(ChatColor.RED + "You must kill the ender dragon before using the end gateway.");
-                e.getPlayer().playSound(e.getFrom(), Sound.BLOCK_ANVIL_LAND, 1f, 1f);
-                return;
-            }
-
-            e.getPlayer().teleport(skyblock.getEndSpawnLocation());
         }
     }
 

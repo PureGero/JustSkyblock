@@ -3,6 +3,7 @@ package just.skyblock.generator;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.type.Chest;
 
 import java.util.Random;
@@ -22,6 +23,14 @@ public class GeneratorUtils {
         chest.setFacing(blockFaces4[random.nextInt(blockFaces4.length)]);
 
         return chest;
+    }
+
+    public static BlockData torchFacing(BlockFace face) {
+        Directional torch = (Directional) Material.WALL_TORCH.createBlockData();
+
+        torch.setFacing(face);
+
+        return torch;
     }
 
     public static int hash(long seed, int x, int y){
