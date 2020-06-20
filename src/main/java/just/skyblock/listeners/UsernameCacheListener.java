@@ -24,7 +24,7 @@ import java.util.UUID;
 
 public class UsernameCacheListener implements org.bukkit.event.Listener {
 
-    public UsernameCacheListener(SkyblockPlugin b) {
+    public UsernameCacheListener(SkyblockPlugin plugin) {
 
     }
 

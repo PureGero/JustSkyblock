@@ -16,8 +16,8 @@ import org.bukkit.event.player.*;
 public class SkyblockListener implements Listener {
     private SkyblockPlugin plugin;
 
-    public SkyblockListener(SkyblockPlugin b) {
-        plugin = b;
+    public SkyblockListener(SkyblockPlugin plugin) {
+        this.plugin = plugin;
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)

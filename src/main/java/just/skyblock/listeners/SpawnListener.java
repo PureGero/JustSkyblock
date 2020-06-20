@@ -23,13 +23,9 @@ import org.bukkit.inventory.ItemStack;
 public class SpawnListener implements org.bukkit.event.Listener {
     SkyblockPlugin skyblock;
 
-    public SpawnListener(SkyblockPlugin b) {
-        skyblock = b;
+    public SpawnListener(SkyblockPlugin plugin) {
+        skyblock = plugin;
     }
-
-    // # --- --- --- #
-    // |    SPAWN    |
-    // # --- --- --- #
 
     @EventHandler
     public void onBlockPlaceSpawn(BlockPlaceEvent e) {
