@@ -2,6 +2,7 @@ package just.skyblock;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mojang.authlib.GameProfile;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
@@ -60,11 +61,11 @@ public class UsernameCache {
 
     private static void addCacheEntry(UUID uuid, String username) {
         try {
-            Object gameProfile = getNMSClass("GameProfile").getConstructor(UUID.class, String.class).newInstance(uuid, username);
+            GameProfile gameProfile = new GameProfile(uuid, username);
             Object userCache = getUserCache();
 
             userCache.getClass().getMethod("a", gameProfile.getClass()).invoke(userCache, gameProfile);
-        } catch (NoSuchFieldException | IllegalAccessException | NoSuchMethodException | InvocationTargetException | InstantiationException e) {
+        } catch (NoSuchFieldException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             e.printStackTrace();
         }
     }
@@ -87,16 +88,6 @@ public class UsernameCache {
 
         Object dedicatedServer = console.get(server);
         return dedicatedServer.getClass().getMethod("getUserCache").invoke(dedicatedServer);
-    }
-
-    private static Class<?> getNMSClass(String name) {
-        try {
-            return Class.forName("net.minecraft.server."
-                    + Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3] + "." + name);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     private static class Lookup implements Runnable {
