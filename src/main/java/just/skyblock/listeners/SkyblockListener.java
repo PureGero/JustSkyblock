@@ -73,17 +73,23 @@ public class SkyblockListener implements Listener {
         Skyblock skyblock = Skyblock.load(e.getPlayer());
 
         if (skyblock.inIsland(e.getFrom()) && !skyblock.inIsland(e.getTo())) {
-            skyblock.lworld = e.getFrom().getWorld().getName();
-            skyblock.lx = e.getFrom().getX();
-            skyblock.ly = e.getFrom().getY();
-            skyblock.lz = e.getFrom().getZ();
-            skyblock.lyaw = e.getFrom().getYaw();
-            skyblock.lpitch = e.getFrom().getPitch();
+            if (e.getTo().getWorld() == plugin.enderDragonFight) {
+                skyblock.lx = 0;
+                skyblock.lz = 0;
+            } else {
+                skyblock.lworld = e.getFrom().getWorld().getName();
+                skyblock.lx = e.getFrom().getX();
+                skyblock.ly = e.getFrom().getY();
+                skyblock.lz = e.getFrom().getZ();
+                skyblock.lyaw = e.getFrom().getYaw();
+                skyblock.lpitch = e.getFrom().getPitch();
+            }
 
-        } else if (!skyblock.inIsland(e.getFrom()) && skyblock.inIsland(e.getTo()) && skyblock.lx != 0 && skyblock.lz != 0
-                && e.getFrom().getWorld().getEnvironment() != World.Environment.THE_END) {
-            e.setTo(new Location(Bukkit.getWorld(skyblock.lworld), skyblock.lx, skyblock.ly, skyblock.lz, skyblock.lyaw, skyblock.lpitch));
-            e.getPlayer().sendMessage(ChatColor.GOLD + "Teleporting to previous location...");
+        } else if (!skyblock.inIsland(e.getFrom()) && skyblock.inIsland(e.getTo()) && skyblock.lx != 0 && skyblock.lz != 0) {
+            if (skyblock.lworld != null && Bukkit.getWorld(skyblock.lworld) != null) {
+                e.setTo(new Location(Bukkit.getWorld(skyblock.lworld), skyblock.lx, skyblock.ly, skyblock.lz, skyblock.lyaw, skyblock.lpitch));
+                e.getPlayer().sendMessage(ChatColor.GOLD + "Teleporting to previous location...");
+            }
 
             skyblock.lx = 0;
             skyblock.lz = 0;
@@ -125,12 +131,12 @@ public class SkyblockListener implements Listener {
         if (skyblock == null) {
             worldBorder.setSize(world.getWorldBorder().getSize());
             worldBorder.setCenter(0, 0);
-        } else if (skyblock.size == 0) {
+        } else if (skyblock.inSmallIsland(location)) {
             int x = ((location.getBlockX() >> 9) << 9) | 256;
             int z = ((location.getBlockZ() >> 9) << 9) | 256;
             worldBorder.setSize(512);
             worldBorder.setCenter(x, z);
-        } else if (skyblock.size == 1) {
+        } else {
             int x = skyblock.x * 1536 + 768;
             int z = skyblock.z * 1536 + 768;
             worldBorder.setSize(1536);
@@ -148,24 +154,11 @@ public class SkyblockListener implements Listener {
 
     @EventHandler
     public void preventPlayerMovingBetweenIslands(PlayerMoveEvent e) {
-        Skyblock skyblock = Skyblock.get(e.getFrom());
-
-        if (skyblock == null) {
-            return;
-        }
-
-        int x, z;
-
-        if (skyblock.size == 0) {
-            x = e.getTo().getBlockX() >> 4 >> 5;
-            z = e.getTo().getBlockZ() >> 4 >> 5;
-        } else {
-            x = (int) Math.floor(e.getTo().getBlockX() / 1536.0);
-            z = (int) Math.floor(e.getTo().getBlockZ() / 1536.0);
-        }
+        Skyblock from = Skyblock.get(e.getFrom());
+        Skyblock to = Skyblock.get(e.getTo());
 
         if (e.getFrom().getWorld() == e.getTo().getWorld()
-                && (x != skyblock.x || z != skyblock.z)
+                && to != from
                 && e.getTo().distanceSquared(e.getFrom()) < 64) {
             e.getPlayer().sendMessage(ChatColor.RED + "You have reached the limit of your skyblock world");
             e.setCancelled(true);
@@ -177,14 +170,12 @@ public class SkyblockListener implements Listener {
         Location from = e.getFrom();
         Location to = e.getTo();
         if (from.getWorld() == plugin.world && to.getWorld().getEnvironment() == World.Environment.NETHER) {
-            e.setCancelled(true);
-            e.getPlayer().teleport(Skyblock.get(from).getNetherSpawnLocation());
+            e.setTo(new Location(plugin.nether, from.getX(), from.getY(), from.getZ()));
             Objective.ENTER_NETHER.give(e.getPlayer()); // Enter Nether Objective
         } else if (from.getWorld() == plugin.world && to.getWorld().getEnvironment() == World.Environment.THE_END) {
             e.setTo(new Location(plugin.enderDragonFight, 100, 50, 0));
-        } else if (from.getWorld() == plugin.nether && to.getWorld().getEnvironment() == World.Environment.NORMAL) {
-            e.setCancelled(true);
-            e.getPlayer().teleport(Skyblock.get(from).getSpawnLocation());
+        } else if (from.getWorld() == plugin.nether) {
+            e.setTo(new Location(plugin.world, from.getX(), from.getY(), from.getZ()));
         }
     }
 
@@ -193,13 +184,11 @@ public class SkyblockListener implements Listener {
         Location from = e.getFrom();
         Location to = e.getTo();
         if (from.getWorld() == plugin.world && to.getWorld().getEnvironment() == World.Environment.NETHER) {
-            e.setCancelled(true);
-            e.getEntity().teleport(Skyblock.get(from).getNetherSpawnLocation());
+            e.setTo(new Location(plugin.nether, from.getX(), from.getY(), from.getZ()));
         } else if (from.getWorld() == plugin.world && to.getWorld().getEnvironment() == World.Environment.THE_END) {
             e.setTo(new Location(plugin.enderDragonFight, 100, 50, 0));
-        } else if (from.getWorld() == plugin.nether && to.getWorld().getEnvironment() == World.Environment.NORMAL) {
-            e.setCancelled(true);
-            e.getEntity().teleport(Skyblock.get(from).getSpawnLocation());
+        } else if (from.getWorld() == plugin.nether) {
+            e.setTo(new Location(plugin.world, from.getX(), from.getY(), from.getZ()));
         }
     }
 

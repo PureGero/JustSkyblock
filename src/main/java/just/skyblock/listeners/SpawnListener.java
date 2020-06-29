@@ -108,7 +108,9 @@ public class SpawnListener implements org.bukkit.event.Listener {
                 + ChatColor.BLUE + ", " + e.getPlayer().getName() + "!");
         e.getPlayer().sendMessage(ChatColor.AQUA + "/skyblock" + ChatColor.BLUE + " to start your own skyblock!");
 
-        Rank.giveRank(e.getPlayer(), Skyblock.load(e.getPlayer().getUniqueId()).getRank());
+        Skyblock.load(e.getPlayer()).checkForUpdates();
+
+        Rank.giveRank(e.getPlayer(), Skyblock.load(e.getPlayer()).getRank());
 
         if (e.getPlayer().getWorld() == skyblock.lobby) {
             e.getPlayer().teleport(skyblock.lobby.getSpawnLocation().add(0.5, 0.5, 0.5));

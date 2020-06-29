@@ -42,6 +42,8 @@ public class SkyblockCommand implements CommandExecutor, TabCompleter {
                 help(p, l);
             } else if (a[0].equalsIgnoreCase("reset")) {
                 reset(p, l);
+            } else if (a[0].equalsIgnoreCase("small") || a[0].equalsIgnoreCase("old")) {
+                small(p, l, null);
             }/*else if(a[0].equalsIgnoreCase("old")){
                 p.sendMessage(ChatColor.RED + "WARNING: This skyblock will be deleted soon!");
                 p.sendMessage(ChatColor.RED + "Please remove all the stuff you want to keep from this skyblock.");
@@ -66,6 +68,8 @@ public class SkyblockCommand implements CommandExecutor, TabCompleter {
                 add(p, a[1]);
             } else if (a[0].equalsIgnoreCase("remove") || a[0].equalsIgnoreCase("untrust")) {
                 remove(p, a[1]);
+            } else if (a[0].equalsIgnoreCase("small") || a[0].equalsIgnoreCase("old")) {
+                small(p, l, a[1]);
             } else if (a[0].equalsIgnoreCase("op") && p.hasPermission("skyblock.admin")) {
                 op(p, a[1]);
             } else {
@@ -81,6 +85,24 @@ public class SkyblockCommand implements CommandExecutor, TabCompleter {
             help(p, l);
         }
         return false;
+    }
+
+    private void small(Player player, String label, String who) {
+        if (who != null) {
+            UUID uuid = UsernameCache.getUUID(who);
+            if (uuid != null) {
+                Skyblock i = Skyblock.load(uuid);
+                if (i.allowed.contains(player.getUniqueId())) {
+                    i.spawnSmall(player);
+                    Objective.VISIT_ANOTHER_SKYBLOCK.give(player);
+                } else {
+                    player.sendMessage(ChatColor.RED + UsernameCache.getUsername(uuid) + " has not added you to their skyblock!");
+                    Skyblock.safeDispose(uuid);
+                }
+            }
+        } else {
+            Skyblock.load(player).spawnSmall(player);
+        }
     }
 
     private void giveLoot(Player p, String who, String countStr) {
@@ -206,6 +228,17 @@ public class SkyblockCommand implements CommandExecutor, TabCompleter {
             }
 
             Skyblock skyblock = Skyblock.load(((Player) sender).getUniqueId());
+
+            if (skyblock.getSmallSpawnLocation() != null) {
+                for (String s : new String[]{
+                        "small", "old"
+                }) {
+                    if (s.startsWith(args[0].toLowerCase())) {
+                        ret.add(s);
+                    }
+                }
+            }
+
             for (UUID uuid : skyblock.allowedMe) {
                 String name = UsernameCache.getUsername(uuid);
                 if (name == null) {

@@ -2,7 +2,6 @@ package just.skyblock;
 
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.*;
-import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -27,11 +26,12 @@ public class Skyblock {
 
     public String rank = null;
 
-    public int x = 0;
-    public int z = 0;
+    public int x = 0; // The x of the 1536x1536 skyblock
+    public int z = 0; // The z of the 1536x1536 skyblock
+    public int smallx = Integer.MAX_VALUE; // The x of the 512x512 skyblock
+    public int smallz = Integer.MAX_VALUE; // The z of the 512x512 skyblock
     public int oldx = Integer.MAX_VALUE;
     public int oldz = Integer.MAX_VALUE;
-    public int size = 0; // 0 = 512x512, 1 = 1536x1536
 
     public String lworld = null;
     public double lx = 0;
@@ -86,8 +86,8 @@ public class Skyblock {
         int x2 = (int) Math.floor(l.getBlockX() / 1536.0);
         int z2 = (int) Math.floor(l.getBlockZ() / 1536.0);
         for (Skyblock i : cache.values()) {
-            if ((i.x == x && i.z == z && i.size == 0) ||
-                    (i.x == x2 && i.z == z2 && i.size == 1)) {
+            if ((i.smallx == x && i.smallz == z) ||
+                    (i.x == x2 && i.z == z2)) {
                 return i;
                 
             }
@@ -148,8 +148,6 @@ public class Skyblock {
             e.printStackTrace();
         }
 
-        c.checkUpdates();
-
         cache.put(u, c);
         return c;
     }
@@ -187,18 +185,24 @@ public class Skyblock {
         return true;
     }
 
+    /**
+     * Returns true if the location is in either the main island or the small island
+     */
     public boolean inIsland(Location location) {
-        if (size == 0) {
-            return isSkyblockWorld(location.getWorld()) &&
-                    Math.floor(location.getBlockX() / 512.0) == x &&
-                    Math.floor(location.getBlockZ() / 512.0) == z;
-        } else if (size == 1) {
-            return isSkyblockWorld(location.getWorld()) &&
-                    Math.floor(location.getBlockX() / 1536.0) == x &&
-                    Math.floor(location.getBlockZ() / 1536.0) == z;
-        } else {
-            throw new IllegalStateException(uuid + "'s Skyblock.size == " + size + " (expected 0 or 1)");
-        }
+        return isSkyblockWorld(location.getWorld()) &&
+                ((Math.floor(location.getBlockX() / 1536.0) == x &&
+                Math.floor(location.getBlockZ() / 1536.0) == z) ||
+                (Math.floor(location.getBlockX() / 512.0) == smallx &&
+                Math.floor(location.getBlockZ() / 512.0) == smallz));
+    }
+
+    /**
+     * Returns true if the location is only in the small island
+     */
+    public boolean inSmallIsland(Location location) {
+        return isSkyblockWorld(location.getWorld()) &&
+                Math.floor(location.getBlockX() / 512.0) == smallx &&
+                Math.floor(location.getBlockZ() / 512.0) == smallz;
     }
 
     private boolean isSkyblockWorld(World world) {
@@ -218,11 +222,14 @@ public class Skyblock {
     }
 
     private Location getCenterLocation(World world) {
-        if (size == 0) {
-            return new Location(world, x * 512 + 256.5 - 8, 65.5, z * 512 + 256.5 - 8);
-        } else {
-            return new Location(world, x * 1536 + 768.5 - 8, 65.5, z * 1536 + 768.5 - 8);
+        return new Location(world, x * 1536 + 768.5 - 8, 65.5, z * 1536 + 768.5 - 8);
+    }
+
+    private Location getSmallCenterLocation(World world) {
+        if (smallx == Integer.MAX_VALUE && smallz == Integer.MAX_VALUE) {
+            return null;
         }
+        return new Location(world, smallx * 512 + 256.5 - 8, 65.5, smallz * 512 + 256.5 - 8);
     }
 
     public Location getSpawnLocation() {
@@ -236,19 +243,19 @@ public class Skyblock {
         return spawnLocation;
     }
 
-    public Location getNetherSpawnLocation() {
-        Location spawnLocation = getCenterLocation(getNether());
+    public Location getSmallSpawnLocation() {
+        Location spawnLocation = getSmallCenterLocation(getWorld());
 
-        while (spawnLocation.getBlockY() < 256 && (!isSuitableNetherSpawnBlock(spawnLocation.getBlock())
-                || !isSuitableNetherSpawnBlock(spawnLocation.getBlock().getRelative(BlockFace.UP)))) {
+        if (spawnLocation == null) {
+            return null;
+        }
+
+        while (spawnLocation.getBlockY() < 256 && (!spawnLocation.getBlock().isEmpty()
+                || !spawnLocation.getBlock().getRelative(BlockFace.UP).isEmpty())) {
             spawnLocation = spawnLocation.add(0, 1, 0);
         }
 
         return spawnLocation;
-    }
-
-    private boolean isSuitableNetherSpawnBlock(Block block) {
-        return block.isEmpty() || block.getType() == Material.NETHER_PORTAL;
     }
 
     public Location getEndSpawnLocation() {
@@ -264,6 +271,18 @@ public class Skyblock {
 
     public void spawn(Player p) {
         p.teleport(getSpawnLocation());
+        p.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 20 * 10, 100));
+    }
+
+    public void spawnSmall(Player p) {
+        Location smallSpawnLocation = getSmallSpawnLocation();
+
+        if (smallSpawnLocation == null) {
+            p.sendMessage(ChatColor.RED + "There is no small skyblock island.");
+            return;
+        }
+
+        p.teleport(smallSpawnLocation);
         p.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 20 * 10, 100));
     }
 
@@ -288,7 +307,7 @@ public class Skyblock {
         lastReset = System.currentTimeMillis();
         resetCount++;
         update = 0;
-        checkUpdates();
+        checkForUpdates();
         save();
 
         //new File(SkyblockPlugin.plugin.world.getWorldFolder(),
@@ -324,8 +343,20 @@ public class Skyblock {
         return temp.rank;
     }
 
-    public void checkUpdates() {
-        if (update == 0) { // First time loading island
+    public void checkForUpdates() {
+        if (update == 1) {
+            SkyblockPlugin.plugin.world.getBlockAt(x * 512 + 256 - 9, 64, z * 512 + 256 - 39).setType(Material.GRASS_BLOCK);
+            SkyblockPlugin.plugin.world.getBlockAt(x * 512 + 256 - 9, 65, z * 512 + 256 - 39).setType(Material.BAMBOO_SAPLING);
+            update = 2;
+        }
+        if (update == 0 || update == 2) { // First time loading island or they have an small island
+            if (update == 2) {
+                smallx = x;
+                smallz = z;
+                x = 0;
+                z = 0;
+            }
+
             try {
                 FileInputStream fin = new FileInputStream(new File(SkyblockPlugin.plugin.getDataFolder(), "nextskyblock.csv"));
                 byte[] b = new byte[4096];
@@ -337,6 +368,7 @@ public class Skyblock {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
             try {
                 int x = this.x;
                 int y = this.z;
@@ -367,16 +399,23 @@ public class Skyblock {
                 e.printStackTrace();
             }
 
-            size = 1;
-            update = 3;
-        }
-        if (update == 1) {
-            SkyblockPlugin.plugin.world.getBlockAt(x * 512 + 256 - 9, 64, z * 512 + 256 - 39).setType(Material.GRASS_BLOCK);
-            SkyblockPlugin.plugin.world.getBlockAt(x * 512 + 256 - 9, 65, z * 512 + 256 - 39).setType(Material.BAMBOO_SAPLING);
-            update = 2;
-        }
-        if (update == 2) {
-            // TODO Fill empty chunks with new islands
+            if (update == 2) {
+                SkyblockPlugin.plugin.getLogger().info("Updating " + uuid + "'s skyblock from a small skyblock at " + smallx + "," + smallz + " to a much larger skyblock at " + x + "," + z);
+
+                Player player = Bukkit.getPlayer(uuid);
+                try {
+                    // This should only run if the player is online, it'll spit an error if the player is offline for us
+                    spawn(player);
+                    player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.PLAYERS, 1f, 1f);
+                    player.sendMessage(ChatColor.AQUA + "" + ChatColor.BOLD + "Welcome to your new, much larger skyblock!");
+                    player.sendMessage(ChatColor.AQUA + "It is 9x larger and we have added many other islands to it!");
+                    player.sendMessage(ChatColor.AQUA + "Don't worry, your old and much smaller skyblock still exists");
+                    player.sendMessage(ChatColor.AQUA + "You can get to it with " + ChatColor.DARK_AQUA + "/sb old");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
             update = 3;
         }
     }

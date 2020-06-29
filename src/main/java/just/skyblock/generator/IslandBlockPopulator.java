@@ -39,7 +39,6 @@ public class IslandBlockPopulator extends BlockPopulator {
     private static final BaseIslandGenerator[] netherIslandGenerators = {
 
             // Location based
-            new NetherPortalIslandGenerator(),
 
             // Normal
             new NetherrackIslandGenerator(),
