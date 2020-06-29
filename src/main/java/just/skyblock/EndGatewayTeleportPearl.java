@@ -6,11 +6,11 @@ import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
-public class EndTeleportPearl implements Runnable {
+public class EndGatewayTeleportPearl implements Runnable {
     private final SkyblockPlugin plugin;
     private final EnderPearl pearl;
 
-    public EndTeleportPearl(SkyblockPlugin plugin, EnderPearl pearl) {
+    public EndGatewayTeleportPearl(SkyblockPlugin plugin, EnderPearl pearl) {
         this.plugin = plugin;
         this.pearl = pearl;
 

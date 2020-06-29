@@ -3,19 +3,16 @@ package just.skyblock.listeners;
 import just.skyblock.*;
 import net.minecraft.server.v1_16_R1.PacketPlayOutWorldBorder;
 import org.bukkit.*;
-import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
 import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.*;
 
@@ -210,7 +207,7 @@ public class SkyblockListener implements Listener {
     public void onProjectileThrow(ProjectileLaunchEvent e) {
         if (e.getEntity() instanceof EnderPearl && e.getEntity().getWorld() == plugin.enderDragonFight) {
             EnderPearl pearl = (EnderPearl) e.getEntity();
-            new EndTeleportPearl(plugin, pearl);
+            new EndGatewayTeleportPearl(plugin, pearl);
         }
     }
 
