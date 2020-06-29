@@ -41,6 +41,11 @@ public class SkyblockChunkGenerator extends ChunkGenerator {
     }
 
     @Override
+    public boolean shouldGenerateStructures() {
+        return true;
+    }
+
+    @Override
     public List<BlockPopulator> getDefaultPopulators(World world) {
         return Collections.singletonList(islandBlockPopulator);
     }
@@ -48,7 +53,7 @@ public class SkyblockChunkGenerator extends ChunkGenerator {
     private Biome getDefaultBiome(World world) {
         switch (world.getEnvironment()) {
             case NETHER:
-                return Biome.NETHER;
+                return Biome.NETHER_WASTES;
             case THE_END:
                 return Biome.THE_END;
             case NORMAL:

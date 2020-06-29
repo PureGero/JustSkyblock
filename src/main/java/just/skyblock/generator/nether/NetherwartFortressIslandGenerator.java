@@ -10,7 +10,7 @@ public class NetherwartFortressIslandGenerator extends FortressBaseIslandGenerat
 
     @Override
     public Biome getBiome() {
-        return Biome.NETHER;
+        return Biome.NETHER_WASTES;
     }
 
     @Override

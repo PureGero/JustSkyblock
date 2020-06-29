@@ -1,16 +1,22 @@
 package just.skyblock.listeners;
 
 import just.skyblock.*;
-import net.minecraft.server.v1_15_R1.PacketPlayOutWorldBorder;
+import net.minecraft.server.v1_16_R1.PacketPlayOutWorldBorder;
 import org.bukkit.*;
-import org.bukkit.craftbukkit.v1_15_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
+import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
+import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.Item;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.*;
 
 public class SkyblockListener implements Listener {
@@ -102,20 +108,29 @@ public class SkyblockListener implements Listener {
         }
     }
 
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerJoinUpdateWorldBorder(PlayerJoinEvent e) {
+        updateWorldBorder(e.getPlayer(), e.getPlayer().getLocation());
+    }
+
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void playerTeleportUpdateWorldBorder(PlayerTeleportEvent e) {
-        World world = e.getTo().getWorld();
-        net.minecraft.server.v1_15_R1.WorldBorder worldBorder = new net.minecraft.server.v1_15_R1.WorldBorder();
-        worldBorder.world = ((CraftWorld) e.getTo().getWorld()).getHandle();
+        updateWorldBorder(e.getPlayer(), e.getTo());
+    }
 
-        Skyblock skyblock = Skyblock.get(e.getTo());
+    private void updateWorldBorder(Player bukkitPlayer, Location location) {
+        World world = location.getWorld();
+        net.minecraft.server.v1_16_R1.WorldBorder worldBorder = new net.minecraft.server.v1_16_R1.WorldBorder();
+        worldBorder.world = ((CraftWorld) location.getWorld()).getHandle();
+
+        Skyblock skyblock = Skyblock.get(location);
 
         if (skyblock == null) {
             worldBorder.setSize(world.getWorldBorder().getSize());
             worldBorder.setCenter(0, 0);
         } else if (skyblock.size == 0) {
-            int x = ((e.getTo().getBlockX() >> 9) << 9) | 256;
-            int z = ((e.getTo().getBlockZ() >> 9) << 9) | 256;
+            int x = ((location.getBlockX() >> 9) << 9) | 256;
+            int z = ((location.getBlockZ() >> 9) << 9) | 256;
             worldBorder.setSize(512);
             worldBorder.setCenter(x, z);
         } else if (skyblock.size == 1) {
@@ -126,14 +141,12 @@ public class SkyblockListener implements Listener {
         }
 
         PacketPlayOutWorldBorder packet = new PacketPlayOutWorldBorder(worldBorder, PacketPlayOutWorldBorder.EnumWorldBorderAction.INITIALIZE);
-        CraftPlayer player = (CraftPlayer) e.getPlayer();
+        CraftPlayer player = (CraftPlayer) bukkitPlayer;
 
         player.getHandle().playerConnection.sendPacket(packet);
 
         // Send it again after any world loading
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            player.getHandle().playerConnection.sendPacket(packet);
-        }, 1L);
+        Bukkit.getScheduler().runTaskLater(plugin, () -> player.getHandle().playerConnection.sendPacket(packet), 1L);
     }
 
     @EventHandler
@@ -171,7 +184,7 @@ public class SkyblockListener implements Listener {
             e.getPlayer().teleport(Skyblock.get(from).getNetherSpawnLocation());
             Objective.ENTER_NETHER.give(e.getPlayer()); // Enter Nether Objective
         } else if (from.getWorld() == plugin.world && to.getWorld().getEnvironment() == World.Environment.THE_END) {
-            e.setTo(new Location(plugin.enderDragonFight, 100, 49, 0));
+            e.setTo(new Location(plugin.enderDragonFight, 100, 50, 0));
         } else if (from.getWorld() == plugin.nether && to.getWorld().getEnvironment() == World.Environment.NORMAL) {
             e.setCancelled(true);
             e.getPlayer().teleport(Skyblock.get(from).getSpawnLocation());
@@ -186,10 +199,26 @@ public class SkyblockListener implements Listener {
             e.setCancelled(true);
             e.getEntity().teleport(Skyblock.get(from).getNetherSpawnLocation());
         } else if (from.getWorld() == plugin.world && to.getWorld().getEnvironment() == World.Environment.THE_END) {
-            e.setTo(new Location(plugin.enderDragonFight, 100, 49, 0));
+            e.setTo(new Location(plugin.enderDragonFight, 100, 50, 0));
         } else if (from.getWorld() == plugin.nether && to.getWorld().getEnvironment() == World.Environment.NORMAL) {
             e.setCancelled(true);
             e.getEntity().teleport(Skyblock.get(from).getSpawnLocation());
+        }
+    }
+
+    @EventHandler
+    public void onProjectileThrow(ProjectileLaunchEvent e) {
+        if (e.getEntity() instanceof EnderPearl && e.getEntity().getWorld() == plugin.enderDragonFight) {
+            EnderPearl pearl = (EnderPearl) e.getEntity();
+            new EndTeleportPearl(plugin, pearl);
+        }
+    }
+
+    @EventHandler
+    public void onWalkIntoEndGateway(PlayerMoveEvent e) {
+        if (e.getTo() != null && (e.getTo().getBlockX() != e.getFrom().getBlockX() || e.getTo().getBlockZ() != e.getFrom().getBlockZ())
+                && e.getTo().getBlock().getType() == Material.END_GATEWAY) {
+            e.getPlayer().teleport(Skyblock.load(e.getPlayer()).getEndSpawnLocation(), PlayerTeleportEvent.TeleportCause.END_GATEWAY);
         }
     }
 }

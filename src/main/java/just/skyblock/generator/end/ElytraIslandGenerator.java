@@ -1,13 +1,13 @@
 package just.skyblock.generator.end;
 
 import just.skyblock.generator.LocationBasedIslandGenerator;
-import net.minecraft.server.v1_15_R1.*;
+import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_15_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,14 +22,16 @@ public class ElytraIslandGenerator extends LocationBasedIslandGenerator {
 
     @Override
     public void generate(Block center, Random random) {
-        DefinedStructureManager definedStructureManager = ((CraftWorld) center.getWorld()).getHandle().r();
+        DefinedStructureManager definedStructureManager = ((CraftWorld) center.getWorld()).getHandle().r_();
 
         List<StructurePiece> pieces = new ArrayList<>();
 
-        WorldGenEndCityPieces.a(definedStructureManager, new BlockPosition(center.getX(), center.getY() + 1, center.getZ()), EnumBlockRotation.a(random), pieces, random);
+        BlockPosition centerPosition = new BlockPosition(center.getX(), center.getY() + 1, center.getZ());
+
+        WorldGenEndCityPieces.a(definedStructureManager, centerPosition, EnumBlockRotation.a(random), pieces, random);
 
         for (StructurePiece piece : pieces) {
-            piece.a(((CraftWorld) center.getWorld()).getHandle(), null, random, new StructureBoundingBox(center.getX() - 256, center.getZ() - 256, center.getX() + 256, center.getZ() + 256), null);
+            piece.a(((CraftWorld) center.getWorld()).getHandle(), ((CraftWorld) center.getWorld()).getHandle().getStructureManager(), null, random, new StructureBoundingBox(center.getX() - 256, center.getZ() - 256, center.getX() + 256, center.getZ() + 256), null, centerPosition);
         }
     }
 

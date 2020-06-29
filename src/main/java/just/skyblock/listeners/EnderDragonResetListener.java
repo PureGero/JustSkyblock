@@ -22,7 +22,7 @@ public class EnderDragonResetListener implements Listener {
     }
 
     private World getWorld() {
-        return plugin.enderDragonFight != null ? plugin.enderDragonFight : Bukkit.getWorld("skyblock_enderDragonFight");
+        return plugin.enderDragonFight != null ? plugin.enderDragonFight : Bukkit.getWorld("skyblock_ender_dragon_fight");
     }
 
     private void setWorld(World world) {
@@ -42,10 +42,10 @@ public class EnderDragonResetListener implements Listener {
             Bukkit.unloadWorld(getWorld(), false);
         }
 
-        recursiveDelete(new File("skyblock_enderDragonFight"));
+        recursiveDelete(new File("skyblock_ender_dragon_fight"));
 
         setWorld(plugin.getServer().createWorld(
-                new WorldCreator("skyblock_enderDragonFight")
+                new WorldCreator("skyblock_ender_dragon_fight")
                         .environment(World.Environment.THE_END)
                         .generator(plugin.skyblockChunkGenerator)));
 

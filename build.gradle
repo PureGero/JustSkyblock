@@ -3,7 +3,7 @@ apply plugin: "eclipse"
 apply plugin: "idea"
 
 buildscript {
-  ext.bukkit_version = "1.15.2-R0.1-SNAPSHOT"
+  ext.bukkit_version = "1.16.1-R0.1-SNAPSHOT"
 }
 
 repositories {

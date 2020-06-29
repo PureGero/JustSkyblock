@@ -11,7 +11,7 @@ public class NetherrackIslandGenerator extends BaseIslandGenerator {
 
     @Override
     public Biome getBiome() {
-        return Biome.NETHER;
+        return Biome.NETHER_WASTES;
     }
 
     @Override

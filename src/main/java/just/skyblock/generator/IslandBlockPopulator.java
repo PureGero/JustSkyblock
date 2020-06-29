@@ -40,7 +40,6 @@ public class IslandBlockPopulator extends BlockPopulator {
 
             // Location based
             new NetherPortalIslandGenerator(),
-            new FortressMainIslandGenerator(),
 
             // Normal
             new NetherrackIslandGenerator(),
@@ -125,7 +124,7 @@ public class IslandBlockPopulator extends BlockPopulator {
     public BaseIslandGenerator getIslandGenerator(World world, int x, int z) {
         Random random = new Random(GeneratorUtils.hash(world.getSeed(), x, z));
 
-        if (world == skyblock.world) {
+        if (world.getName().equals("skyblock")) {
             BaseIslandGenerator generator = getIslandGeneratorFromList(world, x, z, overworldIslandGenerators, random);
 
             if (generator instanceof LocationBasedIslandGenerator ||
@@ -133,21 +132,21 @@ public class IslandBlockPopulator extends BlockPopulator {
                 return generator;
             }
 
-        } else if (world == skyblock.nether) {
+        } else if (world.getName().equals("skyblock_nether")) {
             BaseIslandGenerator generator = getIslandGeneratorFromList(world, x, z, netherIslandGenerators, random);
 
             if (generator instanceof LocationBasedIslandGenerator || random.nextDouble() < 0.6) {
                 return generator;
             }
 
-        } else if (world == skyblock.end) {
+        } else if (world.getName().equals("skyblock_the_end")) {
             BaseIslandGenerator generator = getIslandGeneratorFromList(world, x, z, endIslandGenerators, random);
 
             if (generator instanceof LocationBasedIslandGenerator || random.nextDouble() < 0.05) {
                 return generator;
             }
 
-        } else if (world == skyblock.enderDragonFight) {
+        } else if (world.getName().equals("skyblock_ender_dragon_fight")) {
             BaseIslandGenerator generator = getIslandGeneratorFromList(world, x, z, enderDragonFightIslandGenerators, random);
 
             if (generator instanceof LocationBasedIslandGenerator || random.nextDouble() < 0.1) {

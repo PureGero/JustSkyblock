@@ -3,7 +3,7 @@ main: just.skyblock.SkyblockPlugin
 version: 0.1.0
 description: Skyblock plugin
 author: PureGero
-api-version: 1.13
+api-version: 1.16
 softdepend: [PureNetwork]
 commands:
   skyblock:
