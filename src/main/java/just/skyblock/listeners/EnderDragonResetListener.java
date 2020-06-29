@@ -10,6 +10,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 
 import java.io.File;
+import java.io.IOException;
 
 public class EnderDragonResetListener implements Listener {
 
@@ -18,7 +19,11 @@ public class EnderDragonResetListener implements Listener {
     public EnderDragonResetListener(SkyblockPlugin plugin) {
         this.plugin = plugin;
 
-        resetEnderDragon();
+        if (needsToBeReset()) {
+            resetEnderDragon();
+        } else {
+            createEnderDragonWorld();
+        }
     }
 
     private World getWorld() {
@@ -33,6 +38,31 @@ public class EnderDragonResetListener implements Listener {
         getWorld().getWorldBorder().setSize(256);
     }
 
+    private boolean needsToBeReset() {
+        File resetFile = new File("skyblock_ender_dragon_fight/needs_reset.txt");
+
+        if (resetFile.isFile()) {
+            long lastMod = resetFile.lastModified();
+
+            if (System.currentTimeMillis() > lastMod + 60 * 60 * 1000L) {
+                // Reset time has passed
+                return true;
+            } else {
+                // Schedule a reset
+                plugin.getServer().getScheduler().runTaskLater(plugin, this::resetEnderDragon, (System.currentTimeMillis() - lastMod + 60 * 60 * 1000L) / 50);
+            }
+        }
+
+        return false;
+    }
+
+    private void createEnderDragonWorld() {
+        setWorld(plugin.getServer().createWorld(
+                new WorldCreator("skyblock_ender_dragon_fight")
+                        .environment(World.Environment.THE_END)
+                        .generator(plugin.skyblockChunkGenerator)));
+    }
+
     private void resetEnderDragon() {
         if (getWorld() != null) {
             for (Player player : getWorld().getPlayers()) {
@@ -44,10 +74,7 @@ public class EnderDragonResetListener implements Listener {
 
         recursiveDelete(new File("skyblock_ender_dragon_fight"));
 
-        setWorld(plugin.getServer().createWorld(
-                new WorldCreator("skyblock_ender_dragon_fight")
-                        .environment(World.Environment.THE_END)
-                        .generator(plugin.skyblockChunkGenerator)));
+        createEnderDragonWorld();
 
         Bukkit.broadcastMessage("The Ender Dragon has been reset!");
     }
@@ -78,6 +105,12 @@ public class EnderDragonResetListener implements Listener {
                 Bukkit.broadcastMessage(ChatColor.YELLOW.toString() + ChatColor.BOLD + "The Ender Dragon has been slain by " + killer.getName());
             } else {
                 Bukkit.broadcastMessage(ChatColor.YELLOW.toString() + ChatColor.BOLD + "The Ender Dragon has been slain");
+            }
+
+            try {
+                new File("skyblock_ender_dragon_fight/needs_reset.txt").createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
 
             plugin.getServer().getScheduler().runTaskLater(plugin, this::resetEnderDragon, 60 * 60 * 20);
