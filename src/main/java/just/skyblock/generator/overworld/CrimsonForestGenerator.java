@@ -2,12 +2,14 @@ package just.skyblock.generator.overworld;
 
 import java.util.Random;
 
+import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Material;
 import org.bukkit.TreeType;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 
 import just.skyblock.generator.BaseIslandGenerator;
+import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
 
 public class CrimsonForestGenerator extends BaseIslandGenerator {
 
@@ -40,7 +42,12 @@ public class CrimsonForestGenerator extends BaseIslandGenerator {
             int treeZ = random.nextInt(3) - 1;
             
             center.getRelative(treeX, 1, treeZ).setType(Material.AIR);
-            center.getWorld().generateTree(center.getRelative(treeX, 1, treeZ).getLocation(), TreeType.REDWOOD);
+
+            //center.getWorld().generateTree(center.getRelative(treeX, 1, treeZ).getLocation(), TreeType.REDWOOD);
+            WorldServer world = ((CraftWorld) center.getWorld()).getHandle();
+            BlockPosition pos = new BlockPosition(center.getX(), center.getY() + 1, center.getZ());
+
+            WorldGenerator.HUGE_FUNGUS.generate(world, world.getStructureManager(), world.getChunkProvider().getChunkGenerator(), new Random(), pos, WorldGenFeatureHugeFungiConfiguration.c);
         }
         
         for (int i = 0; i < 4; i++) {
