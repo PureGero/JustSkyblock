@@ -35,7 +35,12 @@ public class IslandBlockPopulator extends BlockPopulator {
             new DungeonIslandGenerator(),
             new SwampIslandGenerator(),
             new CrimsonForestGenerator(),
-            new WarpedForestGenerator()
+            new WarpedForestGenerator(),
+            new BastionGenerator(),
+            new FortressGenerator(),
+            new FortressPlatformGenerator(),
+            new BasaltIslandGenerator(),
+            new SoulSandValleyGenerator()
     };
 
     private static final BaseIslandGenerator[] netherIslandGenerators = {
