@@ -1,4 +1,4 @@
-package just.skyblock.generator.overworld;
+package just.skyblock.generator.nether;
 
 import java.util.Random;
 
@@ -92,10 +92,5 @@ public class WarpedForestGenerator extends BaseIslandGenerator {
             }
         }
         
-    }
-    
-    @Override
-    public double getWeight() {
-        return 5;
     }
 }

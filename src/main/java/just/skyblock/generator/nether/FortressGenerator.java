@@ -1,4 +1,4 @@
-package just.skyblock.generator.overworld;
+package just.skyblock.generator.nether;
 
 import java.util.Random;
 
@@ -11,7 +11,7 @@ import org.bukkit.loot.LootTables;
 import just.skyblock.generator.BaseIslandGenerator;
 import just.skyblock.generator.GeneratorUtils;
 
-public class FortressGenerator extends BaseIslandGenerator {
+public class FortressGenerator extends FortressBaseIslandGenerator {
 
     @Override
     public Biome getBiome() {
@@ -104,10 +104,5 @@ public class FortressGenerator extends BaseIslandGenerator {
             chest.update();
         }
 
-    }
-    
-    @Override
-    public double getWeight() {
-        return 5;
     }
 }

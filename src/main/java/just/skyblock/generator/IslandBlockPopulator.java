@@ -33,26 +33,26 @@ public class IslandBlockPopulator extends BlockPopulator {
             new DarkOakIslandGenerator(),
             new MushroomFieldIslandGenerator(),
             new DungeonIslandGenerator(),
-            new SwampIslandGenerator(),
+            new SwampIslandGenerator()
+    };
+
+    private static final BaseIslandGenerator[] netherIslandGenerators = {
+            new NetherrackIslandGenerator(),
             new CrimsonForestGenerator(),
             new WarpedForestGenerator(),
-            new BastionGenerator(),
-            new FortressGenerator(),
-            new FortressPlatformGenerator(),
             new BasaltIslandGenerator(),
             new SoulSandValleyGenerator()
     };
 
-    private static final BaseIslandGenerator[] netherIslandGenerators = {
-
-            // Location based
-
-            // Normal
-            new NetherrackIslandGenerator(),
-    };
 
     private static final BaseIslandGenerator[] netherFortressIslandGenerators = {
-            new NetherwartFortressIslandGenerator(),
+            new FortressGenerator(),
+            new FortressPlatformGenerator(),
+    };
+
+
+    private static final BaseIslandGenerator[] netherBationIslandGenerators = {
+            new BastionGenerator(),
     };
 
     private static final BaseIslandGenerator[] endIslandGenerators = {
@@ -89,14 +89,26 @@ public class IslandBlockPopulator extends BlockPopulator {
             BaseIslandGenerator islandGenerator = getIslandGenerator(world, chunk.getX(), chunk.getZ());
 
             if (islandGenerator != null) {
-                Block center = islandGenerator.getCenterBlockLocation(chunk);
 
-                if (!(islandGenerator instanceof LocationBasedIslandGenerator) && FortressBaseIslandGenerator.isInFortressStructure(center)) {
-                    islandGenerator = getIslandGeneratorFromList(world, chunk.getX(), chunk.getZ(), netherFortressIslandGenerators,
-                            new Random(GeneratorUtils.hash(world.getSeed(), chunk.getX(), chunk.getZ())));
+                if (!(islandGenerator instanceof LocationBasedIslandGenerator)) {
+                    Block center = islandGenerator.getCenterBlockLocation(chunk);
+                    BaseIslandGenerator[] newGenerators = null;
+
+                    if (FortressBaseIslandGenerator.isInFortressStructure(center) && Math.random() < 0.5) {
+                        newGenerators = netherFortressIslandGenerators;
+                    }
+
+                    if (BastionBaseIslandGenerator.isInBastionStructure(center)) {
+                        newGenerators = netherBationIslandGenerators;
+                    }
+
+                    if (newGenerators != null) {
+                        islandGenerator = getIslandGeneratorFromList(world, chunk.getX(), chunk.getZ(), newGenerators,
+                                new Random(GeneratorUtils.hash(world.getSeed(), chunk.getX(), chunk.getZ())));
+                    }
                 }
 
-                islandGenerator.generate(center, random);
+                islandGenerator.generate(islandGenerator.getCenterBlockLocation(chunk), random);
             }
         } catch (Exception e) {
             e.printStackTrace();

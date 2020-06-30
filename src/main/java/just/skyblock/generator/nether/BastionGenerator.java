@@ -1,4 +1,4 @@
-package just.skyblock.generator.overworld;
+package just.skyblock.generator.nether;
 
 import java.util.Random;
 
@@ -13,7 +13,7 @@ import org.bukkit.loot.LootTables;
 import just.skyblock.generator.BaseIslandGenerator;
 import just.skyblock.generator.GeneratorUtils;
 
-public class BastionGenerator extends BaseIslandGenerator {
+public class BastionGenerator extends BastionBaseIslandGenerator {
     
     Material[] blackstone = new Material[] {Material.POLISHED_BLACKSTONE_BRICKS,
                                         Material.CRACKED_POLISHED_BLACKSTONE_BRICKS};
@@ -135,11 +135,6 @@ public class BastionGenerator extends BaseIslandGenerator {
         }
         
 
-    }
-    
-    @Override
-    public double getWeight() {
-        return 5;
     }
 }
 
