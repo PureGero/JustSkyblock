@@ -1,8 +1,10 @@
 package just.skyblock.listeners;
 
 import just.skyblock.*;
+import net.minecraft.server.v1_16_R1.EntityPlayer;
 import net.minecraft.server.v1_16_R1.PacketPlayOutWorldBorder;
 import org.bukkit.*;
+import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
 import org.bukkit.entity.EnderPearl;
@@ -15,6 +17,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.event.world.PortalCreateEvent;
 
 public class SkyblockListener implements Listener {
     private SkyblockPlugin plugin;
@@ -177,6 +180,14 @@ public class SkyblockListener implements Listener {
         } else if (from.getWorld() == plugin.nether) {
             e.setTo(new Location(plugin.world, from.getX(), from.getY(), from.getZ()));
         }
+    }
+
+    @EventHandler
+    public void onPortalCreate(PortalCreateEvent e) {
+        for (BlockState state : e.getBlocks()) {
+            state.update(true, false);
+        }
+        e.setCancelled(true);
     }
 
     @EventHandler
