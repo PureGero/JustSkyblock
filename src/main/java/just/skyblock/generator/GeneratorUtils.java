@@ -25,6 +25,14 @@ public class GeneratorUtils {
         return chest;
     }
 
+    public static BlockData chestFacing(BlockFace face) {
+        Directional chest = (Directional) Material.CHEST.createBlockData();
+
+        chest.setFacing(face);
+
+        return chest;
+    }
+
     public static BlockData torchFacing(BlockFace face) {
         Directional torch = (Directional) Material.WALL_TORCH.createBlockData();
 
@@ -38,5 +46,4 @@ public class GeneratorUtils {
         h = (h ^ (h >> 13)) * 1274126177;
         return h ^ (h >> 16);
     }
-
 }
