@@ -43,11 +43,7 @@ public class CrimsonForestGenerator extends BaseIslandGenerator {
             
             center.getRelative(treeX, 1, treeZ).setType(Material.AIR);
 
-            //center.getWorld().generateTree(center.getRelative(treeX, 1, treeZ).getLocation(), TreeType.REDWOOD);
-            WorldServer world = ((CraftWorld) center.getWorld()).getHandle();
-            BlockPosition pos = new BlockPosition(center.getX() + treeX, center.getY() + 1, center.getZ() + treeZ);
-
-            WorldGenerator.HUGE_FUNGUS.generate(world, world.getStructureManager(), world.getChunkProvider().getChunkGenerator(), new Random(), pos, WorldGenFeatureHugeFungiConfiguration.c);
+            center.getWorld().generateTree(center.getRelative(treeX, 1, treeZ).getLocation(), TreeType.CRIMSON_FUNGUS);
         }
         
         for (int i = 0; i < 4; i++) {
