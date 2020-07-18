@@ -1,5 +1,6 @@
 package just.skyblock.commands;
 
+import just.skyblock.Rank;
 import just.skyblock.SkyblockPlugin;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.Command;
@@ -21,13 +22,17 @@ public class RanksCommand implements CommandExecutor {
         }
 
         sender.sendMessage(ChatColor.GOLD + "The ranks are as following:");
-        sender.sendMessage(ChatColor.DARK_PURPLE + "[SkyCrafter] " + ChatColor.WHITE + "The beginner's rank");
-        sender.sendMessage(ChatColor.YELLOW + "[SkyBuilder] " + ChatColor.GRAY + "2 objectives");
-        sender.sendMessage(ChatColor.GOLD + "[SkyPrentice] " + ChatColor.WHITE + "4 objectives");
-        sender.sendMessage(ChatColor.GREEN + "[SkyWalker] " + ChatColor.GRAY + "8 objectives");
-        sender.sendMessage(ChatColor.AQUA + "[SkyMaster] " + ChatColor.WHITE + "16 objectives");
-        sender.sendMessage(ChatColor.LIGHT_PURPLE + "[SkyLord] " + ChatColor.GRAY + "32 objectives");
-        sender.sendMessage(ChatColor.DARK_RED + "[SkyOverlord] " + ChatColor.WHITE + "64 objectives");
+
+        int i = 0;
+        for (Rank rank : Rank.all) {
+            String objectives = rank.objectives + " objectives";
+
+            if (rank.objectives == 0) {
+                objectives = "The beginner's rank";
+            }
+
+            sender.sendMessage(rank.color + "[" + rank.prefix + "] " + (i++ % 2 == 0 ? ChatColor.WHITE : ChatColor.GRAY) + objectives);
+        }
 
         return true;
     }

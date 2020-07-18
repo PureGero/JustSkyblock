@@ -319,10 +319,17 @@ public class Skyblock {
     }
 
     public void calcRank() {
-        int rank = (int) (Math.log(Objective.completedCount(this) + 0.1 /*Stop 0*/) / Math.log(2));
-        if (rank < 0) rank = 0;
-        if (rank >= Rank.ordered.length) rank = Rank.ordered.length - 1;
-        Rank r = Rank.ordered[rank];
+        int objectives = Objective.completedCount(this);
+        Rank r = Rank.DEFAULT;
+
+        for (Rank r2 : Rank.all) {
+            if (objectives < r2.objectives) {
+                break;
+            }
+
+            r = r2;
+        }
+
         Player p = Bukkit.getPlayer(uuid);
         if (temp.rank != null && !r.name.equals(temp.rank.name)) {
             if (p != null) {

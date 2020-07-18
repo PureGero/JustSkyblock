@@ -1,7 +1,7 @@
 package just.skyblock;
 
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.scoreboard.Team;
@@ -13,35 +13,27 @@ import java.util.UUID;
 public class Rank {
     public static ArrayList<Rank> all = new ArrayList<>();
 
-    public static Rank DEFAULT = new Rank("default", "SkyCrafter", ChatColor.DARK_PURPLE);
-    public static Rank SKYBUILDER = new Rank("skybuilder", "SkyBuilder", ChatColor.YELLOW);
-    public static Rank SKYAPPRENTICE = new Rank("skyapprentice", "SkyPrentice", ChatColor.GOLD);
-    public static Rank SKYWALKER = new Rank("skywalker", "SkyWalker", ChatColor.GREEN);
-    public static Rank SKYMASTER = new Rank("skymaster", "SkyMaster", ChatColor.AQUA);
-    public static Rank SKYLORD = new Rank("skylord", "SkyLord", ChatColor.LIGHT_PURPLE);
-    public static Rank SKYOVERLORD = new Rank("skyoverlord", "SkyOverlord", ChatColor.DARK_RED);
-    public static Rank MODERATOR = new Rank("moderator", "Mod", ChatColor.AQUA);
-    public static Rank ADMIN = new Rank("admin", "Admin", ChatColor.RED);
+    public static Rank DEFAULT = new Rank("default", "SkyCrafter", ChatColor.DARK_PURPLE, 0);
+    public static Rank SKYBUILDER = new Rank("skybuilder", "SkyBuilder", ChatColor.YELLOW, 2);
+    public static Rank SKYAPPRENTICE = new Rank("skyapprentice", "SkyPrentice", ChatColor.GOLD, 4);
+    public static Rank SKYWALKER = new Rank("skywalker", "SkyWalker", ChatColor.GREEN, 8);
+    public static Rank SKYMASTER = new Rank("skymaster", "SkyMaster", ChatColor.AQUA, 16);
+    public static Rank SKYWIZARD = new Rank("skywizard", "SkyWizard", ChatColor.LIGHT_PURPLE, 32);
+    public static Rank SKYLORD = new Rank("skylord", "SkyLord", ChatColor.DARK_RED, 48);
+    public static Rank SKYOVERLORD = new Rank("skyoverlord", "SkyOverlord", ChatColor.of("#8c0000"), 72);
 
-    public static String[] modPerms = new String[]{
-            "skyblock.admin", "pure.moderator"
-    };
-
-    public static Rank[] ordered = new Rank[]{
-            DEFAULT, SKYBUILDER, SKYAPPRENTICE, SKYWALKER, SKYMASTER, SKYLORD, SKYOVERLORD
-    };
-
-    // 2, 4, 8, 16, 32, 64
     private static HashMap<UUID, PermissionAttachment> attachs = new HashMap<>();
     public String name;
     public String prefix;
     public ChatColor color;
+    public int objectives;
     public Team team;
 
-    public Rank(String name, String prefix, ChatColor color) {
+    public Rank(String name, String prefix, ChatColor color, int objectives) {
         this.name = name;
         this.prefix = prefix;
         this.color = color;
+        this.objectives = objectives;
         all.add(this);
         team = Bukkit.getScoreboardManager().getMainScoreboard().getTeam(name);
         if (team == null)
@@ -81,10 +73,6 @@ public class Rank {
             Bukkit.getScoreboardManager().getMainScoreboard().getTeam(p.getName()).removeEntry(p.getName());
         if (r.team != null)
             r.team.addEntry(p.getName());
-        if (r == MODERATOR || r == ADMIN) {
-            for (String s : modPerms)
-                m.setPermission(s, true);
-        }
     }
 
     public String toString() {
