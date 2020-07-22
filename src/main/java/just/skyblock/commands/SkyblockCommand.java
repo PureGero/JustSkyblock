@@ -123,7 +123,10 @@ public class SkyblockCommand implements CommandExecutor, TabCompleter {
 
     private void reset(Player player, String label) {
         Skyblock skyblock = Skyblock.load(player.getUniqueId());
-        if (skyblock.resetCount >= 3 && skyblock.lastReset > System.currentTimeMillis() - 60 * 60 * 1000L && player.getGameMode() == GameMode.SURVIVAL) {
+        if (skyblock.inSmallIsland(player.getLocation())) {
+            player.sendMessage(ChatColor.RED + "Your old island cannot be reset.");
+
+        } else if (skyblock.resetCount >= 3 && skyblock.lastReset > System.currentTimeMillis() - 60 * 60 * 1000L && player.getGameMode() == GameMode.SURVIVAL) {
             player.sendMessage(ChatColor.RED + "You can only reset your skyblock once every hour.");
 
         } else if (skyblock.lastResetRequest > System.currentTimeMillis() - 30 * 1000L) {
