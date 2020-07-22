@@ -1,4 +1,4 @@
-name: Skyblock
+name: JustSkyblock
 main: just.skyblock.SkyblockPlugin
 version: 0.1.0
 description: Skyblock plugin
