@@ -53,7 +53,7 @@ public class SkyblockPlugin extends JavaPlugin {
                 i.ontime += 10;
                 Objective.ontime(i);
                 if (i.coins >= 1000000) {
-                    Objective.HAVE_BILLION_COINS.give(i);
+                    Objective.HAVE_MILLION_COINS.give(i);
                 }
                 if (i.coins >= 1000000000) {
                     Objective.HAVE_BILLION_COINS.give(i);
