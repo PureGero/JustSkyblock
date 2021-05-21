@@ -88,7 +88,7 @@ public class SkyblockPlugin extends JavaPlugin {
         }
 
         world.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
-        world.setDifficulty(Difficulty.NORMAL);
+        world.setDifficulty(Difficulty.HARD);
     }
 
     private void registerCommands() {
